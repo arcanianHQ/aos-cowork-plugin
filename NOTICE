@@ -1,0 +1,18 @@
+AOS Cowork Plugin
+Copyright (c) 2026 László Fazakas
+
+This repository is the AOS Cowork plugin — the client-run subset (~15–20%)
+of the Arcanian Operating System (AOS). It is published under a dual license:
+
+- Apache License 2.0 — all code, skills, configuration, `.mcp.json`, plugin
+  manifests, and Claude-executable markdown. See the LICENSE file.
+
+- Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0) —
+  all prose, methodology, and documentation (the `aos/docs/` directory and
+  README files). See https://creativecommons.org/licenses/by-sa/4.0/
+
+IP is held personally by László Fazakas. Arcanian Consulting Kft. commercialises
+services around AOS but does not own the underlying IP.
+
+The full AOS system — the complete skill and pattern libraries, cohort tooling,
+and server-side components — is not part of this repository.
