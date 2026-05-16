@@ -10,12 +10,18 @@ in the ADF repo.
 
 ## Status
 
-`v0.8.0` — **scaffold**. The structural skills (`aos-route-question`, `aos-onboard`) are
+`v0.9.0` — **scaffold**. The structural skills (`aos-route-question`, `aos-onboard`) are
 starter drafts; building-block skills are ported under AOS-725 (`aos-build-brand`,
 `aos-build-brand-system`, `aos-draft-content`) and the diagnostic skills under AOS-744
 (`aos-diagnose-7layer` — the L0–L7 Marketing Control Framework diagnostic — and
 `aos-analyze-gtm` — the GTM Strategist gap analysis), all rewired onto the
 granted-folder / data-access-router model; workflow skills follow under AOS-728.
+AOS-743 adds two net-new **focused diagnostic** skills — `aos-diagnose-funnel`
+(a connector-gated L4 funnel / conversion diagnostic, Databox) and
+`aos-diagnose-lifecycle` (a connector-gated L5 lifecycle / CRM / retention
+diagnostic, HubSpot) — each focusing one layer of the seven-layer methodology,
+degrading gracefully to a qualitative read when its connector is absent, and
+emitting FND / REC into `ontology/`.
 `aos-localize-hu` (AOS-749) is the first **language pack** — a Hungarian nativeness
 pass over content-language artifacts; see `docs/language-packs.md`. AOS-745 adds two
 net-new intelligence skills — `aos-build-belief-profile` (the L0 belief / fear / JTBD

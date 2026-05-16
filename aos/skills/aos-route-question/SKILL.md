@@ -73,8 +73,8 @@ each skill's `layer:` frontmatter — keep in sync as skills are added.
 |---|---|---|---|
 | L0–L3 — foundation + value | `aos-build-brand-system` | client intelligence: the 7-file brand profile | — |
 | L1–L2 — identity + positioning | `aos-build-brand` | brand strategy — associations, growth, pivot | — |
-| L4 — funnel + conversion | `aos-diagnose-funnel` *(planned — AOS-743)* | diagnose conversion / funnel performance | **Databox** |
-| L5 — CRM + lifecycle | `aos-diagnose-lifecycle` *(planned — AOS-743)* | diagnose lifecycle / retention / CRM health | **HubSpot** |
+| L4 — funnel + conversion | `aos-diagnose-funnel` | diagnose conversion / funnel performance | **Databox** |
+| L5 — CRM + lifecycle | `aos-diagnose-lifecycle` | diagnose lifecycle / retention / CRM health | **HubSpot** |
 | L6–L7 — audience + market | `aos-draft-content` | draft a content piece (reference / blog / linkbait) | — |
 | cross-layer — discovery prep | `aos-catalogue` | index inbox material before discovery | — |
 | cross-layer — setup | `aos-onboard` | first-run / "set me up" | — |
