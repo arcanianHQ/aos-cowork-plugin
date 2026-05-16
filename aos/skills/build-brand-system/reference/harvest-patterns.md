@@ -258,6 +258,7 @@ Competitor URLs are discovered during local harvest (mentioned in strategic docs
 The orchestrator must never crash because website harvest failed. Failures:
 
 - Firecrawl auth missing → log, skip website pass entirely, flag affected buckets as "local-only" in the harvest index
+- **`WebFetch` "URL not in provenance set" (Cowork provenance gate)** → not a failure. The Cowork runtime only fetches URLs that appeared in a user message. Ask the user to paste the site URL(s) into chat, then retry; only on decline fall through to local-only. See `SKILL.md` Step 2b "Cowork — the `WebFetch` provenance gate".
 - Domain returns 4xx → record in scorecard, ask user to verify the URL in CLIENT_CONFIG.md
 - Domain returns 5xx → retry once after 5s, then give up for this run
 - Empty/JS-shell content (<500 chars extracted) → mark domain as low-signal, recommend manual review

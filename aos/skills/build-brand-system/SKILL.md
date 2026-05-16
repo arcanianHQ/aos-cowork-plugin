@@ -7,7 +7,7 @@ class: execute
 domain: strategy
 layer: [L0, L1, L2, L3]
 client-scope: single-client
-version: 0.1.0
+version: 0.2.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write, Edit, WebFetch]
 args-hint: "[client-slug] [--mode=auto|stepwise|batch] [--skip-website] — slug resolves from CWD if omitted"
@@ -159,16 +159,24 @@ The harvest has two passes. Both feed the same per-bucket index.
 
 **Discovery tiers — start cheap, escalate only when needed:**
 
-- **Tier 0 — `WebFetch` (default).** Fetch the client's key pages directly (homepage, about, services, a few posts) → markdown. No connector, no cost. Sufficient for single-client brand discovery — the signal lives in ~8–12 key pages, not a full crawl. URL discovery at Tier 0: `WebFetch` the homepage + `/sitemap.xml`, extract candidate links, score with the path-priority table in `reference/harvest-patterns.md`.
+- **Tier 0 — `WebFetch` (default).** Fetch the client's key pages directly (homepage, about, services, a few posts) → markdown. No connector, no cost. Sufficient for single-client brand discovery — the signal lives in ~8–12 key pages, not a full crawl. URL discovery at Tier 0: `WebFetch` the homepage + `/sitemap.xml`, extract candidate links, score with the path-priority table in `reference/harvest-patterns.md`. **On Claude Cowork, `WebFetch` is provenance-gated — read the box below before relying on Tier 0.**
 - **Tier 1 — `Claude in Chrome`.** Escalate to the browser connector when WebFetch returns thin content (heavy JS rendering).
 - **Tier 2 — Firecrawl (optional).** For full-site `map` crawls, large competitor sweeps, or anti-bot-heavy domains. Requires the Firecrawl MCP connector (per-client, paid) added to `allowed-tools` + `.mcp.json`. Not bundled by default.
+
+**⚠ Cowork — the `WebFetch` provenance gate.** On the Claude Cowork runtime, `WebFetch` only retrieves URLs that **appeared in a user message** (or in a prior `WebFetch` result). A URL the skill read from `CLIENT_CONFIG.md` / `DOMAIN_CHANNEL_MAP.md`, or that the user picked from an options list, is **not** in the provenance set — `WebFetch` refuses it with *"URL not in provenance set."* This is a Cowork runtime rule, not a harvest failure. So at Tier 0, before any config-derived fetch:
+
+1. **Ask the user to paste the site URL(s) into chat.** State exactly which domain(s) you intend to harvest (from `CLIENT_CONFIG.md` / `DOMAIN_CHANNEL_MAP.md`) and ask the user to paste them back into the conversation. Once a URL appears in their message it enters the provenance set and becomes fetchable.
+2. After the homepage is fetched, links **discovered inside that fetched page** are themselves in the provenance set — so sitemap-/homepage-discovered sub-pages can be `WebFetch`-ed normally without a second paste.
+3. If the user declines to paste, treat website harvest as unavailable and fall through to the website-required gate below (waiver / defer) — exactly as for missing Firecrawl auth. Never report a harvest as "failed" when it was never provenance-eligible.
+
+Outside Cowork (terminal / Claude Code) `WebFetch` has no provenance restriction and Tier 0 fetches config URLs directly. When in doubt, do the paste step — it is harmless off-Cowork and mandatory on it.
 
 The scrape plan below applies at any tier — the `firecrawl_map` / `firecrawl_scrape` calls named in it are the **Tier-2** form; at Tier 0 substitute `WebFetch`.
 
 **Website-required gate** (per `reference/file-substance-criteria.md` "Website source preference" field):
 
 - **REQUIRED files** — `VOICE.md`, `COMPETITIVE_LANDSCAPE.md`. If website harvest hasn't run for these (no cached scrape, Firecrawl unavailable, or `--skip-website` flag), the orchestrator MUST prompt the user before drafting:
-  - **Harvest now** → run web harvest (Tier 0 `WebFetch` by default) on the configured domains
+  - **Harvest now** → run web harvest on the configured domains (Tier 0 `WebFetch` by default; **on Cowork, first ask the user to paste the site URL(s) into chat** — see the provenance-gate box above)
   - **Explicit waiver** → user types reason (e.g., "no Firecrawl auth", "internal-test run"); recorded in `sources_consulted:` frontmatter as `website-harvest: waived ({reason})`
   - **Defer this file** → keep the file as STUB, mark in PROFILE_SCORECARD as blocked-on-website-harvest, proceed to others
 - **STRONGLY_PREFERRED files** — `POSITIONING.md`, `ICP.md`. Recommend scrape, but skip with single user confirmation rather than enforced waiver.
@@ -193,6 +201,7 @@ Per-domain scrape plan:
 
 **Failure modes for website harvest (do not crash the orchestrator):**
 
+- `WebFetch` refuses with *"URL not in provenance set"* (Cowork provenance gate) → **not a harvest failure.** Ask the user to paste the site URL into chat, then retry the fetch. Only if they decline does this fall through to local-only harvest. See the provenance-gate box in Step 2b.
 - Firecrawl unavailable / no auth → log it, continue with local-only harvest, flag the affected files (VOICE, POSITIONING, ICP especially) as drawing from local-only signal.
 - Domain returns 4xx/5xx → record in scorecard as a gap; ask user to verify URL in CLIENT_CONFIG.md.
 - Domain returns mostly JS-rendered shell with no usable content → Firecrawl handles this internally; if extracted content < 500 chars per page, treat the domain as low-signal and warn user.
