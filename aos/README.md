@@ -10,7 +10,7 @@ in the ADF repo.
 
 ## Status
 
-`v0.12.0` — **scaffold**. The structural skills (`aos-route-question`, `aos-onboard`) are
+`v0.13.0` — **scaffold**. The structural skills (`aos-route-question`, `aos-onboard`) are
 starter drafts; building-block skills are ported under AOS-725 (`aos-build-brand`,
 `aos-build-brand-system`, `aos-draft-content`) and the diagnostic skills under AOS-744
 (`aos-diagnose-7layer` — the L0–L7 Marketing Control Framework diagnostic — and
@@ -58,6 +58,12 @@ database, no Drive MCP connector.
 - SQLite, if used for graph queries, is operated on the ephemeral sandbox `/tmp`,
   never on the granted folder (FUSE mounts can't host a live DB).
 
+## Demo data
+
+`demo/` bundles a **fictional demo client** ("Lumen Audio") — `inbox/` material
+to try the pipeline without real client data. Not a real client folder; see
+`demo/README.md`. (AOS-741.)
+
 ## Connectors (`.mcp.json`)
 
 Connectors are for genuinely-remote data sources only — **never** for AOS's own
@@ -75,6 +81,7 @@ aos-cowork-plugin/               the repo — a single-plugin marketplace
     ├── .mcp.json                    connector declarations
     ├── skills/                      AOS skills — router · onboard · catalogue · + ported
     ├── data-template/               canonical granted-folder layout
+    ├── demo/                        fictional demo client ("Lumen Audio")
     └── docs/                        data-folder-spec · design-patterns · connectors · architecture-gaps
 ```
 

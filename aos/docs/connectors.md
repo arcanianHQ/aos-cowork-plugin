@@ -39,6 +39,18 @@ Out of AOS's GTM domain, or superseded by a decision:
 - **Google Drive** — superseded: storage is the granted folder, not a connector
   (`DECISIONS_2026-05-15_aos-cowork-no-control-layer.md` §7).
 
+## The WebFetch provenance gate (Cowork)
+
+`WebFetch` is not a connector, but it is how skills reach live web pages — and on
+Cowork it carries a constraint worth flagging here. Cowork's `web_fetch` only
+retrieves URLs that **appeared in a user message** (or in a prior `web_fetch`
+result). A URL a skill derived itself — read from `DOMAIN_CHANNEL_MAP.yaml`, or
+picked from an options list — is refused: *"URL not in provenance set."*
+
+So any skill that harvests a live page (e.g. `aos-build-brand-system`'s website
+harvest) must **ask the user to paste the URL into chat**, then fetch it in the
+same turn. See `aos-build-brand-system` Step 2b. Tracked: AOS-746.
+
 ## Endpoint confirmation
 
 The Google Ads, GA4, Meta Ads, Semrush, ActiveCampaign and Todoist MCP endpoints
