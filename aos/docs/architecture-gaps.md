@@ -38,7 +38,7 @@ FND/REC graph; the operator world used hooks, dead in Cowork.
 
 - **Emission** is an explicit pipeline band-F step — a skill that `emits` an
   FND/REC writes the artifact (convention: `ontology/README.md`).
-- An **`ontology` maintenance skill** (sibling of `catalogue`) scans
+- An **`ontology` maintenance skill** (sibling of `aos-catalogue`) scans
   `findings/` + `recommendations/`, walks the edges, writes `ontology/INDEX.md`.
 
 This is the mechanism that carries learning around the §1 loop.

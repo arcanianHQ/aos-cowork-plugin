@@ -1,9 +1,9 @@
 ---
-name: build-brand
+name: aos-build-brand
 description: Deliberately build, grow, or pivot a brand by engineering strategic associations that lower CAC, raise LTV, and compound advantage.
 scope: int-company
 flavor: [company, advanced, internal]
-class: execute
+class: intelligence
 domain: strategy
 layer: [L1, L2]
 client-scope: single-client

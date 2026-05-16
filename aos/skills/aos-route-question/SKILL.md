@@ -1,9 +1,9 @@
 ---
-name: aos-router
+name: aos-route-question
 description: "The front door. Routes a plain-English GTM question to the right AOS workflow, indexed by the 7+1 Layer Framework. Trigger for any open-ended request, a vague ask, or 'what can you do'."
 scope: int-company
 flavor: [company, advanced, internal]
-class: router
+class: reading
 domain: routing
 layer: all
 client-scope: single-client
@@ -60,12 +60,12 @@ each skill's `layer:` frontmatter — keep in sync as skills are added.
 
 | Layer band | Skill / workflow | Use for | Connector |
 |---|---|---|---|
-| L0–L3 — foundation + value | `build-brand-system` | client intelligence: the 7-file brand profile | — |
-| L1–L2 — identity + positioning | `build-brand` | brand strategy — associations, growth, pivot | — |
+| L0–L3 — foundation + value | `aos-build-brand-system` | client intelligence: the 7-file brand profile | — |
+| L1–L2 — identity + positioning | `aos-build-brand` | brand strategy — associations, growth, pivot | — |
 | L4 — funnel + conversion | `aos-diagnose-funnel` *(planned — AOS-743)* | diagnose conversion / funnel performance | **Databox** |
 | L5 — CRM + lifecycle | `aos-diagnose-lifecycle` *(planned — AOS-743)* | diagnose lifecycle / retention / CRM health | **HubSpot** |
-| L6–L7 — audience + market | `content-draft` | draft a content piece (reference / blog / linkbait) | — |
-| cross-layer — discovery prep | `catalogue` | index inbox material before discovery | — |
+| L6–L7 — audience + market | `aos-draft-content` | draft a content piece (reference / blog / linkbait) | — |
+| cross-layer — discovery prep | `aos-catalogue` | index inbox material before discovery | — |
 | cross-layer — setup | `aos-onboard` | first-run / "set me up" | — |
 
 **Connector gating.** A workflow tagged with a connector needs that connector's

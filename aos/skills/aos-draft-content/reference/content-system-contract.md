@@ -4,7 +4,7 @@ scope: int-company
 
 # Content-system contract
 
-The structure each client's `clients-cloud/<slug>/content-system/` directory must satisfy for `/content-draft` to run.
+The structure each client's `clients-cloud/<slug>/content-system/` directory must satisfy for `/aos-draft-content` to run.
 
 ## Two layouts: single-BU and multi-BU
 
@@ -20,7 +20,7 @@ clients-cloud/<slug>/content-system/
 └── distribution.md
 ```
 
-`/content-draft` runs without a `--bu` flag for these clients.
+`/aos-draft-content` runs without a `--bu` flag for these clients.
 
 ### Multi-BU layout (when the client operates 2+ business units with separate domains/ICPs/pricing)
 
@@ -40,7 +40,7 @@ clients-cloud/<slug>/content-system/
     └── distribution.md
 ```
 
-`/content-draft` requires `--bu=<bu-slug>` for these clients. `scripts/load-system.mjs` auto-detects the layout and refuses to draft without `--bu` if multi-BU is detected.
+`/aos-draft-content` requires `--bu=<bu-slug>` for these clients. `scripts/load-system.mjs` auto-detects the layout and refuses to draft without `--bu` if multi-BU is detected.
 
 **Reference case:** Deluxe — `kocsibeallo` (Standard pole, kocsibeallo.hu) + `deluxebuilding` (Premium pole, deluxebuilding.hu). DOMAIN_CHANNEL_MAP.md drives the split.
 
@@ -98,7 +98,7 @@ Topic pillars the brand owns. Each pillar must specify:
 - Primary keyword family per sub-topic
 - Internal-link plan (which pillar posts link to which)
 
-Without pillars.md, `/content-draft` will warn but proceed (drafts won't be cross-linked into a topic graph).
+Without pillars.md, `/aos-draft-content` will warn but proceed (drafts won't be cross-linked into a topic graph).
 
 ### `distribution.md` (recommended)
 
@@ -112,7 +112,7 @@ Per content type, where it ships:
 
 Plus: posting cadence per type, image dimensions per channel, hashtag policies per channel.
 
-Without distribution.md, `/content-draft` defaults to own-blog only and skips the social/Pinterest sub-passes for reference posts.
+Without distribution.md, `/aos-draft-content` defaults to own-blog only and skips the social/Pinterest sub-passes for reference posts.
 
 ## Optional files
 
@@ -122,7 +122,7 @@ Subdirectory with examples of past content that landed well — `samples/referen
 
 ### `audience-pulse.md` (optional)
 
-Living document of what the audience is asking about right now — questions from support, sales calls, comments. Updated quarterly. Helps `/content-draft` pick topics that match current demand.
+Living document of what the audience is asking about right now — questions from support, sales calls, comments. Updated quarterly. Helps `/aos-draft-content` pick topics that match current demand.
 
 ## Validation rules (enforced by scripts/load-system.mjs)
 

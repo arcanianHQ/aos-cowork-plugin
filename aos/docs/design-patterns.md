@@ -14,7 +14,7 @@ workflow; a **workflow** chains **building-block** skills. AOS adds a shared
 
 ## 2. The router does no work
 
-`aos-router` routes only — it never pulls data or drafts output. It recommends
+`aos-route-question` routes only — it never pulls data or drafts output. It recommends
 **one** thing with a one-line why, asks to confirm, never dumps a menu. Overviews
 are grouped by the 7+1 layers, not an ad-hoc list.
 
@@ -28,7 +28,7 @@ confirms first.
 
 ## 4. Hard gates on prerequisites
 
-Beyond step gates, a workflow hard-gates on prerequisites. `build-brand-system`
+Beyond step gates, a workflow hard-gates on prerequisites. `aos-build-brand-system`
 will not let downstream content run until the brand profile is 7/7 complete. In
 AOS this is **preflight** (`preflight:` frontmatter, pipeline band C) — check
 client config, the data structure, and required connectors *before* doing work.
@@ -38,7 +38,7 @@ client config, the data structure, and required connectors *before* doing work.
 Keep `SKILL.md` lean — the procedure only. Push depth into `reference/`:
 `gotchas.md`, `examples/`, integration docs, file-templates. Loaded on demand,
 not into every context. (Seen across `small-business` skills and the ported
-`build-brand-system` / `content-draft`.)
+`aos-build-brand-system` / `aos-draft-content`.)
 
 ## 6. Connector-aware graceful degradation
 

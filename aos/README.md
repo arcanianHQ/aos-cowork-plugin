@@ -10,7 +10,7 @@ in the ADF repo.
 
 ## Status
 
-`v0.1.0` — **scaffold**. The structural skills (`aos-router`, `aos-onboard`) are
+`v0.2.0` — **scaffold**. The structural skills (`aos-route-question`, `aos-onboard`) are
 starter drafts; building-block skills are ported under AOS-725 and workflow
 skills under AOS-728.
 

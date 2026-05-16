@@ -1,6 +1,6 @@
 # build-brand — Brand strategy analysis template
 
-Paste into deliverables when running `/build-brand`. Adapt section titles to the engagement’s voice; keep the logic.
+Paste into deliverables when running `/aos-build-brand`. Adapt section titles to the engagement’s voice; keep the logic.
 
 ```
 ═══════════════════════════════════════════════════════════════

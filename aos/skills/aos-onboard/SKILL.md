@@ -3,7 +3,7 @@ name: aos-onboard
 description: "First-run setup. Locates or creates the AOS granted folder, instantiates the data structure, connects Databox, and captures client / business-unit / domain / channel context. Trigger on 'set me up', 'get started', or when the data folder is absent."
 scope: int-company
 flavor: [company, advanced, internal]
-class: workflow
+class: system
 domain: onboarding
 layer: all
 client-scope: single-client

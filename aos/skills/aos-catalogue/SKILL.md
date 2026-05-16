@@ -1,9 +1,9 @@
 ---
-name: catalogue
+name: aos-catalogue
 description: "Index the granted folder's two working zones — inbox/ (client material for discovery) and content/ (produced content pieces) — into their CATALOGUE.md files, each entry with type, status and key metadata. Trigger on 'catalogue the inbox', 'catalogue the content', 'what's in the inbox', or after material/content changes."
 scope: int-company
 flavor: [company, advanced, internal]
-class: execute
+class: reading
 domain: discovery
 layer: all
 client-scope: single-client
@@ -27,7 +27,7 @@ Re-run after material or content changes.
 
 ## Zone — `inbox/` → `inbox/CATALOGUE.md`  (client input material, discovery prep)
 
-Runs *before* `build-brand-system` harvests, so discovery knows what is new.
+Runs *before* `aos-build-brand-system` harvests, so discovery knows what is new.
 
 - **Scan** every file under the `inbox/` typed folders + root. Skip
   `inbox/_processed/`, `inbox/README.md`, `inbox/CATALOGUE.md`.
@@ -61,5 +61,5 @@ Runs *before* `build-brand-system` harvests, so discovery knows what is new.
 
 ## Status
 
-v0.0.3 scaffold — two-zone. Pairs with `build-brand-system` (inbox → discovery)
-and `content-draft` (content production).
+v0.0.3 scaffold — two-zone. Pairs with `aos-build-brand-system` (inbox → discovery)
+and `aos-draft-content` (content production).

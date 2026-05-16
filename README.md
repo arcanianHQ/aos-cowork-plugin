@@ -21,8 +21,8 @@ This repo is a single-plugin marketplace — the root
 
 ## What's inside
 
-The `aos` plugin (`aos/`) ships 6 skills — `aos-router`, `aos-onboard`,
-`catalogue`, `build-brand`, `build-brand-system`, `content-draft` — plus the
+The `aos` plugin (`aos/`) ships 6 skills — `aos-route-question`, `aos-onboard`,
+`aos-catalogue`, `aos-build-brand`, `aos-build-brand-system`, `aos-draft-content` — plus the
 granted-folder data template and docs. See [`aos/README.md`](aos/README.md) for
 the full picture.
 

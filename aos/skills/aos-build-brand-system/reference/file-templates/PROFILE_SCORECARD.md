@@ -8,7 +8,7 @@ status: <complete | partial | blocked>
 
 # Profile Scorecard — <Client Display Name>
 
-> **What this is.** End-of-run summary of the brand intelligence profile state after `/build-brand-system` ran. Tells the next practitioner what's done, what's blocked, what to do next.
+> **What this is.** End-of-run summary of the brand intelligence profile state after `/aos-build-brand-system` ran. Tells the next practitioner what's done, what's blocked, what to do next.
 
 ## Final completeness
 

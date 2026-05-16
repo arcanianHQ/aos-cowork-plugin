@@ -1,9 +1,9 @@
 ---
-name: build-brand-system
+name: aos-build-brand-system
 description: Orchestrate the 7-file Client Intelligence Profile end-to-end. Harvests scattered intelligence from a client's directory, drafts each missing brand/ file with citations, confirms each draft with the user, and hard-gates on 7/7 complete before downstream content/strategy work runs.
 scope: int-company
 flavor: [company, internal]
-class: execute
+class: intelligence
 domain: strategy
 layer: [L0, L1, L2, L3]
 client-scope: single-client
@@ -40,11 +40,11 @@ safety:
   mode: mutates-state
   requires_confirmation: true
 depends_on:
-  - 7layer
-  - belief-profile
-  - build-brand
-  - craft-offer
-  - analyze-gtm
+  - aos-diagnose-7layer
+  - aos-build-belief-profile
+  - aos-build-brand
+  - aos-build-offer
+  - aos-analyze-gtm
 tags: [orchestrator, brand, intelligence, onboarding, profile]
 ---
 
@@ -52,7 +52,7 @@ tags: [orchestrator, brand, intelligence, onboarding, profile]
 
 Most clients have a `brand/` directory scaffolded with 7 standard files — and 5+ of them are empty stubs while the actual intelligence sits scattered in strategic plans, session logs, OKR docs, belief-profile working files at the root. This skill **consolidates the scatter into the standard**.
 
-It is an **orchestrator**, not a thinker. The thinking belongs to the sub-skills (`/7layer`, `/belief-profile`, `/build-brand`, `/craft-offer`, `/analyze-gtm`). This skill's job is:
+It is an **orchestrator**, not a thinker. The thinking belongs to the sub-skills (`/7layer`, `/belief-profile`, `/aos-build-brand`, `/craft-offer`, `/analyze-gtm`). This skill's job is:
 
 1. Find what's already known.
 2. Surface it per intelligence file.
@@ -338,7 +338,7 @@ Final user-facing output:
 
 ## Integration
 
-- **Upstream:** `/add-client` (sets up the client tree); `/7layer`, `/belief-profile`, `/build-brand`, `/craft-offer`, `/analyze-gtm`, `/competitor-monitor` (the diagnostic sub-skills this orchestrates)
+- **Upstream:** `/add-client` (sets up the client tree); `/7layer`, `/belief-profile`, `/aos-build-brand`, `/craft-offer`, `/analyze-gtm`, `/competitor-monitor` (the diagnostic sub-skills this orchestrates)
 - **Downstream:** `/build-content-system` (gated on 7/7 from this skill); `/blog-draft` and other content skills (consume the filled brand intelligence)
 - **Related:** `core/methodology/CLIENT_INTELLIGENCE_PROFILE.md` (the canonical 7-file standard this skill enforces)
 

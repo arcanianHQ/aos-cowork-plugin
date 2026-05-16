@@ -1,9 +1,9 @@
 ---
-name: content-draft
+name: aos-draft-content
 description: Draft a single piece of content (reference post, blog post, or linkbait) for a client by composing brand intelligence + content-system + a post-type spec. Produces a publishable draft in the client's voice with the structure and tone the type requires.
 scope: int-company
 flavor: [company, internal]
-class: execute
+class: content
 domain: content
 layer: [L6, L7]
 client-scope: single-client
@@ -96,7 +96,7 @@ clients-cloud/deluxe/content-system/
 ### Step 0 — Preflight
 
 1. Resolve client slug. Fail fast with clear message if not resolved.
-2. Verify `clients-cloud/<slug>/brand/VOICE.md` and `brand/ICP.md` exist and pass minimum substance (≥1500 bytes each). If not: tell user to run `/build-brand-system` first; abort. Hard gate.
+2. Verify `clients-cloud/<slug>/brand/VOICE.md` and `brand/ICP.md` exist and pass minimum substance (≥1500 bytes each). If not: tell user to run `/aos-build-brand-system` first; abort. Hard gate.
 3. Verify `clients-cloud/<slug>/content-system/` exists. Run `node scripts/load-system.mjs <slug> <type> [<bu>]` — this script:
    - Auto-detects per-BU layout (any subdirectory containing `messaging.md` triggers BU mode)
    - Refuses to validate without `--bu` if BU mode is detected
@@ -188,7 +188,7 @@ Do not write until accept.
 
 ## Hard rules
 
-1. **Brand gate.** Refuse to draft if `brand/VOICE.md` or `brand/ICP.md` are stubs. Send user to `/build-brand-system`. No exceptions.
+1. **Brand gate.** Refuse to draft if `brand/VOICE.md` or `brand/ICP.md` are stubs. Send user to `/aos-build-brand-system`. No exceptions.
 2. **Content-system gate.** Refuse to draft if `content-system/messaging.md` and `content-system/products.md` don't exist with substance.
 3. **Voice fidelity.** Every banned word in VOICE.md gets flagged and rewritten before write. The skill is responsible for this — not the user.
 4. **Pillar coverage.** Drafts must fit a named pillar. Off-pillar topics get an explicit user confirmation step.
@@ -210,7 +210,7 @@ User-facing summary at end of run:
 
 ## Integration
 
-- **Upstream:** `/build-brand-system` (must complete before content-draft runs); the per-client `content-system/` folder (which lives in the client tree and is filled by the practitioner who knows the business)
+- **Upstream:** `/aos-build-brand-system` (must complete before content-draft runs); the per-client `content-system/` folder (which lives in the client tree and is filled by the practitioner who knows the business)
 - **Downstream:** image-generation skill (planned), translation skill (if cross-language distribution), publishing-pipeline skill (planned)
 - **Related:** `core/skills/magyar-szoveg.md` (HU quality checks); `core/methodology/LINKEDIN_CONTENT_RULES.md` (if blog post will be cross-posted to LinkedIn)
 

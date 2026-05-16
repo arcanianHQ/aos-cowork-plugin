@@ -35,6 +35,6 @@ Cowork has no hooks, so the graph is maintained **in-skill**, not by automation:
 
 1. **Emission** — any skill whose frontmatter `emits` an FND/REC writes the
    artifact as an explicit step (pipeline band F — deliverable + emit).
-2. **Index** — the `ontology` maintenance skill (sibling of `catalogue`; to be
+2. **Index** — the `ontology` maintenance skill (sibling of `aos-catalogue`; to be
    built — see `docs/architecture-gaps.md` §2) scans `findings/` +
    `recommendations/`, walks the `consumes`/`emits` edges, and writes `INDEX.md`.

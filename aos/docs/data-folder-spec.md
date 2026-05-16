@@ -24,14 +24,14 @@ AOS/                           the granted folder
 │   └── DOMAIN_CHANNEL_MAP.yaml  domains × channels
 ├── inbox/                     discovery drop zone — typed (see inbox/README.md)
 │   ├── strategy/ · transcripts/ · correspondence/ · research/ · brand-material/
-│   ├── CATALOGUE.md            index of inbox material — built by the `catalogue` skill
+│   ├── CATALOGUE.md            index of inbox material — built by the `aos-catalogue` skill
 │   └── _processed/             harvested items, excluded from re-harvest
 ├── brand/                     7-file Client Intelligence Profile (build-brand-system)
 ├── content-system/
 │   └── <bu>/                  pillars · messaging · products · distribution (per BU)
 ├── content/
 │   ├── <bu>/                  produced content pieces (reference / blog / linkbait)
-│   └── CATALOGUE.md            content index — built by the `catalogue` skill
+│   └── CATALOGUE.md            content index — built by the `aos-catalogue` skill
 ├── dictionaries/
 │   ├── access.yaml            Access dictionary — accounts / properties
 │   ├── campaign.yaml          Campaign dictionary

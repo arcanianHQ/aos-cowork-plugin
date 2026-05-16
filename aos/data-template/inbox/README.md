@@ -1,6 +1,6 @@
 # inbox/ — drop zone for client material
 
-Drop client material here for `build-brand-system` discovery to harvest into
+Drop client material here for `aos-build-brand-system` discovery to harvest into
 `brand/HARVEST_INDEX.md`. Sort each item into the folder that best matches it —
 the harvest uses the folder as a **bucket-affinity boost** when classifying
 signals. Unsure? Use `strategy/` or the `inbox/` root; the harvest still scans it.
@@ -15,9 +15,9 @@ signals. Unsure? Use `strategy/` or the `inbox/` root; the harvest still scans i
 
 `_processed/` — items already harvested; excluded from re-harvest.
 
-Run the **`catalogue`** skill to index everything here into `inbox/CATALOGUE.md`
+Run the **`aos-catalogue`** skill to index everything here into `inbox/CATALOGUE.md`
 before discovery — it records each item's type, status, and a one-line summary.
 
 Everything in `inbox/` is **input material** — never a deliverable. The
-folder → harvest-bucket mapping is consumed by `build-brand-system`'s
+folder → harvest-bucket mapping is consumed by `aos-build-brand-system`'s
 `reference/harvest-patterns.md` (wired in the AOS-725 pass).

@@ -7,8 +7,8 @@ One folder per business unit, each holding the 4-file content foundation:
 - `products.md` — the BU's product & service catalog
 - `distribution.md` — where each content type ships, per channel
 
-This is what the `content-draft` skill composes from. The layout contract is
+This is what the `aos-draft-content` skill composes from. The layout contract is
 `skills/content-draft/reference/content-system-contract.md`.
 
-Populated by the content pipeline: `build-brand-system` (brand docs) →
-`content-draft` (content). For a multi-BU client, each BU gets its own folder.
+Populated by the content pipeline: `aos-build-brand-system` (brand docs) →
+`aos-draft-content` (content). For a multi-BU client, each BU gets its own folder.
