@@ -71,7 +71,7 @@ each skill's `layer:` frontmatter — keep in sync as skills are added.
 
 | Layer band | Skill / workflow | Use for | Connector |
 |---|---|---|---|
-| L0–L3 — foundation + value | `aos-build-brand-system` | client intelligence: the 7-file brand profile | — |
+| L0–L3 — foundation + value | `aos-build-brand-system` | client intelligence: the 9-file brand profile | — |
 | L1–L2 — identity + positioning | `aos-build-brand` | brand strategy — associations, growth, pivot | — |
 | L4 — funnel + conversion | `aos-diagnose-funnel` | diagnose conversion / funnel performance | **Databox** |
 | L5 — CRM + lifecycle | `aos-diagnose-lifecycle` | diagnose lifecycle / retention / CRM health | **HubSpot** |
