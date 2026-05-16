@@ -1,0 +1,13 @@
+{
+  "name": "aos-cowork",
+  "owner": {
+    "name": "Arcanian"
+  },
+  "plugins": [
+    {
+      "name": "aos",
+      "source": ".",
+      "description": "AOS — the Go-To-Market operating system as a Claude plugin (client-run Cowork delivery)."
+    }
+  ]
+}

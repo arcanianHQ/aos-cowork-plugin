@@ -47,6 +47,8 @@ aos-cowork-plugin/
 
 ## Install
 
-- **Claude Code:** `claude plugin marketplace add <marketplace>` then
-  `claude plugin install aos@<marketplace>`.
-- **Cowork:** via the private plugin marketplace (Settings → Plugins).
+This repo is a single-plugin marketplace (`.claude-plugin/marketplace.json`).
+
+- **Claude Code:** `claude plugin marketplace add arcanianHQ/aos-cowork-plugin`, then `claude plugin install aos@aos-cowork`.
+- **Local dev / testing:** `claude --plugin-dir .` — loads the plugin directly.
+- **Cowork:** add the repo as a private marketplace in the admin Plugins panel (or upload a ZIP).
