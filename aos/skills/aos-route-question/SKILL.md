@@ -43,6 +43,11 @@ the right workflow. **You route — you do not do the work yourself.**
 
 - Confirm the granted-folder data structure exists (`AOS_CONFIG.md`, `client/`).
   If absent → route to `aos-onboard`.
+- **Schema check.** Compare `AOS_CONFIG.md`'s `schema-version` to the plugin's
+  current schema version in `docs/CURRENT_SCHEMA_VERSION`. If the folder is
+  **behind** the plugin, route to `aos-migrate` first — never route into a
+  workflow on a folder whose layout the current skills no longer match. See
+  `docs/artifact-versioning.md` §2.
 - Confirm any connector a workflow needs is connected. If missing, say so
   *before* routing — never route into a half-broken workflow; offer a degraded
   fallback if one exists.
@@ -82,6 +87,7 @@ each skill's `layer:` frontmatter — keep in sync as skills are added.
 | L6–L7 — audience + market | `aos-draft-content` | draft a content piece (reference / blog / linkbait) | — |
 | cross-layer — discovery prep | `aos-catalogue` | index inbox material before discovery | — |
 | cross-layer — setup | `aos-onboard` | first-run / "set me up" | — |
+| cross-layer — maintenance | `aos-migrate` | upgrade a data folder behind the plugin's schema | — |
 
 **Connector gating.** A workflow tagged with a connector needs that connector's
 MCP tools available in the session. A connector counts as connected **only if

@@ -7,7 +7,7 @@ class: system
 domain: onboarding
 layer: all
 client-scope: single-client
-version: 0.2.0
+version: 0.3.0
 owner: arcanian
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Bash"]
 preflight: []
@@ -59,6 +59,23 @@ Walk the user through first-run setup.
 6. **Confirm & summarise.** Show what was set up — including each zone's
    resolved location — and suggest a check-in cadence.
 
+## Existing-folder schema check
+
+When this skill runs against a granted folder that **already has** an
+`AOS_CONFIG.md` (a re-run, or onboarding onto a previously-used folder), compare
+its `schema-version` to the plugin's current schema version in
+`docs/CURRENT_SCHEMA_VERSION`:
+
+- folder `schema-version` **<** plugin's → the folder is **behind**. Do not
+  re-scaffold; tell the user the data folder predates this plugin build and
+  **suggest running `aos-migrate`** before any workflow.
+- folder `schema-version` **>** plugin's → the folder is newer than the plugin;
+  advise updating the plugin (do not write to the folder).
+- equal → current; proceed normally.
+
+A fresh install seeds `schema-version` from `data-template/AOS_CONFIG.md`, so a
+brand-new folder is always current. See `docs/artifact-versioning.md` §2.
+
 ## Guardrails
 
 - Never overwrite an existing populated data folder — instantiate only into an
@@ -71,5 +88,7 @@ Walk the user through first-run setup.
 
 ## Status
 
-v0.2.0 — router-aware scaffolding (AOS-757) + captures the communication /
-content language pair into `AOS_CONFIG.md` (AOS-750).
+v0.3.0 — router-aware scaffolding (AOS-757) + captures the communication /
+content language pair into `AOS_CONFIG.md` (AOS-750) + an existing-folder
+schema-version check that suggests `aos-migrate` when the folder is behind the
+plugin (AOS-755).

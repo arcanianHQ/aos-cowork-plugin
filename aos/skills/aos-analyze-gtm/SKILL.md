@@ -129,6 +129,22 @@ Minimum content for every delivery:
 - Recommended next steps
 - **What did we get wrong? What's missing?**
 
+## Provenance
+
+Every artifact this skill writes carries the **standard provenance block** in
+its frontmatter — see `docs/artifact-versioning.md` §1. Stamp all four fields:
+
+```yaml
+generated_by: <this skill's name>      # the name: frontmatter value
+skill_version: <this skill's version>  # the version: frontmatter value
+generated_date: <YYYY-MM-DD>           # the date written
+aos_schema: <schema-version>           # read from AOS_CONFIG.md
+```
+
+Add it to whatever domain frontmatter the artifact already carries; never
+hard-code `skill_version` or `aos_schema` — read them at write time. This is
+what lets a granted folder be migrated when the plugin or schema changes.
+
 ## Hard Rules
 
 1. This skill is for **analysis** — not action planning. Diagnose gaps; do not write the plan.

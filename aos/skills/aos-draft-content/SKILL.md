@@ -248,14 +248,18 @@ client: <slug>
 content_type: <type>
 topic: <topic>
 pillar: <pillar slug>
-generated_by: content-draft v0.1
+generated_by: aos-draft-content        # provenance block — see docs/artifact-versioning.md
+skill_version: <this skill's version>
 generated_date: <YYYY-MM-DD>
+aos_schema: <schema-version from AOS_CONFIG.md>
 status: draft  # → review → approved → published
 target_channel: <from distribution.md>
 voice_check_passed: true
 banned_words_check_passed: true
 ---
 ```
+
+`generated_by` / `skill_version` / `generated_date` / `aos_schema` are the standard provenance block (`docs/artifact-versioning.md` §1) — see the **Provenance** section below.
 
 ### Step 6 — User review
 
@@ -265,6 +269,22 @@ Present the draft with three options:
 - **Regenerate** — user provides correction direction; redraft
 
 Do not write until accept.
+
+## Provenance
+
+Every artifact this skill writes carries the **standard provenance block** in
+its frontmatter — see `docs/artifact-versioning.md` §1. Stamp all four fields:
+
+```yaml
+generated_by: <this skill's name>      # the name: frontmatter value
+skill_version: <this skill's version>  # the version: frontmatter value
+generated_date: <YYYY-MM-DD>           # the date written
+aos_schema: <schema-version>           # read from AOS_CONFIG.md
+```
+
+Add it to whatever domain frontmatter the artifact already carries; never
+hard-code `skill_version` or `aos_schema` — read them at write time. This is
+what lets a granted folder be migrated when the plugin or schema changes.
 
 ## Hard rules
 

@@ -1,8 +1,10 @@
 ---
 scope: int-confidential
 client: <slug>
-generated_by: aos-build-offer v0.1.0
+generated_by: aos-build-offer   # provenance block — see docs/artifact-versioning.md
+skill_version: <skill-semver>
 generated_date: <YYYY-MM-DD>
+aos_schema: <schema-version from AOS_CONFIG.md>
 sources_consulted:
   - <path>:L<line>
 status: confirmed-by-user

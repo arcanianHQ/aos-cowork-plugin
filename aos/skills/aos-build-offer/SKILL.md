@@ -149,7 +149,23 @@ Present the full draft offer to the user with the three options:
 - **Revise** — user edits inline before write
 - **Regenerate** — user supplies a correction direction, redraft
 
-Only on Accept (or post-Revise) write the file, with the frontmatter block from `reference/output-template.md` (`scope`, `client`, `generated_by`, `generated_date`, `sources_consulted`, `status`, `needs_refresh_by` = generated_date + 90 days, `depends_on: ICP.md, POSITIONING.md, BELIEF_PROFILE.md`). End the file with the mandatory footer line: *"What did we get wrong? What's missing?"*
+Only on Accept (or post-Revise) write the file, with the frontmatter block from `reference/output-template.md` (`scope`, `client`, the standard provenance block — `generated_by`, `skill_version`, `generated_date`, `aos_schema` — `sources_consulted`, `status`, `needs_refresh_by` = generated_date + 90 days, `depends_on: ICP.md, POSITIONING.md, BELIEF_PROFILE.md`). See the **Provenance** section below and `docs/artifact-versioning.md` §1. End the file with the mandatory footer line: *"What did we get wrong? What's missing?"*
+
+## Provenance
+
+Every artifact this skill writes carries the **standard provenance block** in
+its frontmatter — see `docs/artifact-versioning.md` §1. Stamp all four fields:
+
+```yaml
+generated_by: <this skill's name>      # the name: frontmatter value
+skill_version: <this skill's version>  # the version: frontmatter value
+generated_date: <YYYY-MM-DD>           # the date written
+aos_schema: <schema-version>           # read from AOS_CONFIG.md
+```
+
+Add it to whatever domain frontmatter the artifact already carries; never
+hard-code `skill_version` or `aos_schema` — read them at write time. This is
+what lets a granted folder be migrated when the plugin or schema changes.
 
 ## Hard rules
 

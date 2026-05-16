@@ -145,6 +145,22 @@ Shell layouts for Mode 1–3 and the Competitive Matrix: `reference/report-templ
 
 When run inside a full engagement, write the consolidated diagnosis to `brand/7LAYER_DIAGNOSTIC.md` — the canonical profile slot consumed by `aos-build-brand-system`. When run as a standalone session, save the deliverable under `deliverables/<YYYY-MM>/`. Either way, never hard-code the path — resolve the `brand` / `deliverables` zone via `AOS_CONFIG.md`.
 
+## Provenance
+
+Every artifact this skill writes carries the **standard provenance block** in
+its frontmatter — see `docs/artifact-versioning.md` §1. Stamp all four fields:
+
+```yaml
+generated_by: <this skill's name>      # the name: frontmatter value
+skill_version: <this skill's version>  # the version: frontmatter value
+generated_date: <YYYY-MM-DD>           # the date written
+aos_schema: <schema-version>           # read from AOS_CONFIG.md
+```
+
+Add it to whatever domain frontmatter the artifact already carries; never
+hard-code `skill_version` or `aos_schema` — read them at write time. This is
+what lets a granted folder be migrated when the plugin or schema changes.
+
 ## Hard Rules
 
 1. Do not claim causality from a single channel's analytics alone — triangulate (e.g. ads UI + analytics).

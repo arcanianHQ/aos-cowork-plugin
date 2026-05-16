@@ -130,6 +130,22 @@ For `class: execute`, include:
 
 Always end with: **What did we get wrong? What's missing?**
 
+## Provenance
+
+Every artifact this skill writes carries the **standard provenance block** in
+its frontmatter — see `docs/artifact-versioning.md` §1. Stamp all four fields:
+
+```yaml
+generated_by: <this skill's name>      # the name: frontmatter value
+skill_version: <this skill's version>  # the version: frontmatter value
+generated_date: <YYYY-MM-DD>           # the date written
+aos_schema: <schema-version>           # read from AOS_CONFIG.md
+```
+
+Add it to whatever domain frontmatter the artifact already carries; never
+hard-code `skill_version` or `aos_schema` — read them at write time. This is
+what lets a granted folder be migrated when the plugin or schema changes.
+
 ## Hard Rules
 
 1. Write or update brand intelligence files only under the `brand/` zone of the granted folder; follow the Client Intelligence Profile layout (the 7 standard `brand/` files — see `aos-build-brand-system`).

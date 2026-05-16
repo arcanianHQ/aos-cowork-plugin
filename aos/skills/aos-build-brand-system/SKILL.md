@@ -290,8 +290,10 @@ Surface the chosen mode to the user before drafting begins. Mode auto-recommenda
    ---
    scope: int-confidential
    client: <slug>
-   generated_by: build-brand-system v0.1
+   generated_by: aos-build-brand-system   # provenance block — see docs/artifact-versioning.md
+   skill_version: <this skill's version: frontmatter value>
    generated_date: YYYY-MM-DD
+   aos_schema: <schema-version read from AOS_CONFIG.md>
    sources_consulted:
      - <path>:L<line>
      - <path>:L<line>
@@ -299,6 +301,8 @@ Surface the chosen mode to the user before drafting begins. Mode auto-recommenda
    needs_refresh_by: <YYYY-MM-DD + 90 days>
    ---
    ```
+
+   The first four fields are the **standard provenance block** (`docs/artifact-versioning.md` §1) — every generated artifact carries it. Stamp `skill_version` from this skill's own `version:` frontmatter and `aos_schema` from `AOS_CONFIG.md`'s `schema-version`; never hard-code either.
 
 5. **Lock awareness.** Brand intelligence files are NOT in `.gitattributes` lockable list today. The orchestrator does not lock. If the user is editing the file concurrently in another session, last-write-wins — flag this as a caveat in the user-facing summary.
 

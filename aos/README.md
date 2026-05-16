@@ -10,7 +10,7 @@ in the ADF repo.
 
 ## Status
 
-`v0.11.0` — **scaffold**. The structural skills (`aos-route-question`, `aos-onboard`) are
+`v0.12.0` — **scaffold**. The structural skills (`aos-route-question`, `aos-onboard`) are
 starter drafts; building-block skills are ported under AOS-725 (`aos-build-brand`,
 `aos-build-brand-system`, `aos-draft-content`) and the diagnostic skills under AOS-744
 (`aos-diagnose-7layer` — the L0–L7 Marketing Control Framework diagnostic — and
@@ -35,6 +35,15 @@ hierarchy (storytelling framework → content type → content-type structure) t
 zone (seeded with Hero's Journey + Before-After-Bridge arcs); the `content/` zone
 gains a **series** model — one storytelling-framework run produces one series. See
 `docs/content-framework.md`.
+AOS-755 adds **artifact versioning + data-folder migration**. Every generated
+artifact now carries a standard **provenance block** (`generated_by`,
+`skill_version`, `generated_date`, `aos_schema`) so a client's granted folder can
+be migrated when the plugin or data-schema changes. The new `aos-migrate` skill
+compares `AOS_CONFIG.md`'s `schema-version` to the plugin's current schema
+version (`docs/CURRENT_SCHEMA_VERSION`) and runs the ordered, idempotent,
+non-destructive migration steps for the gap. `aos-onboard` and `aos-route-question`
+detect a folder behind the plugin and route to `aos-migrate`. Design:
+`docs/artifact-versioning.md`.
 
 ## Storage model
 

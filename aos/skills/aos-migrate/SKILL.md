@@ -1,0 +1,124 @@
+---
+name: aos-migrate
+description: "Migrate a client's AOS granted folder forward when the plugin's data-folder schema has moved ahead of the folder's. Compares AOS_CONFIG.md's schema-version to the plugin's current schema version, runs the ordered migration steps for the gap (idempotent, non-destructive, each logged to CAPTAINS_LOG.md), then advances schema-version. Trigger on 'migrate my folder', 'upgrade the data folder', or when a skill reports the folder is behind the plugin."
+scope: int-company
+flavor: [company, advanced, internal]
+class: system
+domain: onboarding
+layer: all
+client-scope: single-client
+version: 0.1.0
+owner: arcanian
+allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep", "Bash"]
+args-hint: "(no args — operates on the granted folder)"
+preflight: []
+ontology:
+  consumes: []
+  emits: []
+safety:
+  mode: mutates-state
+  requires_confirmation: true
+---
+
+# AOS Migrate
+
+Bring a client's granted folder forward when the plugin's data-folder **schema
+version** has moved ahead of the folder's. Design: `docs/artifact-versioning.md`
+— read it before touching this skill.
+
+## The two version numbers
+
+- **Folder schema version** — `schema-version` in `AOS_CONFIG.md` at the
+  granted-folder root. The layout version *this folder* is at.
+- **Plugin current schema version** — the integer in the plugin's
+  `docs/CURRENT_SCHEMA_VERSION` (a one-line file). The layout version *this
+  build of the plugin* expects. This is the **single source of truth** for the
+  plugin's schema version.
+
+A migration is due when **plugin current > folder**.
+
+## Steps
+
+1. **Read the folder version.** Resolve the granted-folder root, read
+   `schema-version` from `AOS_CONFIG.md`.
+
+2. **Read the plugin target version.** `cat` the plugin's
+   `docs/CURRENT_SCHEMA_VERSION` — a single integer, no parsing.
+
+3. **Compare.**
+   - folder **==** target → report *"folder is up to date (schema vN)"*; stop.
+   - folder **>** target → **stop.** Report a plugin/folder mismatch: the folder
+     was written by a newer plugin than the one installed. Never downgrade,
+     never guess. Tell the user to update the plugin.
+   - folder **<** target → a migration is due; continue.
+
+4. **Plan the run.** List the ordered steps to run — `N→N+1` for each `N` from
+   folder-version up to target-1 — from `reference/migration-steps.md`. Show the
+   user the plan (current version → target version, the steps in between) and
+   **confirm before running** (`safety.requires_confirmation: true`).
+
+5. **Run each step, in order.** For each `N→N+1` step, following
+   `reference/migration-steps.md`:
+   - Apply the step. Every step is **idempotent** — it checks the state it would
+     create before creating it, so re-running a partially-done migration is
+     safe.
+   - Every step is **non-destructive** — it never deletes client data. Anything
+     superseded is moved into `.aos/migration-backup/<N>-to-<N+1>/`, never
+     removed.
+   - On success: append a `CAPTAINS_LOG.md` entry (what ran, the `N → N+1`
+     transition, files touched, outcome), then advance `schema-version` in
+     `AOS_CONFIG.md` by one. Advancing per-step means an interrupted migration
+     resumes cleanly from where it stopped.
+   - On failure: stop. Do not advance `schema-version` past the failed step. Log
+     the failure to `CAPTAINS_LOG.md` and report it to the user.
+
+6. **Confirm.** When the folder reaches the target version, summarise: versions
+   before/after, steps run, files touched, anything moved to
+   `.aos/migration-backup/`. Suggest the user re-run their original workflow.
+
+## Current state
+
+Schema version is **`1`**. `docs/CURRENT_SCHEMA_VERSION` is `1`. **There are no
+migration steps yet** — every freshly-onboarded folder is already at the current
+version, so today this skill only ever reports *"up to date"*.
+
+The skill exists now so the **mechanism** is in place. When the first
+schema-changing migration ships, it becomes a drop-in — see *Adding a migration
+step* below and §2 of `docs/artifact-versioning.md`.
+
+## Adding a migration step (future work)
+
+When the data-folder layout or an artifact format changes:
+
+1. Choose the new schema version — next integer after `CURRENT_SCHEMA_VERSION`.
+2. Add a numbered `Step N→N+1` section to `reference/migration-steps.md` — the
+   change, the zones/files touched, the exact operations, the **idempotency
+   check** (how the step detects it already ran), what (if anything) gets moved
+   to `.aos/migration-backup/`.
+3. Bump `docs/CURRENT_SCHEMA_VERSION` to the new integer.
+4. Update `data-template/AOS_CONFIG.md`'s `schema-version` literal so fresh
+   installs start current.
+5. Bump `.claude-plugin/plugin.json` version + note the migration in `README.md`.
+
+This skill needs **no code change** to pick up a new step — it reads the steps
+from `reference/migration-steps.md` and runs every one in the gap.
+
+## Guardrails
+
+- **Non-destructive, always.** A migration step never deletes client data. The
+  granted folder is the system of record; losing any of it is unacceptable.
+  Superseded files move to `.aos/migration-backup/`, never `rm`.
+- **Idempotent, always.** Every step is safe to re-run. Never assume a step is
+  unrun — check.
+- **Ordered, one step at a time.** Close a multi-version gap step by step; never
+  jump versions. `schema-version` advances by exactly one per completed step.
+- **Confirm before running.** Show the plan; do not migrate silently.
+- **Never downgrade.** Folder newer than plugin → stop and report.
+- **`aos-migrate` is the only skill that advances `schema-version`.** No other
+  skill writes that field after `aos-onboard`'s initial install value.
+
+## Status
+
+v0.1.0 — migration **mechanism** + the version-comparison + per-step log/advance
+loop (AOS-755). Zero migration steps defined (schema is at `1`). The first real
+step lands as edits to `reference/migration-steps.md` + `CURRENT_SCHEMA_VERSION`.
