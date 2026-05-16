@@ -1,0 +1,142 @@
+---
+scope: int-company
+---
+
+# Series mode — walking the content framework hierarchy
+
+The depth behind `aos-draft-content` **series mode**. Series mode produces a
+**content series** — one run of a Level-1 storytelling framework, yielding
+~10–11 pieces. Design: `docs/content-framework.md`. Library guide:
+`content-system/frameworks/README.md`.
+
+Single-piece mode is unchanged — see SKILL.md. This doc covers series mode only.
+
+## The 3-level library
+
+The framework library lives in the `content-system/` zone at
+`content-system/frameworks/` (shared across BUs — see below):
+
+```
+content-system/frameworks/
+├── storytelling/     LEVEL 1 — narrative arcs (heros-journey.md, before-after-bridge.md)
+├── content-types/    LEVEL 2 — platforms (linkedin-post.md, blog-post.md, email.md)
+└── structures/       LEVEL 3 — skeletons, by type (structures/<type>/<structure>.md)
+```
+
+The library is **shared** — it is *not* per-BU. A series run still draws its
+*substance* (pole, products, pillars) from the per-BU foundation files
+(`content-system/<bu>/messaging.md` etc.), and its *shape* from this shared library.
+
+## The walk — Step-by-step
+
+### S0 — Preflight (in addition to SKILL.md Step 0)
+
+- All of SKILL.md Step 0 (brand gate, content-system contract).
+- Confirm `content-system/frameworks/storytelling/` exists with ≥1 framework file.
+  If absent: the data-template seeds it; tell the user to re-run `aos-onboard` or
+  copy the `frameworks/` library in. Abort.
+
+### S1 — Choose / instruct a storytelling framework (Level 1)
+
+- If the user named a framework (`--framework=<slug>`), load
+  `content-system/frameworks/storytelling/<slug>.md`.
+- Otherwise: read every file in `storytelling/`, summarise each arc's **When to
+  use**, and recommend the one that fits the user's stated goal. Confirm with the
+  user before proceeding.
+- The chosen framework's **Beats** table is the run plan — ~10–11 beats, each = one
+  piece, each with a suggested content type.
+
+### S2 — Name the series
+
+- Derive a `<series-slug>` (kebab-case) from the framework + topic, e.g.
+  `heros-journey-winter-carports`. Confirm with the user.
+- The run will become one `content/<series-slug>/` folder (or
+  `content/<bu>/<series-slug>/` for multi-BU). Create it.
+
+### S3 — Per beat, pick a content type (Level 2)
+
+For each beat in the framework's Beats table:
+
+- Default = the beat's **Suggested type**.
+- The user may re-type any beat (`--retype=<beat#>:<type>` or interactively). A
+  series **may span multiple content types** — that is expected.
+- For each chosen type, load `content-system/frameworks/content-types/<type>.md`
+  for its platform constraints and `supported-structures`.
+
+### S4 — Per piece, pick / instruct a structure (Level 3)
+
+For each piece:
+
+- Default = the content type's `default-structure`, **or** the structure whose
+  **Fit** section matches the beat's narrative job — read the candidate structures
+  under `structures/<type>/` and match.
+- The user may override with any structure listed in the type's
+  `supported-structures`.
+- Load the chosen `structures/<type>/<structure>.md` for its section skeleton.
+
+### S5 — Draft each piece
+
+Per piece, compose:
+
+- **Brand** (`brand/VOICE.md`, `ICP.md`, `POSITIONING.md`) — the WHO.
+- **Per-BU foundation** (`content-system/[<bu>/]messaging.md`, `products.md`,
+  `pillars.md`) — the WHAT (substance for this BU).
+- **Level-2 content type** — platform constraints (length, media, tone, links).
+- **Level-3 structure** — the ordered section skeleton.
+- **Level-1 beat** — the narrative job this specific piece performs in the arc.
+
+Voice enforcement is identical to single-piece mode (banned words, address form,
+HU quality rules — SKILL.md Step 3). Draft beats **in order** — later beats may
+reference earlier ones, mirroring the arc.
+
+### S6 — Write the series
+
+- Write each piece to `content/[<bu>/]<series-slug>/<NN>-<beat-slug>.md`
+  (`NN` = zero-padded beat number).
+- Write the series `INDEX.md` (template below).
+- Series-piece frontmatter — same as single-piece frontmatter (SKILL.md Step 5)
+  plus three fields:
+
+  ```yaml
+  series: <series-slug>
+  series_framework: <storytelling-framework slug>
+  beat: <NN>-<beat-slug>
+  content_type: <linkedin-post | blog-post | email | …>
+  structure: <structure slug>
+  ```
+
+  (`content_type` here is the Level-2 type, e.g. `linkedin-post` — distinct from
+  the legacy `--type=reference|blog|linkbait` axis.)
+
+## The series INDEX.md template
+
+```markdown
+# Series — <series name>
+
+- **Framework:** <storytelling-framework slug> (<framework display name>)
+- **BU:** <bu slug or —>
+- **Run date:** <YYYY-MM-DD>
+- **Pieces:** <N> of <total>
+- **Status:** in-progress | complete
+
+| # | Beat | Piece file | Content type | Structure | Status |
+|---|---|---|---|---|---|
+| 01 | <beat name> | 01-<beat-slug>.md | linkedin-post | hook-insight-cta | draft |
+| …  | …           | …                 | …             | …                | …     |
+
+---
+Generated by aos-draft-content (series mode). Indexed by aos-catalogue.
+```
+
+## Resumable runs
+
+A series run is long. If interrupted, re-running with the same `--series=<slug>`
+reads the existing `INDEX.md`, skips pieces already at `status: draft` or beyond,
+and continues from the first un-drafted beat.
+
+## Multi-BU note
+
+The `frameworks/` library is shared (one copy at `content-system/frameworks/`).
+The series output folder nests under the BU: `content/<bu>/<series-slug>/`. A
+series for BU A draws substance only from `content-system/<bu-a>/` — the strict
+cross-BU separation rule (SKILL.md "Multi-BU clients") still holds per piece.

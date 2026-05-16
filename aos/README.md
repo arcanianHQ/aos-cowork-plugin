@@ -10,7 +10,7 @@ in the ADF repo.
 
 ## Status
 
-`v0.9.0` — **scaffold**. The structural skills (`aos-route-question`, `aos-onboard`) are
+`v0.10.0` — **scaffold**. The structural skills (`aos-route-question`, `aos-onboard`) are
 starter drafts; building-block skills are ported under AOS-725 (`aos-build-brand`,
 `aos-build-brand-system`, `aos-draft-content`) and the diagnostic skills under AOS-744
 (`aos-diagnose-7layer` — the L0–L7 Marketing Control Framework diagnostic — and
@@ -28,6 +28,13 @@ net-new intelligence skills — `aos-build-belief-profile` (the L0 belief / fear
 map of the client's decision-makers) and `aos-build-offer` (the L4 offer design, built
 on Arcanian's own offer framework) — which fill the `BELIEF_PROFILE.md` and `OFFER.md`
 slots of the `aos-build-brand-system` Client Intelligence Profile, now a 9-file profile.
+AOS-752 / AOS-753 add the **content framework system** — a 3-level, pluggable
+hierarchy (storytelling framework → content type → content-type structure) that
+`aos-draft-content` walks to turn one strategic idea into a multi-piece, multi-platform
+**content series**. The framework library lives in the `content-system/frameworks/`
+zone (seeded with Hero's Journey + Before-After-Bridge arcs); the `content/` zone
+gains a **series** model — one storytelling-framework run produces one series. See
+`docs/content-framework.md`.
 
 ## Storage model
 

@@ -1,16 +1,16 @@
 ---
 name: aos-draft-content
-description: Draft a single piece of content (reference post, blog post, or linkbait) for a client by composing brand intelligence + content-system + a post-type spec. Produces a publishable draft in the client's voice with the structure and tone the type requires.
+description: Draft content for a client by composing brand intelligence + content-system + the content framework library. Two modes — single-piece (one reference/blog/linkbait post) and series (walk a storytelling framework → a multi-piece, multi-platform content series). Produces publishable drafts in the client's voice.
 scope: int-company
 flavor: [company, internal]
 class: content
 domain: content
 layer: [L6, L7]
 client-scope: single-client
-version: 0.1.0
+version: 0.2.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write, Edit]
-args-hint: "--type=<reference|blog|linkbait> --topic=\"<short topic phrase>\" [--bu=<bu-slug>] [--pillar=<pillar slug>]"
+args-hint: "single-piece: --type=<reference|blog|linkbait> --topic=\"<phrase>\" [--bu=<bu-slug>] [--pillar=<slug>]  ·  series: --framework=<slug> --topic=\"<phrase>\" [--bu=<bu-slug>] [--series=<slug>]"
 inputs:
   - brand/VOICE.md (required)
   - brand/ICP.md (required)
@@ -19,9 +19,12 @@ inputs:
   - content-system/[<bu>/]products.md (required for product-tied content)
   - content-system/[<bu>/]pillars.md (recommended)
   - content-system/[<bu>/]distribution.md (recommended)
-  - reference/post-type-<type>.md (this skill's bundled spec)
+  - content-system/frameworks/ (the 3-level content framework library — required for series mode)
+  - reference/post-type-<type>.md (single-piece mode — this skill's bundled spec)
+  - reference/series-mode.md (series mode — the hierarchy walk)
 outputs:
-  - content/[<bu>/]<YYYY-MM-DD>-<type>-<topic-slug>.md
+  - single-piece — content/[<bu>/]<YYYY-MM-DD>-<type>-<topic-slug>.md
+  - series — content/[<bu>/]<series-slug>/ (NN-<beat>.md pieces + INDEX.md)
 preflight:
   - client-config
   - content-system-contract
@@ -45,9 +48,21 @@ This skill's data lives in the **granted folder** — the folder Cowork was give
 
 ## Purpose
 
-Draft one piece of content per invocation. The skill is the **composer** — it doesn't generate ideas from scratch. It takes a topic + a content-system + a brand profile and writes a draft that fits.
+The skill is the **composer** — it doesn't generate ideas from scratch. It takes a
+topic + a content-system + a brand profile and writes drafts that fit.
 
-Three post types are supported:
+## Modes
+
+The skill runs in one of two modes, selected by the arguments given:
+
+| Mode | Trigger | Produces |
+|---|---|---|
+| **single-piece** | `--type=<reference\|blog\|linkbait>` | one content piece, written flat under `content/` |
+| **series** | `--framework=<storytelling-framework slug>` | a **content series** — one storytelling-framework run → ~10–11 pieces in `content/<series-slug>/` |
+
+If both are given, `--framework` wins (series mode). If neither, ask the user which.
+
+### Single-piece mode — three post types
 
 | Type | Goal | Where it lives | Tone register |
 |---|---|---|---|
@@ -55,7 +70,24 @@ Three post types are supported:
 | **blog** | SEO + topical authority, educate the ICP | Own blog only | Mentor-practitioner, educational |
 | **linkbait** | Link acquisition + reach via external host | External blog platform (blog.hu, Medium, etc.) | Peer-conversational, hook-driven |
 
-Same topic can be drafted as any of the three. The skill enforces structural differences per type — see `reference/post-type-<type>.md`.
+Same topic can be drafted as any of the three. The skill enforces structural
+differences per type — see `reference/post-type-<type>.md`.
+
+### Series mode — the content framework hierarchy
+
+Series mode walks the **3-level content framework** (design:
+`docs/content-framework.md`; library: `content-system/frameworks/`):
+
+1. **Storytelling framework** (Level 1) — a generative narrative arc; one run yields
+   ~10–11 distinct pieces.
+2. **Content type** (Level 2) — the platform / format of one piece (LinkedIn post,
+   blog post, email).
+3. **Content-type structure** (Level 3) — the internal skeleton of one piece.
+
+One framework run = **one series** (`content/<series-slug>/`). A series **may span
+multiple content types**. The full walk lives in `reference/series-mode.md` — read
+it when running series mode. The library is **pluggable**: drop in a new framework /
+type / structure file, no skill change (same pattern as `docs/language-packs.md`).
 
 ## Posture
 
@@ -63,10 +95,24 @@ Discovery, not pronouncement. Every draft ends with *"What did we get wrong? Wha
 
 ## Arguments
 
+**Single-piece mode**
+
 - `--type` (required) — one of `reference`, `blog`, `linkbait`
 - `--topic` (required) — short topic phrase, e.g., `"téli kocsibeálló-építés"` or `"premium garage flooring options"`
-- `--bu` (required if client uses per-BU content-system) — BU slug, e.g., `kocsibeallo` or `deluxebuilding`. If the client's `content-system/` contains subfolders with their own `messaging.md`, the skill refuses to run without this flag.
 - `--pillar` (optional) — pillar slug from the BU's `pillars.md` (if omitted, skill picks the best-matching pillar and tells the user)
+
+**Series mode**
+
+- `--framework` (required) — a storytelling-framework slug from
+  `content-system/frameworks/storytelling/` (e.g. `heros-journey`). If omitted but
+  series mode is wanted, the skill reads the library and recommends one.
+- `--topic` (required) — the strategic idea the whole series is about
+- `--series` (optional) — the series slug; if omitted the skill derives one from
+  framework + topic. Re-passing an existing `--series` **resumes** that run.
+
+**Both modes**
+
+- `--bu` (required if client uses per-BU content-system) — BU slug, e.g., `kocsibeallo` or `deluxebuilding`. If the client's `content-system/` contains subfolders with their own `messaging.md`, the skill refuses to run without this flag.
 
 There is no `--client` argument: the granted folder *is* the client folder, and client identity is read from `client/CLIENT_CONFIG.md` / `AOS_CONFIG.md`.
 
@@ -98,7 +144,29 @@ Per-BU layout is detected by checking whether any subdirectory of `content-syste
 
 ## Process
 
-### Step 0 — Preflight
+The Process below is **single-piece mode**. For **series mode**, the skill walks
+the content framework hierarchy — see the dedicated procedure in
+`reference/series-mode.md`. The series walk in brief:
+
+1. **Choose / instruct a storytelling framework** (Level 1) — the user names one or
+   the skill recommends from `content-system/frameworks/storytelling/`. The chosen
+   framework's **Beats** table is the run plan (~10–11 pieces).
+2. **Name the series** — derive a `<series-slug>`; the run becomes one
+   `content/[<bu>/]<series-slug>/` folder.
+3. **Per beat, pick a content type** (Level 2) — default = the beat's suggested
+   type; the user may re-type any beat. A series may span multiple content types.
+4. **Per piece, pick / instruct a structure** (Level 3) — default = the content
+   type's `default-structure` or the structure whose **Fit** matches the beat.
+5. **Draft each piece** — same composition + voice enforcement as Step 1 / Step 3
+   below, with the Level-2 platform constraints and the Level-3 section skeleton.
+6. **Write the series** — each piece to `content/[<bu>/]<series-slug>/`, plus a
+   series `INDEX.md`. The content `CATALOGUE.md` indexes by series.
+
+Series mode still runs the brand gate and content-system contract from Step 0, and
+the voice rules from Step 3. The depth — beat→type→structure resolution, frontmatter,
+the `INDEX.md` template, resumable runs — is in `reference/series-mode.md`.
+
+### Step 0 — Preflight (single-piece)
 
 1. Confirm the working directory is the granted-folder root. Read `AOS_CONFIG.md` for the zone manifest.
 2. Verify `brand/VOICE.md` and `brand/ICP.md` exist and pass minimum substance (≥1500 bytes each). If not: tell user to run `/aos-build-brand-system` first; abort. Hard gate.
@@ -162,7 +230,8 @@ For `--type=blog` and `--type=linkbait`: single blog draft only. The user re-run
 
 ### Step 5 — Write
 
-Output path (relative to the granted-folder root):
+Output path (relative to the granted-folder root). A single-piece draft is written
+**flat** — a series is a folder (series mode — see `reference/series-mode.md`):
 - Single-BU client: `content/<YYYY-MM-DD>-<type>-<topic-slug>.md`
 - Multi-BU client: `content/<bu>/<YYYY-MM-DD>-<type>-<topic-slug>.md`
 
@@ -202,6 +271,8 @@ Do not write until accept.
 5. **Single client.** The granted folder is one client's folder — operate only within it. There is no other client's content-system or brand to read.
 6. **Multilingual.** Draft in the client's primary brand language. Never default to EN if the brand operates in HU/DE/FR/etc.
 7. **Discovery, not pronouncement.** Every draft footer asks *"What did we get wrong? What's missing?"*.
+8. **Framework fidelity (series mode).** A series follows its storytelling framework's beat list exactly — every beat becomes a piece, in order. Do not improvise, drop, or reorder beats. Re-typing a beat's content type is allowed; skipping a beat is not.
+9. **One framework run = one series.** A series-mode run writes exactly one `content/[<bu>/]<series-slug>/` folder with one `INDEX.md`. Never scatter a framework run's pieces flat under `content/`.
 
 ## Output sections
 
@@ -219,11 +290,13 @@ User-facing summary at end of run:
 - **Upstream:** `/aos-build-brand-system` (must complete before content-draft runs); the per-client `content-system/` folder (which lives in the client tree and is filled by the practitioner who knows the business)
 - **Downstream:** image-generation skill (planned), translation skill (if cross-language distribution), publishing-pipeline skill (planned)
 - **Related:** Hungarian-text quality rules (applied inline in Step 3 for HU clients); when a blog post will be cross-posted to LinkedIn, tighten the hook and trim to LinkedIn's shorter attention budget.
+- **Content framework system:** series mode consumes the 3-level content framework library in `content-system/frameworks/` — design in `docs/content-framework.md`, the walk in `reference/series-mode.md`. The library is pluggable; new frameworks / types / structures are drop-in files.
 
 ## Versioning
 
 - **v0.1.0** — initial dogfood version. Reference / blog / linkbait types defined. Multi-surface output for reference type only.
-- **v0.2.0 planned** — add `--variants=N` for A/B title generation; add image-prompt sub-pass; multilingual cross-pollination (one topic, two languages).
+- **v0.2.0** — **series mode** added (AOS-752 / AOS-753): walks the 3-level content framework library (`content-system/frameworks/`); one storytelling-framework run produces one multi-piece, multi-platform content series. Single-piece mode unchanged.
+- **v0.3.0 planned** — add `--variants=N` for A/B title generation; add image-prompt sub-pass; multilingual cross-pollination (one topic, two languages).
 - **v1.0.0** — promotion criterion: 30+ pieces shipped through this skill across 3+ clients with positive feedback.
 
 ## Notes for the practitioner
@@ -231,5 +304,7 @@ User-facing summary at end of run:
 - The `content-system/` zone is where client-specific operational knowledge lives — products, messaging, pillars, distribution. These don't fit in `brand/` because they're operational, not identity-level.
 - A reference post (real project case study) is usually the highest-converting content type per the data we have on physical-product brands. Prefer reference posts over generic blog posts when a real project is available to write about.
 - Linkbait is the riskiest type — register drifts toward "clickbait" easily. The post-type spec for linkbait enforces a "hook earns the read" rule.
+- **Series vs single-piece.** Reach for **series mode** when the goal is a campaign — to walk an audience through a narrative arc over weeks. Reach for **single-piece** when one post is needed now. A series is the natural unit of a storytelling-framework run; a single piece is a one-off.
+- The `content-system/frameworks/` library is **shared across BUs** and **pluggable** — extending it (a new storytelling framework, content type, or structure) is a drop-in file, no skill change. See `content-system/frameworks/README.md`.
 
 **What did we get wrong? What's missing?**

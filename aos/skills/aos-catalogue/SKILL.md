@@ -7,7 +7,7 @@ class: reading
 domain: discovery
 layer: all
 client-scope: single-client
-version: 0.0.3
+version: 0.0.4
 owner: arcanian
 allowed-tools: [Read, Glob, Grep, Bash, Write, Edit]
 args-hint: "[inbox|content|all] — which zone to catalogue; default all"
@@ -36,14 +36,26 @@ Runs *before* `aos-build-brand-system` harvests, so discovery knows what is new.
   `harvested` / `processed` from the prior catalogue — never downgrade.
 - **Columns:** `File · Type · Size · Modified · Status · Summary`.
 
-## Zone — `content/` → `content/CATALOGUE.md`  (produced content pieces)
+## Zone — `content/` → `content/CATALOGUE.md`  (produced content pieces, by series)
 
-- **Scan** every piece under `content/<bu>/`. Skip `README.md`, `CATALOGUE.md`.
-- **Type** = `reference` / `blog` / `linkbait` (from the piece's frontmatter).
-- Pull **BU**, **pillar**, **channel**, **status** from each piece's frontmatter.
+`content/` is organised **by series** — one storytelling-framework run = one
+`content/[<bu>/]<series-slug>/` folder of ~10–11 pieces. See `content/README.md`
+and `docs/content-framework.md`.
+
+- **Scan** every piece under `content/`. Skip `README.md`, `CATALOGUE.md`.
+- **Series** — each `<series-slug>/` folder is a series. Read its `INDEX.md` for
+  the framework, run date, and beat→piece map. Catalogue series under the
+  **Series** section, one block per series.
+- **Single pieces** — flat `content/[<bu>/]<YYYY-MM-DD>-<type>-*.md` files (not in
+  a series folder) go under the **Single pieces** section.
+- **Type** — per piece: the Level-2 `content_type` for series pieces
+  (`linkedin-post` / `blog-post` / `email`), or the legacy `reference` / `blog` /
+  `linkbait` for single pieces (from frontmatter).
+- Pull **BU**, **pillar**, **status**, **beat** from each piece's frontmatter.
 - **Status** — `draft` / `in-review` / `scheduled` / `published`. Preserve
   `published` across re-runs.
-- **Columns:** `File · Type · BU · Pillar · Channel · Status · Created`.
+- **Columns (series block):** `# · Piece · Beat · Content type · Pillar · Status · Created`.
+- **Columns (single pieces):** `File · Type · BU · Pillar · Channel · Status · Created`.
 
 ## Process
 
@@ -61,5 +73,6 @@ Runs *before* `aos-build-brand-system` harvests, so discovery knows what is new.
 
 ## Status
 
-v0.0.3 scaffold — two-zone. Pairs with `aos-build-brand-system` (inbox → discovery)
-and `aos-draft-content` (content production).
+v0.0.4 scaffold — two-zone. Pairs with `aos-build-brand-system` (inbox → discovery)
+and `aos-draft-content` (content production). v0.0.4 indexes `content/` **by series**
+(AOS-753 series model).

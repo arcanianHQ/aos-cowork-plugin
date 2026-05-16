@@ -28,10 +28,12 @@ AOS/                           the granted folder
 │   └── _processed/             harvested items, excluded from re-harvest
 ├── brand/                     7-file Client Intelligence Profile (build-brand-system)
 ├── content-system/
-│   └── <bu>/                  pillars · messaging · products · distribution (per BU)
+│   ├── <bu>/                  pillars · messaging · products · distribution (per BU)
+│   └── frameworks/            content framework library — storytelling · content-types · structures
 ├── content/
-│   ├── <bu>/                  produced content pieces (reference / blog / linkbait)
-│   └── CATALOGUE.md            content index — built by the `aos-catalogue` skill
+│   ├── <series-slug>/         a content series (one storytelling-framework run, ~10–11 pieces + INDEX.md)
+│   ├── <bu>/                  multi-BU: series + single pieces nest under the BU folder
+│   └── CATALOGUE.md            content index — by series — built by the `aos-catalogue` skill
 ├── dictionaries/
 │   ├── access.yaml            Access dictionary — accounts / properties
 │   ├── campaign.yaml          Campaign dictionary
