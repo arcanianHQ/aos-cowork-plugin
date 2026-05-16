@@ -7,7 +7,7 @@ class: execute
 domain: strategy
 layer: [L0, L1, L2, L3]
 client-scope: single-client
-version: 0.2.0
+version: 0.2.1
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write, Edit, WebFetch]
 args-hint: "[client-slug] [--mode=auto|stepwise|batch] [--skip-website] — slug resolves from CWD if omitted"
@@ -165,7 +165,7 @@ The harvest has two passes. Both feed the same per-bucket index.
 
 **⚠ Cowork — the `WebFetch` provenance gate.** On the Claude Cowork runtime, `WebFetch` only retrieves URLs that **appeared in a user message** (or in a prior `WebFetch` result). A URL the skill read from `CLIENT_CONFIG.md` / `DOMAIN_CHANNEL_MAP.md`, or that the user picked from an options list, is **not** in the provenance set — `WebFetch` refuses it with *"URL not in provenance set."* This is a Cowork runtime rule, not a harvest failure. So at Tier 0, before any config-derived fetch:
 
-1. **Ask the user to paste the site URL(s) into chat.** State exactly which domain(s) you intend to harvest (from `CLIENT_CONFIG.md` / `DOMAIN_CHANNEL_MAP.md`) and ask the user to paste them back into the conversation. Once a URL appears in their message it enters the provenance set and becomes fetchable.
+1. **Ask the user to paste the site URL(s) into chat — then fetch in the same turn.** State exactly which domain(s) you intend to harvest (from `CLIENT_CONFIG.md` / `DOMAIN_CHANNEL_MAP.md`) and ask the user to paste them back. The provenance window may be only the **immediately-prior** user message — so `WebFetch` the pasted URLs *in the very next step*, before doing anything else. If other turns have intervened since the paste, treat the URL as possibly aged out of the provenance set and **re-ask** rather than assume it is still fetchable. A URL only the *skill* mentioned (in its own prior response) is never provenance-eligible.
 2. After the homepage is fetched, links **discovered inside that fetched page** are themselves in the provenance set — so sitemap-/homepage-discovered sub-pages can be `WebFetch`-ed normally without a second paste.
 3. If the user declines to paste, treat website harvest as unavailable and fall through to the website-required gate below (waiver / defer) — exactly as for missing Firecrawl auth. Never report a harvest as "failed" when it was never provenance-eligible.
 
