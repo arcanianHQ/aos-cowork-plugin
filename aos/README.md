@@ -37,18 +37,20 @@ see `docs/connectors.md`.
 ## Layout
 
 ```
-aos-cowork-plugin/
-├── .claude-plugin/plugin.json   plugin manifest
-├── .mcp.json                    connector declarations
-├── skills/                      AOS skills — router, onboard, + ported skills
-├── data-template/               canonical granted-folder layout
-└── docs/data-folder-spec.md     the data-folder spec
+aos-cowork-plugin/               the repo — a single-plugin marketplace
+├── .claude-plugin/marketplace.json
+└── aos/                         the plugin
+    ├── .claude-plugin/plugin.json   plugin manifest
+    ├── .mcp.json                    connector declarations
+    ├── skills/                      AOS skills — router · onboard · catalogue · + ported
+    ├── data-template/               canonical granted-folder layout
+    └── docs/                        data-folder-spec · design-patterns · connectors · architecture-gaps
 ```
 
 ## Install
 
-This repo is a single-plugin marketplace (`.claude-plugin/marketplace.json`).
+This repo is a single-plugin marketplace — root `.claude-plugin/marketplace.json` lists the `aos` plugin, which lives in `aos/`.
 
 - **Claude Code:** `claude plugin marketplace add arcanianHQ/aos-cowork-plugin`, then `claude plugin install aos@aos-cowork`.
-- **Local dev / testing:** `claude --plugin-dir .` — loads the plugin directly.
+- **Local dev / testing:** `claude --plugin-dir <path>/aos-cowork-plugin/aos`.
 - **Cowork:** add the repo as a private marketplace in the admin Plugins panel (or upload a ZIP).

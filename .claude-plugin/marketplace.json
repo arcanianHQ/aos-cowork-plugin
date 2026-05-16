@@ -7,10 +7,7 @@
   "plugins": [
     {
       "name": "aos",
-      "source": {
-        "source": "github",
-        "repo": "arcanianHQ/aos-cowork-plugin"
-      },
+      "source": "./aos",
       "description": "AOS — the Go-To-Market operating system as a Claude plugin (client-run Cowork delivery)."
     }
   ]
