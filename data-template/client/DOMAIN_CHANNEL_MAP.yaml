@@ -1,0 +1,6 @@
+# DOMAIN_CHANNEL_MAP — the client's domains x channels.
+# Read at preflight; the spine of layer-aware routing.
+client: <slug>
+domains: []            # e.g. [example.com]
+channels: []           # e.g. [google-ads, ga4, meta-ads, seo]
+business_units: []     # optional; a multi-BU client may carry per-BU domains/channels

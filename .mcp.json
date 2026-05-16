@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "databox": {
+      "type": "http",
+      "url": "https://mcp.databox.com/mcp"
+    },
+    "hubspot": {
+      "type": "http",
+      "url": "https://mcp.hubspot.com/anthropic"
+    }
+  }
+}

@@ -1,0 +1,4 @@
+# Campaign Dictionary — campaigns and their windows for this client.
+# Machine-populated by the campaign skills.
+client: <slug>
+campaigns: []   # [{id, name, channel, business_unit, start, end}]

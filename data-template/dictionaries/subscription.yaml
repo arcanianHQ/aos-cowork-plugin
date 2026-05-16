@@ -1,0 +1,3 @@
+# Subscription Dictionary — subscriptions / recurring commitments for this client.
+client: <slug>
+subscriptions: []   # [{id, name, vendor, business_unit, renews}]

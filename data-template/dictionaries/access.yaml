@@ -1,0 +1,4 @@
+# Access Dictionary — accounts / properties this client has access to.
+# Machine-populated by the discovery skills; kept human-readable on purpose.
+client: <slug>
+accounts: []   # [{platform, id, name, business_unit}]
