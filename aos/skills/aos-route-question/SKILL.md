@@ -7,7 +7,7 @@ class: reading
 domain: routing
 layer: all
 client-scope: single-client
-version: 0.1.0
+version: 0.2.0
 owner: arcanian
 allowed-tools: ["Read", "Glob", "Grep"]
 ontology:
@@ -53,6 +53,17 @@ the right workflow. **You route — you do not do the work yourself.**
 - Recommend ONE thing, one sentence why, ask to confirm. Never dump a menu.
 - Organise any "what can you do" overview by the 7+1 layers, not an ad-hoc list.
 
+## Language
+
+Honor the **language context** (`docs/language-context.md`) on every turn:
+
+- Talk to the user in `AOS_CONFIG.md`'s `communication-language`.
+- When routing, pass the `content-language` to the receiving workflow so its
+  output is written in it.
+- If the user asks to change either language ("switch the content language to
+  X"), **update the field in `AOS_CONFIG.md`, confirm, and apply it from now
+  on** — do not route this as a workflow.
+
 ## Routing table — by 7+1 layer
 
 The router routes by the 7+1 layer (L0–L7) a question lands in. Generated from
@@ -77,5 +88,6 @@ to connect it. Never route into a connector-gated workflow on faith.
 
 ## Status
 
-v0.0.1 scaffold — the layer-indexed routing table grows as workflows are
-added (AOS-728). Pattern: `docs/aos-cowork-merged-architecture.md` (ADF repo).
+v0.2.0 — layer-indexed routing + connector gating + language context. The
+routing table grows as workflows are added (AOS-728). Pattern:
+`docs/aos-cowork-merged-architecture.md` (ADF repo).

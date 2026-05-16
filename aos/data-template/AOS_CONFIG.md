@@ -7,6 +7,8 @@ every skill to resolve where data lives — see `docs/data-access-router.md`.
 - **business-units**: []              # for multi-BU clients
 - **granted-folder**: <path>          # the host path this folder was granted at
 - **mode**: local                     # Cowork = local; the granted folder is the system of record
+- **communication-language**: <lang>  # how skills talk to the user (see docs/language-context.md)
+- **content-language**: <lang>         # language of created / delivered artifacts
 - **plugin-version**: <plugin-version>
 - **schema-version**: 1               # data-folder layout version (migration — AOS-755)
 - **created**: <date>

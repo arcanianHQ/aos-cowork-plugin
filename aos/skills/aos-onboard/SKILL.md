@@ -7,7 +7,7 @@ class: system
 domain: onboarding
 layer: all
 client-scope: single-client
-version: 0.1.0
+version: 0.2.0
 owner: arcanian
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Bash"]
 preflight: []
@@ -45,9 +45,12 @@ Walk the user through first-run setup.
    - Fill `granted-folder`, `client`, `schema-version`, `plugin-version`,
      `created`. Layout reference: `docs/data-folder-spec.md`.
 
-4. **Capture client context.** Fill `client/CLIENT_CONFIG.md` and
+4. **Capture client context + languages.** Fill `client/CLIENT_CONFIG.md` and
    `client/DOMAIN_CHANNEL_MAP.yaml` — the client, its business units, domains
-   and channels.
+   and channels. Then ask the user the **communication language** (how AOS
+   talks to them) and the **content language** (what created artifacts are
+   written in) — they may differ — and write both into `AOS_CONFIG.md`. See
+   `docs/language-context.md`.
 
 5. **Connect Databox.** Guide the user to authorise the Databox connector
    (Settings → Connectors). Confirm with a `List Accounts` call; note the client
@@ -68,5 +71,5 @@ Walk the user through first-run setup.
 
 ## Status
 
-v0.1.0 — router-aware scaffolding (AOS-757). Writes the `AOS_CONFIG.md` Zones
-location manifest and scaffolds each zone at its chosen location.
+v0.2.0 — router-aware scaffolding (AOS-757) + captures the communication /
+content language pair into `AOS_CONFIG.md` (AOS-750).
