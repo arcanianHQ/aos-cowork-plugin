@@ -1,13 +1,13 @@
 ---
 name: aos-onboard
-description: "First-run setup. Locates or creates the AOS granted folder, instantiates the data structure, connects Databox, and captures client / business-unit / domain / channel context. Trigger on 'set me up', 'get started', or when the data folder is absent."
+description: "First-run setup. Locates or creates the AOS granted folder, instantiates the data structure on the selected storage, writes the location manifest, connects Databox, and captures client / business-unit / domain / channel context. Trigger on 'set me up', 'get started', or when the data folder is absent."
 scope: int-company
 flavor: [company, advanced, internal]
 class: system
 domain: onboarding
 layer: all
 client-scope: single-client
-version: 0.0.1
+version: 0.1.0
 owner: arcanian
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Bash"]
 preflight: []
@@ -28,24 +28,45 @@ Walk the user through first-run setup.
 1. **Locate the granted folder.** Ask the user to grant Cowork a folder for AOS —
    recommend a folder *inside their Google Drive for Desktop directory* so it is
    cloud-synced. It appears inside the VM as `~/mnt/<name>`. Confirm the path.
-2. **Instantiate the data structure.** If the granted folder is empty, copy this
-   plugin's `data-template/` into it — creating `AOS_CONFIG.md`, `client/`,
-   `dictionaries/`, `ontology/`, `deliverables/`. See `docs/data-folder-spec.md`.
-3. **Capture client context.** Fill `client/CLIENT_CONFIG.md` and
-   `client/DOMAIN_CHANNEL_MAP.yaml` — the client, its business units, domains and
-   channels.
-4. **Connect Databox.** Guide the user to authorise the Databox connector
+
+2. **Choose the storage layout.** By default **every data zone lives inside the
+   granted folder** — accept this unless the user has a reason not to. A zone
+   (e.g. `deliverables/`) may instead be placed in a separate folder or a shared
+   Drive folder. Note each choice — it drives the manifest in Step 3.
+
+3. **Instantiate + write the location manifest.**
+   - If the granted folder is empty, copy this plugin's `data-template/` into it.
+     Scaffold **every zone at the location chosen in Step 2** — a zone placed
+     elsewhere is created *there*, not in the granted folder.
+   - Write `AOS_CONFIG.md` at the granted-folder root, **including the Zones
+     location manifest** (the zone → location → adapter table). The data-access
+     router and every skill resolve zones through it — see
+     `docs/data-access-router.md`.
+   - Fill `granted-folder`, `client`, `schema-version`, `plugin-version`,
+     `created`. Layout reference: `docs/data-folder-spec.md`.
+
+4. **Capture client context.** Fill `client/CLIENT_CONFIG.md` and
+   `client/DOMAIN_CHANNEL_MAP.yaml` — the client, its business units, domains
+   and channels.
+
+5. **Connect Databox.** Guide the user to authorise the Databox connector
    (Settings → Connectors). Confirm with a `List Accounts` call; note the client
    should authorise *their own* Databox scope.
-5. **Confirm & summarise.** Show what was set up; suggest a check-in cadence.
+
+6. **Confirm & summarise.** Show what was set up — including each zone's
+   resolved location — and suggest a check-in cadence.
 
 ## Guardrails
 
 - Never overwrite an existing populated data folder — instantiate only into an
   empty one. Confirm with the user before writing.
-- Storage is the granted folder via plain file ops. Never create a database file
-  on it (FUSE mounts can't host a live SQLite DB).
+- Storage is plain file ops. Never create a database file on a granted / FUSE
+  folder (FUSE mounts can't host a live SQLite DB).
+- **The manifest and the structure must match.** Every zone the Zones manifest
+  declares must actually be scaffolded at that location — a manifest entry with
+  no folder behind it is a broken install the data-access router will fail on.
 
 ## Status
 
-v0.0.1 scaffold.
+v0.1.0 — router-aware scaffolding (AOS-757). Writes the `AOS_CONFIG.md` Zones
+location manifest and scaffolds each zone at its chosen location.
