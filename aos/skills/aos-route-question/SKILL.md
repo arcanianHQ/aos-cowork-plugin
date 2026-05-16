@@ -63,6 +63,10 @@ Honor the **language context** (`docs/language-context.md`) on every turn:
 - If the user asks to change either language ("switch the content language to
   X"), **update the field in `AOS_CONFIG.md`, confirm, and apply it from now
   on** — do not route this as a workflow.
+- **Language pack.** If a skill exists whose `language-pack:` frontmatter value
+  matches the resolved `content-language` (e.g. `aos-localize-hu` for `hu`),
+  note when routing that artifacts in that language get a final nativeness pass
+  through that pack. If no matching pack exists, base-system output ships as-is.
 
 ## Routing table — by 7+1 layer
 

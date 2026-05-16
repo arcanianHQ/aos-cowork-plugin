@@ -46,6 +46,10 @@ tags: [content, drafting, blog, social, linkbait, pinterest]
 
 This skill's data lives in the **granted folder** — the folder Cowork was given access to, which **is** one client's folder (no per-client nesting). The granted-folder root is the working directory. Resolve zones (`brand/`, `content-system/`, `content/`, …) per `docs/data-access-router.md` and the `AOS_CONFIG.md` manifest at the granted-folder root. Never hard-code paths beyond the documented zone layout. Client identity is read from `client/CLIENT_CONFIG.md` and the `client` field of `AOS_CONFIG.md` — it is never a directory level. Business-unit subfolders (`content-system/<bu>/`, `content/<bu>/`) *are* a legitimate layout level for multi-BU clients.
 
+## Language
+
+Resolve `communication-language` and `content-language` from `AOS_CONFIG.md` during context assembly (per `docs/language-context.md`) — never hard-code a language. Talk to the user in `communication-language`; write client-facing artifacts in `content-language`.
+
 ## Purpose
 
 The skill is the **composer** — it doesn't generate ideas from scratch. It takes a

@@ -25,6 +25,10 @@ safety:
 Index the granted folder's two working zones into their `CATALOGUE.md` files.
 Re-run after material or content changes.
 
+## Language
+
+Resolve `communication-language` and `content-language` from `AOS_CONFIG.md` during context assembly (per `docs/language-context.md`) — never hard-code a language. Talk to the user in `communication-language`; write client-facing artifacts in `content-language`.
+
 ## Zone — `inbox/` → `inbox/CATALOGUE.md`  (client input material, discovery prep)
 
 Runs *before* `aos-build-brand-system` harvests, so discovery knows what is new.

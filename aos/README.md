@@ -10,7 +10,7 @@ in the ADF repo.
 
 ## Status
 
-`v0.10.0` — **scaffold**. The structural skills (`aos-route-question`, `aos-onboard`) are
+`v0.11.0` — **scaffold**. The structural skills (`aos-route-question`, `aos-onboard`) are
 starter drafts; building-block skills are ported under AOS-725 (`aos-build-brand`,
 `aos-build-brand-system`, `aos-draft-content`) and the diagnostic skills under AOS-744
 (`aos-diagnose-7layer` — the L0–L7 Marketing Control Framework diagnostic — and

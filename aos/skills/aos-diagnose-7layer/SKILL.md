@@ -39,6 +39,10 @@ tags: [diagnostic, intelligence, seven-layer, constraint]
 
 This skill's data lives in the **granted folder** — the folder Cowork was given access to, which **is** one client's folder (no per-client nesting). The granted-folder root is the working directory. Resolve zones (`client/`, `brand/`, `inbox/`, `ontology/`, `deliverables/`, …) per `docs/data-access-router.md` and the `AOS_CONFIG.md` manifest at the granted-folder root. Never hard-code paths beyond the documented zone layout. Client identity (the client name / slug) is read from `client/CLIENT_CONFIG.md` and the `client` field of `AOS_CONFIG.md` — it is never a directory level. Bash + filesystem on the granted folder is the contract; the router is an optimization.
 
+## Language
+
+Resolve `communication-language` and `content-language` from `AOS_CONFIG.md` during context assembly (per `docs/language-context.md`) — never hard-code a language. Talk to the user in `communication-language`; write client-facing artifacts in `content-language`.
+
 ## Purpose
 
 Diagnose a business's marketing using the Arcanian Marketing Control Framework (L0–L7). Find the **primary constraint** — the deepest layer blocking growth — and show how problems cascade across layers. Deliver a **Pattern Map** that makes the invisible visible.
