@@ -3,10 +3,14 @@
   "owner": {
     "name": "Arcanian"
   },
+  "description": "Arcanian AOS — the Go-To-Market operating system, delivered as a Claude plugin.",
   "plugins": [
     {
       "name": "aos",
-      "source": ".",
+      "source": {
+        "source": "github",
+        "repo": "arcanianHQ/aos-cowork-plugin"
+      },
       "description": "AOS — the Go-To-Market operating system as a Claude plugin (client-run Cowork delivery)."
     }
   ]
