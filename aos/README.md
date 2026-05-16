@@ -10,10 +10,12 @@ in the ADF repo.
 
 ## Status
 
-`v0.6.0` — **scaffold**. The structural skills (`aos-route-question`, `aos-onboard`) are
-starter drafts; building-block skills are ported under AOS-725 (the first three —
-`aos-build-brand`, `aos-build-brand-system`, `aos-draft-content` — are rewired onto
-the granted-folder / data-access-router model) and workflow skills under AOS-728.
+`v0.7.0` — **scaffold**. The structural skills (`aos-route-question`, `aos-onboard`) are
+starter drafts; building-block skills are ported under AOS-725 (`aos-build-brand`,
+`aos-build-brand-system`, `aos-draft-content`) and the diagnostic skills under AOS-744
+(`aos-diagnose-7layer` — the L0–L7 Marketing Control Framework diagnostic — and
+`aos-analyze-gtm` — the GTM Strategist gap analysis), all rewired onto the
+granted-folder / data-access-router model; workflow skills follow under AOS-728.
 `aos-localize-hu` (AOS-749) is the first **language pack** — a Hungarian nativeness
 pass over content-language artifacts; see `docs/language-packs.md`.
 
