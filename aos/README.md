@@ -10,14 +10,18 @@ in the ADF repo.
 
 ## Status
 
-`v0.7.0` — **scaffold**. The structural skills (`aos-route-question`, `aos-onboard`) are
+`v0.8.0` — **scaffold**. The structural skills (`aos-route-question`, `aos-onboard`) are
 starter drafts; building-block skills are ported under AOS-725 (`aos-build-brand`,
 `aos-build-brand-system`, `aos-draft-content`) and the diagnostic skills under AOS-744
 (`aos-diagnose-7layer` — the L0–L7 Marketing Control Framework diagnostic — and
 `aos-analyze-gtm` — the GTM Strategist gap analysis), all rewired onto the
 granted-folder / data-access-router model; workflow skills follow under AOS-728.
 `aos-localize-hu` (AOS-749) is the first **language pack** — a Hungarian nativeness
-pass over content-language artifacts; see `docs/language-packs.md`.
+pass over content-language artifacts; see `docs/language-packs.md`. AOS-745 adds two
+net-new intelligence skills — `aos-build-belief-profile` (the L0 belief / fear / JTBD
+map of the client's decision-makers) and `aos-build-offer` (the L4 offer design, built
+on Arcanian's own offer framework) — which fill the `BELIEF_PROFILE.md` and `OFFER.md`
+slots of the `aos-build-brand-system` Client Intelligence Profile, now a 9-file profile.
 
 ## Storage model
 

@@ -18,12 +18,13 @@ status: <complete | partial | blocked>
 | CONSTRAINT_MAP.md | <n> | <n> | <...> | <0–5> | <count> |
 | REPAIR_ROADMAP.md | <n> | <n> | <...> | <0–5> | <count> |
 | BELIEF_PROFILE.md | <n> | <n> | <...> | <0–5> | <count> |
+| OFFER.md | <n> | <n> | <...> | <0–5> | <count> |
 | ICP.md | <n> | <n> | <...> | <0–5> | <count> |
 | POSITIONING.md | <n> | <n> | <...> | <0–5> | <count> |
 | VOICE.md | <n> | <n> | <...> | <0–5> | <count> |
 | COMPETITIVE_LANDSCAPE.md | <n> | <n> | <...> | <0–5> | <count> |
 
-**Overall:** <X>/8 FILLED — gate <PASSED / BLOCKED>
+**Overall:** <X>/9 FILLED — gate <PASSED / BLOCKED>
 
 ## Quality rubric (per-file, 0–5)
 
@@ -51,7 +52,7 @@ status: <complete | partial | blocked>
 
 - **`/build-content-system`** — <unlocked / still blocked>
 - **`/blog-draft` and other content skills** — <unlocked / still blocked>
-- **`/craft-offer`** — <unlocked / still blocked> (depends on ICP + POSITIONING)
+- **`aos-analyze-gtm`** — <unlocked / still blocked> (consumes OFFER + POSITIONING + ICP)
 
 ## Recommended next actions
 

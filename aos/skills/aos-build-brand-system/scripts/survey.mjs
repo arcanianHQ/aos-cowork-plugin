@@ -37,7 +37,7 @@ if (!existsSync(brandDir)) {
   process.exit(2);
 }
 
-// The 8 standard files of the Client Intelligence Profile.
+// The 9 standard files of the Client Intelligence Profile.
 // minBytes per reference/file-substance-criteria.md
 // websitePref: REQUIRED | STRONGLY_PREFERRED | OPTIONAL — per the same criteria doc
 // dependsOn: which other files must be FILLED before this one is drafted
@@ -48,6 +48,7 @@ const files = [
   { name: 'BELIEF_PROFILE.md', minBytes: 3000, websitePref: 'OPTIONAL', dependsOn: [] },
   { name: 'ICP.md', minBytes: 2000, websitePref: 'STRONGLY_PREFERRED', dependsOn: [] },
   { name: 'POSITIONING.md', minBytes: 1500, websitePref: 'STRONGLY_PREFERRED', dependsOn: ['ICP.md', '7LAYER_DIAGNOSTIC.md'] },
+  { name: 'OFFER.md', minBytes: 1500, websitePref: 'STRONGLY_PREFERRED', dependsOn: ['ICP.md', 'POSITIONING.md', 'BELIEF_PROFILE.md'] },
   { name: 'VOICE.md', minBytes: 2000, websitePref: 'REQUIRED', dependsOn: ['BELIEF_PROFILE.md', 'ICP.md'] },
   { name: 'COMPETITIVE_LANDSCAPE.md', minBytes: 1500, websitePref: 'REQUIRED', dependsOn: ['POSITIONING.md'] },
 ];
@@ -167,7 +168,7 @@ if (prepMode) {
 
   const needingFiles = rows.filter(r => r.status !== 'FILLED');
   if (needingFiles.length === 0) {
-    console.log('\nAll 8 files FILLED — nothing to draft. Profile complete.');
+    console.log('\nAll 9 files FILLED — nothing to draft. Profile complete.');
     console.log('');
     process.exit(0);
   }

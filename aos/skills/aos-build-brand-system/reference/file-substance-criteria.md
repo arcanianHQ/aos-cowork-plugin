@@ -20,6 +20,7 @@ The orchestrator's Step 2b website-harvest gate uses this to decide which files 
 | BELIEF_PROFILE.md | OPTIONAL | Founder-internal; rarely on the website |
 | ICP.md | STRONGLY_PREFERRED | Testimonials, FAQ, case-study customer descriptions are gold |
 | POSITIONING.md | STRONGLY_PREFERRED | Homepage H1 + hero subhead is the L2 identity sentence compressed |
+| OFFER.md | STRONGLY_PREFERRED | Pricing pages, package descriptions, and guarantee language are the offer in the wild |
 | VOICE.md | **REQUIRED** | Voice samples in the wild ARE the voice — descriptions of voice are not |
 | COMPETITIVE_LANDSCAPE.md | **REQUIRED** | Competitor homepages must be scraped (1 page each, depth 0) for credible mapping |
 
@@ -102,7 +103,7 @@ Harvest signal patterns:
 - Meeting transcripts with self-diagnostic moments
 - Profile documents in `analyses/` or `team/profiles/`
 
-If harvest yields < 5 direct founder/decision-maker quotes → route to `/belief-profile` instead of drafting.
+If harvest yields < 5 direct founder/decision-maker quotes → route to `aos-build-belief-profile` instead of drafting.
 
 ---
 
@@ -143,6 +144,32 @@ Harvest signal patterns:
 - Market positioning documents
 
 Depends on: ICP.md being FILLED.
+
+---
+
+## OFFER.md
+
+Minimum-FILLED requires all of:
+
+- ≥1500 bytes
+- A one-sentence **core offer statement** in the value-proposition shape (*"For [customer] who [pain], [the offer] provides [outcome]."*)
+- The **package** — what is inside the offer, with scope; tiers named if any
+- **Pricing** — the price (or a justified range), the pricing model, and a 5-second-readability note
+- A **risk-reversal** mechanism — or an explicit, reasoned statement that there is none
+- A **reason to act now** that is genuine (a real capacity limit, real cost-of-delay, or real seasonal window — never a fabricated deadline)
+- An **objection map** — ≥3 real objections, each mapped to the offer component that answers it
+- At least one cited source for pricing / customer-language claims
+
+Built from Arcanian's own L4 Offer framework and value-proposition language — **no external offer-guru methodology** (no imported value-equation, no "irresistible/grand offer" formula or vocabulary).
+
+Harvest signal patterns:
+- Pricing pages, package / tier descriptions, rate cards
+- Sales-call notes and objection language (the buyer's own words)
+- Guarantee / refund / trial language already in use
+- Capacity statements ("we take N clients"), seasonal or cost-of-delay language
+- Strategic-plan offer / pricing sections
+
+Depends on: ICP.md, POSITIONING.md, and BELIEF_PROFILE.md being FILLED (the offer rests on customer, identity, and the decision-maker's value beliefs). Filled by the `aos-build-offer` sub-skill.
 
 ---
 

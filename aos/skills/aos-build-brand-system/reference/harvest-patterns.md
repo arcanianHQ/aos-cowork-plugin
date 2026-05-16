@@ -4,7 +4,7 @@ scope: int-company
 
 # Harvest patterns — finding scattered intelligence
 
-When the orchestrator scans the `inbox/` zone (`inbox/**/*.md`, excluding `inbox/_processed/`) and any markdown elsewhere in the granted folder outside `brand/`, it classifies paragraphs into 8 buckets matching the 7 intelligence files. These are the keyword + structural patterns used.
+When the orchestrator scans the `inbox/` zone (`inbox/**/*.md`, excluding `inbox/_processed/`) and any markdown elsewhere in the granted folder outside `brand/`, it classifies paragraphs into 9 buckets matching the 9 intelligence files. These are the keyword + structural patterns used.
 
 **Rule:** match the **paragraph** containing the keyword, plus 1 paragraph before and after for context. Always record `<path>:L<line>` for citation.
 
@@ -111,7 +111,30 @@ When the orchestrator scans the `inbox/` zone (`inbox/**/*.md`, excluding `inbox
 
 ---
 
-## Bucket 7 — VOICE.md
+## Bucket 7 — OFFER.md
+
+**Direct cues:**
+- "offer", "package", "pricing", "price", "rate card", "tiers", "csomag", "ár", "árazás"
+- "guarantee", "refund", "money-back", "garancia", "trial", "pilot"
+- "discount", "discounting", "kedvezmény" — discount history is offer-structure signal
+- "objection", "they say it's too expensive", "why now", "reason to buy"
+- "what's included", "deliverables", "scope of work"
+
+**Indirect cues** (any 2):
+- Pricing pages / package descriptions / tier tables
+- Sales-call notes recording buyer objections in their own words
+- Capacity statements ("we take N clients at a time")
+- Seasonal or cost-of-delay language tied to buying
+- Value-proposition sentences ("For X who Y, we provide Z")
+
+**Note:** harvested offer material may carry external "offer-formula" vocabulary
+(value-equation, "irresistible/grand offer", etc.). Extract the underlying fact
+— price, package, guarantee — but `aos-build-offer` restates it in Arcanian L4
+terms. Do not let the imported framing into the OFFER bucket draft.
+
+---
+
+## Bucket 8 — VOICE.md
 
 **Direct cues:**
 - "voice", "register", "tone", "tone of voice"
@@ -128,7 +151,7 @@ When the orchestrator scans the `inbox/` zone (`inbox/**/*.md`, excluding `inbox
 
 ---
 
-## Bucket 8 — COMPETITIVE_LANDSCAPE.md
+## Bucket 9 — COMPETITIVE_LANDSCAPE.md
 
 **Direct cues:**
 - "competitor", "competition", "competitive landscape"
@@ -195,8 +218,8 @@ The live website is often the highest-signal source. The patterns below run *aft
 | `/case-stud*`, `/esettanulmany*`, `/portfolio`, `/projects*`, `/projektek`, `/munkaink` | ICP | Featured customers = literal ICP examples |
 | `/testimonial*`, `/velemenyek`, `/reviews`, `/ertekel*` | ICP, VOICE | Customer language in their own words = JTBD + emotional triggers |
 | `/blog*`, `/hirek*`, `/news*`, `/insights*`, `/tudasbazis` | VOICE | Long-form brand writing = strongest voice sample |
-| `/pricing*`, `/arak`, `/csomagok` | POSITIONING, ICP | Pricing language reveals positioning tier (premium / mass / budget) + target segment |
-| `/faq*`, `/gyakori-kerdesek` | ICP, CONSTRAINT_MAP | What customers ask reveals their objections + perceived blockers |
+| `/pricing*`, `/arak`, `/csomagok` | OFFER, POSITIONING, ICP | Pricing + package pages ARE the offer in the wild; also reveal positioning tier + target segment |
+| `/faq*`, `/gyakori-kerdesek` | ICP, OFFER, CONSTRAINT_MAP | What customers ask reveals their objections (offer signal) + perceived blockers |
 
 **LOW priority — skip unless URL pool is thin:**
 
@@ -220,6 +243,7 @@ When the scraped markdown is classified, apply these structural boosts to the sc
 | VOICE | Any paragraph >100 words from blog/news pages (+5); H1 + first paragraph of homepage (+8) |
 | BELIEF_PROFILE | Any first-person paragraph (`Én`, `Mi`, `I`, `We`) from `/about`, `/manifesto`, `/team` (+5); founder name + direct quote (+8) |
 | ICP | Testimonial blockquotes (+8 each); case study customer descriptions (+5 each); FAQ questions (+3 each — these reveal what ICP doesn't yet understand) |
+| OFFER | Pricing-page price + package tables (+10); guarantee / refund / trial language (+8); FAQ entries about price or "why now" (+3 each) |
 | COMPETITIVE_LANDSCAPE | Any external domain mentioned on the client's site (+5) — sometimes the client names competitors directly |
 | 7LAYER_DIAGNOSTIC | Usually low signal on a website; skip boost |
 | CONSTRAINT_MAP | Usually low signal on a website; skip boost |

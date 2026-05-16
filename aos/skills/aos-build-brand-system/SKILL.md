@@ -1,6 +1,6 @@
 ---
 name: aos-build-brand-system
-description: Orchestrate the 7-file Client Intelligence Profile end-to-end. Harvests scattered intelligence from a client's directory, drafts each missing brand/ file with citations, confirms each draft with the user, and hard-gates on 7/7 complete before downstream content/strategy work runs.
+description: Orchestrate the 9-file Client Intelligence Profile end-to-end. Harvests scattered intelligence from a client's directory, drafts each missing brand/ file with citations, confirms each draft with the user, and hard-gates on 9/9 complete before downstream content/strategy work runs.
 scope: int-company
 flavor: [company, internal]
 class: intelligence
@@ -22,6 +22,7 @@ outputs:
   - brand/CONSTRAINT_MAP.md
   - brand/REPAIR_ROADMAP.md
   - brand/BELIEF_PROFILE.md
+  - brand/OFFER.md
   - brand/ICP.md
   - brand/POSITIONING.md
   - brand/VOICE.md
@@ -53,15 +54,15 @@ This skill's data lives in the **granted folder** — the folder Cowork was give
 
 ## Purpose
 
-Most clients have a `brand/` directory scaffolded with 7 standard files — and 5+ of them are empty stubs while the actual intelligence sits scattered in strategic plans, session logs, OKR docs, belief-profile working files in the `inbox/`. This skill **consolidates the scatter into the standard**.
+Most clients have a `brand/` directory scaffolded with 9 standard files — and 5+ of them are empty stubs while the actual intelligence sits scattered in strategic plans, session logs, OKR docs, belief-profile working files in the `inbox/`. This skill **consolidates the scatter into the standard**.
 
-It is an **orchestrator**, not a thinker. The thinking belongs to the sub-skills (`/7layer`, `/belief-profile`, `/aos-build-brand`, `/craft-offer`, `/analyze-gtm`). This skill's job is:
+It is an **orchestrator**, not a thinker. The thinking belongs to the sub-skills (`aos-diagnose-7layer`, `aos-build-belief-profile`, `aos-build-brand`, `aos-build-offer`, `aos-analyze-gtm`). This skill's job is:
 
 1. Find what's already known.
 2. Surface it per intelligence file.
 3. Draft each missing file.
 4. Get user confirmation.
-5. Hard-gate on 7/7 before downstream work runs.
+5. Hard-gate on 9/9 before downstream work runs.
 
 **Anti-goal:** This skill does NOT replace the sub-skills. If a file is missing rich diagnostic work (e.g., no 7-layer has ever been run), the orchestrator routes the user to run that sub-skill first rather than fake the output.
 
@@ -80,12 +81,12 @@ This skill operates on the **granted folder** — which is the client's folder. 
 1. Confirm the working directory is the granted-folder root (the client folder). Read `AOS_CONFIG.md` for the zone manifest and `client` identity.
 2. Verify `client/CLIENT_CONFIG.md` exists. If not, the folder hasn't been onboarded — suggest running `aos-onboard`.
 3. Verify the `brand/` zone exists. If not, abort with a clear message (run `aos-onboard` to scaffold the layout).
-4. The Client Intelligence Profile is the 8 standard `brand/` files listed in Step 3.1 — confirm none have been added/removed since this skill was written.
-5. **Pre-read all 8 target brand/ files** — including stubs. This is non-negotiable. The Claude Code Write tool refuses to overwrite a file that hasn't been Read in-conversation, so batch-write attempts fail mid-run if you don't pre-read. Issue a single parallel batch of Read calls covering all 8 files (or however many exist). Stubs return their TODO placeholder; that's fine — the Read satisfies the harness rule. Source incident: 2026-05-14 Deluxe dogfood, POSITIONING + VOICE Write failed mid-batch.
+4. The Client Intelligence Profile is the 9 standard `brand/` files listed in Step 3.1 — confirm none have been added/removed since this skill was written.
+5. **Pre-read all 9 target brand/ files** — including stubs. This is non-negotiable. The Claude Code Write tool refuses to overwrite a file that hasn't been Read in-conversation, so batch-write attempts fail mid-run if you don't pre-read. Issue a single parallel batch of Read calls covering all 9 files (or however many exist). Stubs return their TODO placeholder; that's fine — the Read satisfies the harness rule. Source incident: 2026-05-14 Deluxe dogfood, POSITIONING + VOICE Write failed mid-batch.
 
 ### Step 1 — Survey existing state
 
-**Baseline (bash + filesystem — the contract).** For each of the 8 `brand/` files, stat its byte size and count its H2/H3 headings, then classify it with the substance thresholds below. Plain `ls -l brand/` + `grep -c '^#\{2,3\} ' brand/<file>` is sufficient — no Node required.
+**Baseline (bash + filesystem — the contract).** For each of the 9 `brand/` files, stat its byte size and count its H2/H3 headings, then classify it with the substance thresholds below. Plain `ls -l brand/` + `grep -c '^#\{2,3\} ' brand/<file>` is sufficient — no Node required.
 
 **Optional accelerator.** `node scripts/survey.mjs` does the same survey in one call and prints the table below; `--prep` adds the source-doc inventory and harvest-richness preview. Use it if Node is available; otherwise do the survey by hand — the result is identical.
 
@@ -99,13 +100,14 @@ Brand intelligence profile
 │ 7LAYER_DIAGNOSTIC.md    │ 11238  │ FILLED  │
 │ BELIEF_PROFILE.md       │ 53449  │ FILLED  │
 │ CONSTRAINT_MAP.md       │    73  │ STUB    │
+│ OFFER.md                │    68  │ STUB    │
 │ ICP.md                  │    62  │ STUB    │
 │ POSITIONING.md          │    70  │ STUB    │
 │ REPAIR_ROADMAP.md       │    73  │ STUB    │
 │ VOICE.md                │    64  │ STUB    │
 │ COMPETITIVE_LANDSCAPE   │   ---  │ MISSING │
 └─────────────────────────┴────────┴─────────┘
-Completeness: 2/7 (29%)
+Completeness: 2/9 (22%)
 ```
 
 Substance thresholds (per `reference/file-substance-criteria.md`):
@@ -116,7 +118,7 @@ Substance thresholds (per `reference/file-substance-criteria.md`):
 
 ### Step 1.5 — Harvest-richness scoring (gates mode selection)
 
-For each of the 8 target files, estimate the **harvest richness** *before* drafting. This determines the recommended execution mode and the website-scrape decision.
+For each of the 9 target files, estimate the **harvest richness** *before* drafting. This determines the recommended execution mode and the website-scrape decision.
 
 Inventory two things in parallel:
 
@@ -261,11 +263,12 @@ Surface the chosen mode to the user before drafting begins. Mode auto-recommenda
 1. `7LAYER_DIAGNOSTIC.md` — foundation; everything else depends on layer findings
 2. `CONSTRAINT_MAP.md` — derives from 7-layer
 3. `REPAIR_ROADMAP.md` — derives from constraints
-4. `BELIEF_PROFILE.md` — independent but feeds VOICE
-5. `ICP.md` — independent but feeds POSITIONING + VOICE
+4. `BELIEF_PROFILE.md` — independent but feeds VOICE + OFFER
+5. `ICP.md` — independent but feeds POSITIONING + VOICE + OFFER
 6. `POSITIONING.md` — depends on ICP + 7-layer
-7. `VOICE.md` — depends on BELIEF_PROFILE + ICP
-8. `COMPETITIVE_LANDSCAPE.md` — depends on POSITIONING
+7. `OFFER.md` — depends on ICP + POSITIONING + BELIEF_PROFILE
+8. `VOICE.md` — depends on BELIEF_PROFILE + ICP
+9. `COMPETITIVE_LANDSCAPE.md` — depends on POSITIONING
 
 **Per-file procedure:**
 
@@ -297,7 +300,7 @@ Surface the chosen mode to the user before drafting begins. Mode auto-recommenda
 
 ### Step 4 — Hard gate
 
-After the per-file pass, re-run the survey (Step 1 — bash baseline, or `node scripts/survey.mjs` as the accelerator). If completeness < 7/7:
+After the per-file pass, re-run the survey (Step 1 — bash baseline, or `node scripts/survey.mjs` as the accelerator). If completeness < 9/9:
 
 ```
 ⚠️ HARD GATE — incomplete profile
@@ -309,17 +312,17 @@ Blocked files (need sub-skill runs first):
 User skipped:
   - POSITIONING.md (regenerate requested but not provided)
 
-Status: 4/7 complete. /build-content-system will NOT run until 7/7.
+Status: 4/9 complete. /build-content-system will NOT run until 9/9.
 ```
 
 Do NOT mark the profile complete. Emit a `PROFILE_SCORECARD.md` showing what's done, what's blocked, what's user-skipped, and what to do next.
 
 ### Step 5 — Completion
 
-When 7/7 is reached:
+When 9/9 is reached:
 
 1. Write `brand/PROFILE_SCORECARD.md` with the final state, sources used per file, and unblock-signal for `/build-content-system`.
-2. Append an entry to `CAPTAINS_LOG.md` (granted-folder root): "Client intelligence profile completed via /build-brand-system — 7/7 files filled."
+2. Append an entry to `CAPTAINS_LOG.md` (granted-folder root): "Client intelligence profile completed via /build-brand-system — 9/9 files filled."
 3. Surface to user: profile complete, content-system unblocked, suggest next step.
 
 ## Hard rules
@@ -328,7 +331,7 @@ When 7/7 is reached:
 2. **User confirms each draft.** No silent writes. Accept / Revise / Regenerate is mandatory per file.
 3. **Hard gate stands.** Do not announce profile complete with <7 substantive files. The gate exists to keep downstream skills from generating thin content on thin intelligence.
 4. **Single client.** The granted folder is one client's folder — operate only within it. There are no other clients' files to read; never reach outside the granted folder for "inspiration."
-5. **Idempotent.** Re-running this skill on a 7/7 profile should: re-survey, report "already complete", offer a refresh path (per-file regeneration). Never overwrite without confirmation.
+5. **Idempotent.** Re-running this skill on a 9/9 profile should: re-survey, report "already complete", offer a refresh path (per-file regeneration). Never overwrite without confirmation.
 6. **Discovery, not pronouncement.** Every draft ends with *"What did we get wrong? What's missing?"* before user accepts.
 
 ## Output sections
@@ -338,15 +341,15 @@ Final user-facing output:
 - **Survey summary** (before-state)
 - **Harvest summary** (what we found and where)
 - **Per-file outcomes** (drafted / blocked / user-skipped)
-- **Final completeness** (X/7)
+- **Final completeness** (X/9)
 - **Profile scorecard path** (where the user can find it)
 - **What did we get wrong? What's missing?**
 
 ## Integration
 
-- **Upstream:** `aos-onboard` (scaffolds the granted folder); `/7layer`, `/belief-profile`, `/aos-build-brand`, `/craft-offer`, `/analyze-gtm`, `/competitor-monitor` (the diagnostic sub-skills this orchestrates)
-- **Downstream:** `/build-content-system` (gated on 7/7 from this skill); `/blog-draft` and other content skills (consume the filled brand intelligence)
-- **Related:** the Client Intelligence Profile standard is the 8 `brand/` files this skill enforces (defined in Step 3.1 above) — there is no separate spec file.
+- **Upstream:** `aos-onboard` (scaffolds the granted folder); `aos-diagnose-7layer`, `aos-build-belief-profile`, `aos-build-brand`, `aos-build-offer`, `aos-analyze-gtm` (the diagnostic sub-skills this orchestrates)
+- **Downstream:** `/build-content-system` (gated on 9/9 from this skill); `/blog-draft` and other content skills (consume the filled brand intelligence)
+- **Related:** the Client Intelligence Profile standard is the 9 `brand/` files this skill enforces (defined in Step 3.1 above) — there is no separate spec file.
 
 ## Versioning
 
