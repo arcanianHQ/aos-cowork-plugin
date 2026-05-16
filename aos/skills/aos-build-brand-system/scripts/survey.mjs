@@ -1,50 +1,43 @@
 #!/usr/bin/env node
-// survey.mjs — survey the brand intelligence profile state for a client.
+// survey.mjs — survey the brand intelligence profile state of the granted folder.
 //
-// Usage:
-//   node survey.mjs <client-slug>            # human-readable survey
-//   node survey.mjs <client-slug> --json     # machine-readable
-//   node survey.mjs <client-slug> --prep     # survey + source-doc inventory
-//                                              + harvest-richness preview
+// OPTIONAL ACCELERATOR. The contract is bash + filesystem: the same survey can
+// be done by hand with `ls -l brand/` + a heading count. This script just does
+// it in one call. Node is never required for a core function (per the AOS DAL
+// contract and docs/data-access-router.md).
+//
+// The granted folder IS one client's folder — no per-client nesting, no slug.
+// The granted-folder root is the working directory (process.cwd()).
+//
+// Usage (run from the granted-folder root):
+//   node <skill>/scripts/survey.mjs            # human-readable survey
+//   node <skill>/scripts/survey.mjs --json     # machine-readable
+//   node <skill>/scripts/survey.mjs --prep     # survey + source-doc inventory
+//                                                + harvest-richness preview
 //
 // Exit codes:
 //   0  — survey completed (regardless of completeness)
-//   1  — invalid input
-//   2  — client not found
+//   2  — granted folder is not a valid AOS data folder (no brand/ zone)
 
 import { readFileSync, statSync, existsSync, readdirSync } from 'node:fs';
-import { resolve, dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const HUB_ROOT = resolve(__dirname, '..', '..', '..', '..');
-
-const [, , clientSlug, ...rest] = process.argv;
+const [, , ...rest] = process.argv;
 const jsonOutput = rest.includes('--json');
 const prepMode = rest.includes('--prep');
 
-if (!clientSlug) {
-  console.error('Usage: node survey.mjs <client-slug> [--json]');
-  process.exit(1);
-}
+// The granted folder is the working directory — it IS the client folder.
+const GRANTED_ROOT = process.cwd();
 
-// Resolve client dir — try clients-cloud/ first, then clients/
-let clientDir = resolve(HUB_ROOT, 'clients-cloud', clientSlug);
-if (!existsSync(clientDir)) {
-  clientDir = resolve(HUB_ROOT, 'clients', clientSlug);
-  if (!existsSync(clientDir)) {
-    console.error(`ERROR: Client '${clientSlug}' not found in clients-cloud/ or clients/`);
-    process.exit(2);
-  }
-}
-
-const brandDir = resolve(clientDir, 'brand');
+const brandDir = resolve(GRANTED_ROOT, 'brand');
 if (!existsSync(brandDir)) {
-  console.error(`ERROR: ${brandDir} does not exist. Scaffold the brand directory first.`);
+  console.error(`ERROR: ${brandDir} does not exist.`);
+  console.error('Run this from the granted-folder root. If the brand/ zone is');
+  console.error('missing, the folder has not been onboarded — run aos-onboard.');
   process.exit(2);
 }
 
-// The 8 standard files per CLIENT_INTELLIGENCE_PROFILE.md.
+// The 8 standard files of the Client Intelligence Profile.
 // minBytes per reference/file-substance-criteria.md
 // websitePref: REQUIRED | STRONGLY_PREFERRED | OPTIONAL — per the same criteria doc
 // dependsOn: which other files must be FILLED before this one is drafted
@@ -88,7 +81,7 @@ const gatePassed = filled === total;
 
 if (jsonOutput) {
   console.log(JSON.stringify({
-    client: clientSlug,
+    granted_root: GRANTED_ROOT,
     brand_dir: brandDir,
     files: rows.map(r => ({
       file: r.file, bytes: r.bytes, headings: r.headings,
@@ -98,7 +91,7 @@ if (jsonOutput) {
   }, null, 2));
 } else {
   console.log('');
-  console.log(`Brand intelligence profile — ${clientSlug}`);
+  console.log('Brand intelligence profile');
   console.log('────────────────────────────────────────────────────');
   console.log('File                          Bytes    H#   Status');
   console.log('────────────────────────────────────────────────────');
@@ -122,17 +115,18 @@ if (jsonOutput) {
 // ──────────────────────────────────────────────────────────────────────
 
 if (prepMode) {
-  console.log('\nHarvest preparation — ' + clientSlug);
+  console.log('\nHarvest preparation');
   console.log('━'.repeat(72));
 
-  // 1. Inventory candidate source documents (root + inbox + correspondence + adjacent)
+  // 1. Inventory candidate source documents — the inbox/ zone and its typed subfolders.
+  const inboxDir = resolve(GRANTED_ROOT, 'inbox');
   const candidateDirs = [
-    clientDir,
-    resolve(clientDir, 'inbox'),
-    resolve(clientDir, 'correspondence'),
-    resolve(clientDir, 'analysis'),
-    resolve(clientDir, 'analyses'),
-    resolve(clientDir, 'recordings'),
+    inboxDir,
+    resolve(inboxDir, 'strategy'),
+    resolve(inboxDir, 'transcripts'),
+    resolve(inboxDir, 'correspondence'),
+    resolve(inboxDir, 'research'),
+    resolve(inboxDir, 'brand-material'),
   ].filter(d => existsSync(d));
 
   const candidates = [];
@@ -144,7 +138,7 @@ if (prepMode) {
       const fp = resolve(dir, ent.name);
       const bytes = statSync(fp).size;
       if (bytes < 2000) continue; // <2KB unlikely to carry substance
-      candidates.push({ path: fp.replace(HUB_ROOT + '/', ''), bytes });
+      candidates.push({ path: fp.replace(GRANTED_ROOT + '/', ''), bytes });
     }
   }
   candidates.sort((a, b) => b.bytes - a.bytes);
@@ -161,10 +155,11 @@ if (prepMode) {
   //   +1 if 1-2 candidates (total < 6 but ≥ 2)
   //   +2 if all dependsOn FILLED
   //   -3 if websitePref=REQUIRED and no website cache exists
-  //   +2 if pre-existing user-written reference (heuristic: file in root matching bucket-keyword)
+  //   +2 if pre-existing user-written reference (heuristic: file matching bucket-keyword)
   // The orchestrator AI refines these scores with content awareness — this script gives the baseline.
 
-  const websiteCacheDir = resolve(clientDir, '.cache', 'website-harvest');
+  // Website cache lives in the .aos/ runtime zone.
+  const websiteCacheDir = resolve(GRANTED_ROOT, '.aos', 'cache', 'website-harvest');
   const websiteCached = existsSync(websiteCacheDir);
 
   // Build status lookup for dependency resolution

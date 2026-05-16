@@ -55,7 +55,7 @@ Minimum-FILLED requires all of:
 
 - ≥1500 bytes
 - Names the **primary constraint** (the one thing that, if fixed, unlocks everything else)
-- Names ≥2 **secondary constraints** with classification (Hard / Soft / Inferred — per `core/methodology/UNVERIFIED_ASSUMPTIONS_RULE.md`)
+- Names ≥2 **secondary constraints** with classification: Hard (verified from a cited source), Soft (observed but not yet confirmed), or Inferred (an unverified assumption — must be labelled as such, never stated as fact)
 - Explicit reasoning chain: "constraint X causes symptom Y in metric Z"
 - At least one cited source
 
@@ -131,7 +131,7 @@ If harvest yields < 1 substantive segment description → route to `/jtbd-map` i
 Minimum-FILLED requires all of:
 
 - ≥1500 bytes
-- The **L2 identity sentence** (per `core/methodology/CLIENT_INTELLIGENCE_PROFILE.md`)
+- The **L2 identity sentence** — a single sentence stating who the brand is and the category position it claims
 - Named ≥2 direct competitors and ≥1 indirect alternative
 - Per-competitor: positioning axis, what they own that we don't, what we own that they don't
 - The "I am the only one who..." statement
@@ -157,7 +157,7 @@ Minimum-FILLED requires all of:
 - Sentence-rhythm rules (cadence, length, paragraph density)
 - Voice samples (≥3 short snippets pulled from harvest that exemplify the voice)
 - Anti-pattern examples (≥2 things this voice avoids — with rewrites)
-- For non-EN clients: language-specific rules (e.g., HU register notes per `core/skills/magyar-szoveg.md`)
+- For non-EN clients: language-specific rules (e.g., HU register notes — tegező/magázó choice, AI-magyar anti-patterns to avoid)
 
 Harvest signal patterns:
 - Founder-written correspondence (the gold standard — actual voice in the wild)

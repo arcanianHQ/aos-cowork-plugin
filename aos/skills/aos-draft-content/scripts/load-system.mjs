@@ -1,8 +1,16 @@
 #!/usr/bin/env node
-// load-system.mjs — validate that a client's content-system meets the contract.
+// load-system.mjs — validate that the granted folder's content-system meets the contract.
 //
-// Usage:
-//   node load-system.mjs <client-slug> <type> [<bu-slug>]
+// OPTIONAL ACCELERATOR. The contract is bash + filesystem: the same checks can
+// be done by hand (see aos-draft-content SKILL.md Step 0). This script just runs
+// them in one call. Node is never required for a core function (per the AOS DAL
+// contract and docs/data-access-router.md).
+//
+// The granted folder IS one client's folder — no per-client nesting, no slug.
+// The granted-folder root is the working directory (process.cwd()).
+//
+// Usage (run from the granted-folder root):
+//   node <skill>/scripts/load-system.mjs <type> [<bu-slug>]
 //
 // <type> is one of: reference, blog, linkbait
 // <bu-slug> optional — if provided, validates content-system/<bu-slug>/ instead of
@@ -10,24 +18,19 @@
 //
 // Exit codes:
 //   0 — content-system passes validation for the requested type
-//   1 — invalid input (bad slug, bad type)
-//   2 — client tree not found
+//   1 — invalid input (bad type)
 //   3 — content-system directory missing
 //   4 — required file missing or fails substance check
-//   5 — client uses per-BU layout but no --bu was provided
+//   5 — client uses per-BU layout but no <bu-slug> was provided
 
 import { existsSync, statSync, readdirSync } from 'node:fs';
-import { resolve, basename, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const HUB_ROOT = resolve(__dirname, '..', '..', '..', '..');
-
-const [, , clientSlug, type, buSlugRaw] = process.argv;
+const [, , type, buSlugRaw] = process.argv;
 let buSlug = buSlugRaw || '';
 
-if (!clientSlug || !type) {
-  console.error('Usage: node load-system.mjs <client-slug> <reference|blog|linkbait> [<bu-slug>]');
+if (!type) {
+  console.error('Usage: node load-system.mjs <reference|blog|linkbait> [<bu-slug>]');
   process.exit(1);
 }
 
@@ -36,20 +39,14 @@ if (!['reference', 'blog', 'linkbait'].includes(type)) {
   process.exit(1);
 }
 
-// Resolve client dir
-let clientDir = resolve(HUB_ROOT, 'clients-cloud', clientSlug);
-if (!existsSync(clientDir)) {
-  clientDir = resolve(HUB_ROOT, 'clients', clientSlug);
-  if (!existsSync(clientDir)) {
-    console.error(`ERROR: Client '${clientSlug}' not found in clients-cloud/ or clients/`);
-    process.exit(2);
-  }
-}
+// The granted folder is the working directory — it IS the client folder.
+const GRANTED_ROOT = process.cwd();
 
-const csRoot = resolve(clientDir, 'content-system');
+const csRoot = resolve(GRANTED_ROOT, 'content-system');
 if (!existsSync(csRoot)) {
   console.error(`ERROR: ${csRoot} does not exist.`);
-  console.error('Create it (copy templates or fill manually).');
+  console.error('Run this from the granted-folder root. If the content-system/ zone');
+  console.error('is missing, run aos-onboard to scaffold the data folder.');
   process.exit(3);
 }
 
@@ -66,17 +63,17 @@ const hasBuLayout = buFolders.length > 0;
 
 // --bu supplied to single-BU client: warn and ignore
 if (buSlug && !hasBuLayout) {
-  console.error(`WARNING: --bu=${buSlug} was supplied but ${clientSlug} uses single-BU layout (no subfolders under content-system/).`);
-  console.error(`Ignoring --bu and using ${csRoot} directly.`);
+  console.error(`WARNING: bu=${buSlug} was supplied but this client uses single-BU layout (no subfolders under content-system/).`);
+  console.error(`Ignoring it and using ${csRoot} directly.`);
   buSlug = '';
 }
 
 // Multi-BU client without --bu: refuse
 if (hasBuLayout && !buSlug) {
-  console.error(`ERROR: ${clientSlug} uses a per-BU content-system layout.`);
+  console.error('ERROR: this client uses a per-BU content-system layout.');
   console.error('Available BUs:');
   for (const bu of buFolders) console.error(`  - ${bu}`);
-  console.error(`Re-run with a BU slug: node load-system.mjs ${clientSlug} ${type} <bu-slug>`);
+  console.error(`Re-run with a BU slug: node load-system.mjs ${type} <bu-slug>`);
   process.exit(5);
 }
 
@@ -122,8 +119,8 @@ if (type === 'reference') {
 const pillars = checkSubstance(resolve(csDir, 'pillars.md'), 300, '', false);
 const distribution = checkSubstance(resolve(csDir, 'distribution.md'), 300, '', false);
 
-// Required brand inputs
-const brandDir = resolve(clientDir, 'brand');
+// Required brand inputs — the brand/ zone of the granted folder
+const brandDir = resolve(GRANTED_ROOT, 'brand');
 const voice = checkSubstance(
   resolve(brandDir, 'VOICE.md'), 1500, 'Brand intelligence incomplete.', false
 );
@@ -132,17 +129,17 @@ const icp = checkSubstance(
 );
 
 if (!voice.ok || !icp.ok) {
-  console.error(`ERROR: Brand intelligence incomplete for ${clientSlug}.`);
+  console.error('ERROR: Brand intelligence incomplete.');
   console.error(`  brand/VOICE.md: ${voice.bytes} bytes (need ≥1500)`);
   console.error(`  brand/ICP.md:   ${icp.bytes} bytes (need ≥1500)`);
-  console.error('Run /build-brand-system first.');
+  console.error('Run /aos-build-brand-system first.');
   process.exit(4);
 }
 
 // All checks passed
 const head = buSlug
-  ? `✓ Content-system valid for ${clientSlug} / bu=${buSlug} / type=${type}`
-  : `✓ Content-system valid for ${clientSlug} / type=${type}`;
+  ? `✓ Content-system valid for bu=${buSlug} / type=${type}`
+  : `✓ Content-system valid for type=${type}`;
 console.log(head);
 console.log(`  messaging.md       — ${messaging.bytes} bytes`);
 if (products) console.log(`  products.md        — ${products.bytes} bytes`);

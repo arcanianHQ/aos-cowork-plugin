@@ -10,18 +10,18 @@ client-scope: single-client
 version: 0.1.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write, Edit]
-args-hint: "--type=<reference|blog|linkbait> --topic=\"<short topic phrase>\" [--bu=<bu-slug>] [--pillar=<pillar slug>] [--client=<slug>]"
+args-hint: "--type=<reference|blog|linkbait> --topic=\"<short topic phrase>\" [--bu=<bu-slug>] [--pillar=<pillar slug>]"
 inputs:
-  - clients-cloud/<slug>/brand/VOICE.md (required)
-  - clients-cloud/<slug>/brand/ICP.md (required)
-  - clients-cloud/<slug>/brand/POSITIONING.md (recommended)
-  - clients-cloud/<slug>/content-system/[<bu>/]messaging.md (required — per-BU path if multi-BU)
-  - clients-cloud/<slug>/content-system/[<bu>/]products.md (required for product-tied content)
-  - clients-cloud/<slug>/content-system/[<bu>/]pillars.md (recommended)
-  - clients-cloud/<slug>/content-system/[<bu>/]distribution.md (recommended)
+  - brand/VOICE.md (required)
+  - brand/ICP.md (required)
+  - brand/POSITIONING.md (recommended)
+  - content-system/[<bu>/]messaging.md (required — per-BU path if multi-BU)
+  - content-system/[<bu>/]products.md (required for product-tied content)
+  - content-system/[<bu>/]pillars.md (recommended)
+  - content-system/[<bu>/]distribution.md (recommended)
   - reference/post-type-<type>.md (this skill's bundled spec)
 outputs:
-  - clients-cloud/<slug>/content/<YYYY-MM-DD>-<type>-<topic-slug>.md
+  - content/[<bu>/]<YYYY-MM-DD>-<type>-<topic-slug>.md
 preflight:
   - client-config
   - content-system-contract
@@ -38,6 +38,10 @@ depends_on:
   - build-brand-system (for the brand/ inputs)
 tags: [content, drafting, blog, social, linkbait, pinterest]
 ---
+
+## Data access
+
+This skill's data lives in the **granted folder** — the folder Cowork was given access to, which **is** one client's folder (no per-client nesting). The granted-folder root is the working directory. Resolve zones (`brand/`, `content-system/`, `content/`, …) per `docs/data-access-router.md` and the `AOS_CONFIG.md` manifest at the granted-folder root. Never hard-code paths beyond the documented zone layout. Client identity is read from `client/CLIENT_CONFIG.md` and the `client` field of `AOS_CONFIG.md` — it is never a directory level. Business-unit subfolders (`content-system/<bu>/`, `content/<bu>/`) *are* a legitimate layout level for multi-BU clients.
 
 ## Purpose
 
@@ -63,16 +67,17 @@ Discovery, not pronouncement. Every draft ends with *"What did we get wrong? Wha
 - `--topic` (required) — short topic phrase, e.g., `"téli kocsibeálló-építés"` or `"premium garage flooring options"`
 - `--bu` (required if client uses per-BU content-system) — BU slug, e.g., `kocsibeallo` or `deluxebuilding`. If the client's `content-system/` contains subfolders with their own `messaging.md`, the skill refuses to run without this flag.
 - `--pillar` (optional) — pillar slug from the BU's `pillars.md` (if omitted, skill picks the best-matching pillar and tells the user)
-- `--client` (optional) — slug; resolved from CWD if omitted; ask user (no enumeration) if neither resolves
+
+There is no `--client` argument: the granted folder *is* the client folder, and client identity is read from `client/CLIENT_CONFIG.md` / `AOS_CONFIG.md`.
 
 ## Multi-BU clients
 
 Some clients operate **multiple business units (BUs)** under one tenant — different domains, different ICPs, different price points, different messaging poles. Deluxe is the reference case: `kocsibeallo.hu` (Standard) and `deluxebuilding.hu` (Premium) under one client tree.
 
-For multi-BU clients, `content-system/` is split into per-BU subfolders:
+For multi-BU clients, the `content-system/` zone is split into per-BU subfolders:
 
 ```
-clients-cloud/deluxe/content-system/
+content-system/
 ├── kocsibeallo/
 │   ├── messaging.md       (Standard pole)
 │   ├── products.md
@@ -85,24 +90,26 @@ clients-cloud/deluxe/content-system/
     └── distribution.md
 ```
 
-`brand/` stays at the client level (one founder, one identity diagnosis, one umbrella positioning). Per AOS-87, prose stays at `clients-cloud/<slug>/` regardless of BU — only the operational content-system splits.
+`brand/` stays at the granted-folder level (one founder, one identity diagnosis, one umbrella positioning) — only the operational content-system splits per BU.
 
-**Strict separation rule** (from each client's `DOMAIN_CHANNEL_MAP.md` when applicable): a draft for BU A NEVER references BU B's products, messaging, or audience. The skill enforces this by loading only the requested BU's content-system files.
+**Strict separation rule** (from `client/DOMAIN_CHANNEL_MAP.yaml` when applicable): a draft for BU A NEVER references BU B's products, messaging, or audience. The skill enforces this by loading only the requested BU's content-system files.
 
-`load-system.mjs` auto-detects per-BU layouts and refuses to draft without `--bu` when needed.
+Per-BU layout is detected by checking whether any subdirectory of `content-system/` contains a `messaging.md`; if so, `--bu` is required. (The optional `load-system.mjs` accelerator does this same detection.)
 
 ## Process
 
 ### Step 0 — Preflight
 
-1. Resolve client slug. Fail fast with clear message if not resolved.
-2. Verify `clients-cloud/<slug>/brand/VOICE.md` and `brand/ICP.md` exist and pass minimum substance (≥1500 bytes each). If not: tell user to run `/aos-build-brand-system` first; abort. Hard gate.
-3. Verify `clients-cloud/<slug>/content-system/` exists. Run `node scripts/load-system.mjs <slug> <type> [<bu>]` — this script:
-   - Auto-detects per-BU layout (any subdirectory containing `messaging.md` triggers BU mode)
-   - Refuses to validate without `--bu` if BU mode is detected
-   - Validates `messaging.md` + (for reference type) `products.md` are non-stub
-   - Validates `brand/VOICE.md` + `brand/ICP.md` are non-stub
-   If validation fails, the script's exit message tells the user what to fix; abort.
+1. Confirm the working directory is the granted-folder root. Read `AOS_CONFIG.md` for the zone manifest.
+2. Verify `brand/VOICE.md` and `brand/ICP.md` exist and pass minimum substance (≥1500 bytes each). If not: tell user to run `/aos-build-brand-system` first; abort. Hard gate.
+3. Verify the `content-system/` zone exists, then validate the content-system contract.
+
+   **Baseline (bash + filesystem — the contract):**
+   - Detect per-BU layout — `ls content-system/*/messaging.md`; if any match, BU mode is on and `--bu` is required (abort with the list of BU folders if it's missing).
+   - Resolve the content-system dir: `content-system/<bu>/` in BU mode, else `content-system/`.
+   - Confirm `messaging.md` is non-stub, and `products.md` is non-stub for `--type=reference`. Confirm `brand/VOICE.md` + `brand/ICP.md` are non-stub. Abort with a clear fix message if any check fails.
+
+   **Optional accelerator:** `node scripts/load-system.mjs <type> [<bu>]` runs exactly these checks in one call and exits non-zero with the fix message. Use it if Node is available; the bash baseline is equivalent.
 4. Validate `--type` against allowed values.
 5. Load `reference/post-type-<type>.md` from this skill's reference directory.
 
@@ -141,7 +148,7 @@ Per-type structural rules live in `reference/post-type-<type>.md`. The skill's j
 **Voice enforcement (hard rule):**
 - Banned words from `VOICE.md` must NOT appear in the draft. Run a final pass and rewrite any hits.
 - Address form (tegező/magázó for HU; tu/vous for FR; etc.) per `VOICE.md`.
-- For HU clients: apply `core/skills/magyar-szoveg.md` quality rules (no AI-magyar patterns, no EN-calque verbs, correct definite articles on brand names).
+- For HU clients: apply Hungarian-text quality rules — no AI-magyar phrasing patterns, no EN-calque verbs, correct definite articles on brand names, register (tegező/magázó) consistent with `VOICE.md`.
 
 ### Step 4 — Multi-surface output (reference type only)
 
@@ -155,9 +162,9 @@ For `--type=blog` and `--type=linkbait`: single blog draft only. The user re-run
 
 ### Step 5 — Write
 
-Output path:
-- Single-BU client: `clients-cloud/<slug>/content/<YYYY-MM-DD>-<type>-<topic-slug>.md`
-- Multi-BU client: `clients-cloud/<slug>/content/<bu>/<YYYY-MM-DD>-<type>-<topic-slug>.md`
+Output path (relative to the granted-folder root):
+- Single-BU client: `content/<YYYY-MM-DD>-<type>-<topic-slug>.md`
+- Multi-BU client: `content/<bu>/<YYYY-MM-DD>-<type>-<topic-slug>.md`
 
 Frontmatter:
 
@@ -192,10 +199,9 @@ Do not write until accept.
 2. **Content-system gate.** Refuse to draft if `content-system/messaging.md` and `content-system/products.md` don't exist with substance.
 3. **Voice fidelity.** Every banned word in VOICE.md gets flagged and rewritten before write. The skill is responsible for this — not the user.
 4. **Pillar coverage.** Drafts must fit a named pillar. Off-pillar topics get an explicit user confirmation step.
-5. **Single client.** Never read another client's content-system or brand. Cross-client confidentiality per `.claude/rules/cross-client-confidentiality.md`.
-6. **No enumeration.** If client slug ambiguous, ask user to type it.
-7. **Multilingual.** Draft in the client's primary brand language. Never default to EN if the brand operates in HU/DE/FR/etc.
-8. **Discovery, not pronouncement.** Every draft footer asks *"What did we get wrong? What's missing?"*.
+5. **Single client.** The granted folder is one client's folder — operate only within it. There is no other client's content-system or brand to read.
+6. **Multilingual.** Draft in the client's primary brand language. Never default to EN if the brand operates in HU/DE/FR/etc.
+7. **Discovery, not pronouncement.** Every draft footer asks *"What did we get wrong? What's missing?"*.
 
 ## Output sections
 
@@ -212,7 +218,7 @@ User-facing summary at end of run:
 
 - **Upstream:** `/aos-build-brand-system` (must complete before content-draft runs); the per-client `content-system/` folder (which lives in the client tree and is filled by the practitioner who knows the business)
 - **Downstream:** image-generation skill (planned), translation skill (if cross-language distribution), publishing-pipeline skill (planned)
-- **Related:** `core/skills/magyar-szoveg.md` (HU quality checks); `core/methodology/LINKEDIN_CONTENT_RULES.md` (if blog post will be cross-posted to LinkedIn)
+- **Related:** Hungarian-text quality rules (applied inline in Step 3 for HU clients); when a blog post will be cross-posted to LinkedIn, tighten the hook and trim to LinkedIn's shorter attention budget.
 
 ## Versioning
 
@@ -222,7 +228,7 @@ User-facing summary at end of run:
 
 ## Notes for the practitioner
 
-- The content-system folder is where Deluxe-specific knowledge lives — products, messaging, pillars, distribution. These don't fit in `brand/` because they're operational, not identity-level.
+- The `content-system/` zone is where client-specific operational knowledge lives — products, messaging, pillars, distribution. These don't fit in `brand/` because they're operational, not identity-level.
 - A reference post (real project case study) is usually the highest-converting content type per the data we have on physical-product brands. Prefer reference posts over generic blog posts when a real project is available to write about.
 - Linkbait is the riskiest type — register drifts toward "clickbait" easily. The post-type spec for linkbait enforces a "hook earns the read" rule.
 

@@ -10,13 +10,13 @@ client-scope: single-client
 version: 0.1.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write]
-args-hint: "client slug"
+args-hint: "(no args — operates on the granted folder)"
 inputs:
-  - clients/<slug>/CLIENT_CONFIG.md
-  - clients/<slug>/brand/
+  - client/CLIENT_CONFIG.md
+  - brand/
   - Optional market / persona research supplied in session
 outputs:
-  - clients/<slug>/brand/*.md (per hub CLIENT_INTELLIGENCE_PROFILE — belief, brand, positioning, voice, customer profile as applicable)
+  - brand/*.md (the Client Intelligence Profile — belief, brand, positioning, voice, customer profile as applicable)
   - Session deliverable using reference/report-template.md
 preflight:
   - client-config
@@ -31,17 +31,17 @@ safety:
   requires_confirmation: false
 ---
 
+## Data access
+
+This skill's data lives in the **granted folder** — the folder Cowork was given access to, which **is** one client's folder (no per-client nesting). The granted-folder root is the working directory. Resolve zones (`client/`, `brand/`, `content/`, `deliverables/`, …) per `docs/data-access-router.md` and the `AOS_CONFIG.md` manifest at the granted-folder root. Never hard-code paths beyond the documented zone layout. Client identity (the client name / slug) is read from `client/CLIENT_CONFIG.md` and the `client` field of `AOS_CONFIG.md` — it is never a directory level.
+
 ## Purpose
 
 Deliberately build, grow, or pivot a brand for profit by engineering **strategic brand associations** that lower acquisition cost, increase lifetime value, and build durable advantage.
 
 **Core principle:** Branding means pairing the business with things the ideal customers already like, trust, or aspire to.
 
-**Posture:** Discovery, not pronouncement — see hub `core/methodology/DISCOVERY_NOT_PRONOUNCEMENT.md`.
-
-## Arguments
-
-- **Client slug** — resolve from working directory or ask.
+**Posture:** Discovery, not pronouncement — present every finding as a draft with sources for the user to correct, never as a verdict.
 
 ## Process
 
@@ -120,7 +120,7 @@ Advertising and content shape short-term associations; **product experience** do
 For `class: execute`, include:
 
 - **Change plan** (associations to add/remove, direction)
-- **Applied changes** (files updated under `clients/<slug>/brand/` when applicable)
+- **Applied changes** (files updated under `brand/` when applicable)
 - **Safeguards / checks** (what to verify in market)
 - **Rollback guidance** (how to revert messaging or positioning experiments)
 
@@ -128,7 +128,7 @@ Always end with: **What did we get wrong? What's missing?**
 
 ## Hard Rules
 
-1. Write or update brand intelligence files only under the active client’s tree; follow hub `CLIENT_INTELLIGENCE_PROFILE.md` layout.
+1. Write or update brand intelligence files only under the `brand/` zone of the granted folder; follow the Client Intelligence Profile layout (the 7 standard `brand/` files — see `aos-build-brand-system`).
 2. Do not invent financial results — show assumptions and invite correction.
 3. For major pivots, cross-check with idea validation / market evidence when those skills or data are in scope.
 4. Trace beliefs when the client resists visibility, premium pricing, or narrow positioning — often L0/L2, not “the algorithm.”

@@ -4,7 +4,7 @@ scope: int-company
 
 # Content-system contract
 
-The structure each client's `clients-cloud/<slug>/content-system/` directory must satisfy for `/aos-draft-content` to run.
+The structure the granted folder's `content-system/` zone must satisfy for `/aos-draft-content` to run. All paths below are relative to the granted-folder root (which is the client folder).
 
 ## Two layouts: single-BU and multi-BU
 
@@ -13,7 +13,7 @@ The structure each client's `clients-cloud/<slug>/content-system/` directory mus
 One messaging pole, one product line, one audience. Files live directly under `content-system/`:
 
 ```
-clients-cloud/<slug>/content-system/
+content-system/
 ├── messaging.md
 ├── products.md
 ├── pillars.md
@@ -27,7 +27,7 @@ clients-cloud/<slug>/content-system/
 Per-BU subfolders, each with its own complete content-system. The BU-level files NEVER reference each other's products or messaging — that's the whole point of splitting.
 
 ```
-clients-cloud/<slug>/content-system/
+content-system/
 ├── <bu-slug-1>/
 │   ├── messaging.md
 │   ├── products.md
@@ -40,9 +40,9 @@ clients-cloud/<slug>/content-system/
     └── distribution.md
 ```
 
-`/aos-draft-content` requires `--bu=<bu-slug>` for these clients. `scripts/load-system.mjs` auto-detects the layout and refuses to draft without `--bu` if multi-BU is detected.
+`/aos-draft-content` requires `--bu=<bu-slug>` for these clients. The layout is detected by checking whether any subdirectory of `content-system/` contains a `messaging.md`; the optional `scripts/load-system.mjs` accelerator does the same detection and refuses to validate without `--bu` if multi-BU is detected.
 
-**Reference case:** Deluxe — `kocsibeallo` (Standard pole, kocsibeallo.hu) + `deluxebuilding` (Premium pole, deluxebuilding.hu). DOMAIN_CHANNEL_MAP.md drives the split.
+**Reference case:** a client with `kocsibeallo` (Standard pole) + `deluxebuilding` (Premium pole) business units. `client/DOMAIN_CHANNEL_MAP.yaml` drives the split.
 
 ### When to use which layout
 
@@ -55,7 +55,7 @@ Use **single-BU** when the client has:
 Use **multi-BU** when the client has any of:
 - Multiple domains targeting genuinely different audiences (price tier, geography, B2B vs B2C)
 - Pricing strategies that contradict each other if mixed (premium vs. value)
-- A stated "do not mix" rule in `DOMAIN_CHANNEL_MAP.md`
+- A stated "do not mix" rule in `client/DOMAIN_CHANNEL_MAP.yaml`
 
 When in doubt: start single-BU. Promote to multi-BU only when the cross-BU mixing problem is observable in practice (e.g., a piece of content drafted in single-BU mode read wrong for the audience it ended up reaching).
 
@@ -124,7 +124,7 @@ Subdirectory with examples of past content that landed well — `samples/referen
 
 Living document of what the audience is asking about right now — questions from support, sales calls, comments. Updated quarterly. Helps `/aos-draft-content` pick topics that match current demand.
 
-## Validation rules (enforced by scripts/load-system.mjs)
+## Validation rules (bash baseline; `scripts/load-system.mjs` is an optional accelerator that enforces the same)
 
 1. **messaging.md** must have ≥1 pole declared with all fields present
 2. **products.md** must have ≥1 product entry if the draft is reference type

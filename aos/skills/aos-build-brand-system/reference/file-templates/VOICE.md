@@ -77,7 +77,7 @@ depends_on: BELIEF_PROFILE.md, ICP.md
 
 ## Language-specific notes (if non-EN)
 
-<For HU clients: AI-magyar anti-patterns, levél-regiszter, vowel harmony notes, EN-calque verbs to avoid. Cross-reference `core/skills/magyar-szoveg.md`.>
+<For HU clients: AI-magyar anti-patterns, levél-regiszter, vowel harmony notes, EN-calque verbs to avoid.>
 <For other non-EN: equivalent language-specific quality notes.>
 
 ## Voice rules for specific surfaces

@@ -4,7 +4,7 @@ scope: int-company
 
 # Harvest patterns — finding scattered intelligence
 
-When the orchestrator scans `clients-cloud/<slug>/**/*.md` (excluding `brand/`, `_archive/`, `recordings/audio/`, `inbox/_processed/`), it classifies paragraphs into 8 buckets matching the 7 intelligence files. These are the keyword + structural patterns used.
+When the orchestrator scans the `inbox/` zone (`inbox/**/*.md`, excluding `inbox/_processed/`) and any markdown elsewhere in the granted folder outside `brand/`, it classifies paragraphs into 8 buckets matching the 7 intelligence files. These are the keyword + structural patterns used.
 
 **Rule:** match the **paragraph** containing the keyword, plus 1 paragraph before and after for context. Always record `<path>:L<line>` for citation.
 
@@ -229,7 +229,7 @@ When the scraped markdown is classified, apply these structural boosts to the sc
 
 Website scrapes are expensive and slow. Cache rules:
 
-- Cache path: `clients-cloud/<slug>/.cache/website-harvest/<domain>/<url-slug>.md`
+- Cache path: `.aos/cache/website-harvest/<domain>/<url-slug>.md` (the `.aos/` runtime zone, rebuildable)
 - Cache TTL: 14 days. Re-runs within 14 days reuse cache. Re-runs after 14 days trigger fresh scrape.
 - User can force refresh: orchestrator accepts a `--refresh-website` flag (v0.2).
 - Cache files have frontmatter: `url`, `scraped_at`, `status_code`, `language_detected`, `content_chars`.

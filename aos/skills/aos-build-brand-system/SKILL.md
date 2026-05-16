@@ -10,26 +10,25 @@ client-scope: single-client
 version: 0.2.1
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write, Edit, WebFetch]
-args-hint: "[client-slug] [--mode=auto|stepwise|batch] [--skip-website] — slug resolves from CWD if omitted"
+args-hint: "[--mode=auto|stepwise|batch] [--skip-website] — operates on the granted folder"
 inputs:
-  - clients-cloud/<slug>/CLIENT_CONFIG.md
-  - clients-cloud/<slug>/DOMAIN_CHANNEL_MAP.md (source of client + competitor URLs to scrape)
-  - clients-cloud/<slug>/brand/* (existing state)
-  - clients-cloud/<slug>/**/*.md (local harvest pool — root, inbox, recordings, session logs, audit docs)
+  - client/CLIENT_CONFIG.md
+  - client/DOMAIN_CHANNEL_MAP.yaml (source of client + competitor URLs to scrape)
+  - brand/* (existing state)
+  - inbox/**/*.md (local harvest pool — typed inbox: strategy, transcripts, correspondence, research, brand-material)
   - Live website pages — primary client domain(s) + any competitor URLs found locally (web harvest — tiered, WebFetch by default; see Step 2b)
 outputs:
-  - clients-cloud/<slug>/brand/7LAYER_DIAGNOSTIC.md
-  - clients-cloud/<slug>/brand/CONSTRAINT_MAP.md
-  - clients-cloud/<slug>/brand/REPAIR_ROADMAP.md
-  - clients-cloud/<slug>/brand/BELIEF_PROFILE.md
-  - clients-cloud/<slug>/brand/ICP.md
-  - clients-cloud/<slug>/brand/POSITIONING.md
-  - clients-cloud/<slug>/brand/VOICE.md
-  - clients-cloud/<slug>/brand/COMPETITIVE_LANDSCAPE.md
-  - clients-cloud/<slug>/brand/PROFILE_SCORECARD.md (completeness scorecard, emitted at end)
+  - brand/7LAYER_DIAGNOSTIC.md
+  - brand/CONSTRAINT_MAP.md
+  - brand/REPAIR_ROADMAP.md
+  - brand/BELIEF_PROFILE.md
+  - brand/ICP.md
+  - brand/POSITIONING.md
+  - brand/VOICE.md
+  - brand/COMPETITIVE_LANDSCAPE.md
+  - brand/PROFILE_SCORECARD.md (completeness scorecard, emitted at end)
 preflight:
   - client-config
-  - working-directory-is-client
 ontology:
   consumes: [Layer, FND, Belief]
   emits: [Goal, REC, Layer]
@@ -48,9 +47,13 @@ depends_on:
 tags: [orchestrator, brand, intelligence, onboarding, profile]
 ---
 
+## Data access
+
+This skill's data lives in the **granted folder** — the folder Cowork was given access to, which **is** one client's folder (no per-client nesting). The granted-folder root is the working directory. Resolve zones (`client/`, `inbox/`, `brand/`, …) per `docs/data-access-router.md` and the `AOS_CONFIG.md` manifest at the granted-folder root. Never hard-code paths beyond the documented zone layout. Client identity is read from `client/CLIENT_CONFIG.md` and the `client` field of `AOS_CONFIG.md` — it is never a directory level.
+
 ## Purpose
 
-Most clients have a `brand/` directory scaffolded with 7 standard files — and 5+ of them are empty stubs while the actual intelligence sits scattered in strategic plans, session logs, OKR docs, belief-profile working files at the root. This skill **consolidates the scatter into the standard**.
+Most clients have a `brand/` directory scaffolded with 7 standard files — and 5+ of them are empty stubs while the actual intelligence sits scattered in strategic plans, session logs, OKR docs, belief-profile working files in the `inbox/`. This skill **consolidates the scatter into the standard**.
 
 It is an **orchestrator**, not a thinker. The thinking belongs to the sub-skills (`/7layer`, `/belief-profile`, `/aos-build-brand`, `/craft-offer`, `/analyze-gtm`). This skill's job is:
 
@@ -64,28 +67,32 @@ It is an **orchestrator**, not a thinker. The thinking belongs to the sub-skills
 
 ## Posture
 
-Discovery, not pronouncement. Every draft is presented with sources and the question *"what did we get wrong? what's missing?"* before write. See `core/methodology/DISCOVERY_NOT_PRONOUNCEMENT.md`.
+Discovery, not pronouncement. Every draft is presented with sources and the question *"what did we get wrong? what's missing?"* before write — present findings as drafts for the user to correct, never as verdicts.
 
 ## Arguments
 
-- **Client slug** (optional) — resolved from CWD if running inside `clients-cloud/<slug>/`. If hub session, ask user (do not enumerate; user types the slug per `.claude/rules/skill-privacy.md`).
+This skill operates on the **granted folder** — which is the client's folder. There is no client-slug argument: the granted-folder root is the working directory and client identity is read from `client/CLIENT_CONFIG.md` / `AOS_CONFIG.md`.
 
 ## Process
 
 ### Step 0 — Preflight
 
-1. Resolve client slug from CWD or argument. If neither resolves, ask user (no enumeration).
-2. Verify `clients-cloud/<slug>/` exists. If not, abort with clear message.
-3. Verify `clients-cloud/<slug>/CLIENT_CONFIG.md` exists. If not, suggest `/add-client`.
-4. Read `core/methodology/CLIENT_INTELLIGENCE_PROFILE.md` — confirm the 7-file list hasn't drifted from this skill's expectations.
+1. Confirm the working directory is the granted-folder root (the client folder). Read `AOS_CONFIG.md` for the zone manifest and `client` identity.
+2. Verify `client/CLIENT_CONFIG.md` exists. If not, the folder hasn't been onboarded — suggest running `aos-onboard`.
+3. Verify the `brand/` zone exists. If not, abort with a clear message (run `aos-onboard` to scaffold the layout).
+4. The Client Intelligence Profile is the 8 standard `brand/` files listed in Step 3.1 — confirm none have been added/removed since this skill was written.
 5. **Pre-read all 8 target brand/ files** — including stubs. This is non-negotiable. The Claude Code Write tool refuses to overwrite a file that hasn't been Read in-conversation, so batch-write attempts fail mid-run if you don't pre-read. Issue a single parallel batch of Read calls covering all 8 files (or however many exist). Stubs return their TODO placeholder; that's fine — the Read satisfies the harness rule. Source incident: 2026-05-14 Deluxe dogfood, POSITIONING + VOICE Write failed mid-batch.
 
 ### Step 1 — Survey existing state
 
-Run `node scripts/survey.mjs <slug>`. Output:
+**Baseline (bash + filesystem — the contract).** For each of the 8 `brand/` files, stat its byte size and count its H2/H3 headings, then classify it with the substance thresholds below. Plain `ls -l brand/` + `grep -c '^#\{2,3\} ' brand/<file>` is sufficient — no Node required.
+
+**Optional accelerator.** `node scripts/survey.mjs` does the same survey in one call and prints the table below; `--prep` adds the source-doc inventory and harvest-richness preview. Use it if Node is available; otherwise do the survey by hand — the result is identical.
+
+Either way the survey produces:
 
 ```
-Brand intelligence profile — <slug>
+Brand intelligence profile
 ┌─────────────────────────┬────────┬─────────┐
 │ File                    │ Bytes  │ Status  │
 ├─────────────────────────┼────────┼─────────┤
@@ -113,7 +120,7 @@ For each of the 8 target files, estimate the **harvest richness** *before* draft
 
 Inventory two things in parallel:
 
-1. **Source-document inventory** — `ls` the client root + `inbox/` + `correspondence/` + adjacent dirs by file size. Documents >2KB are candidate sources. Count how many fall into each bucket (use the keyword patterns in `reference/harvest-patterns.md`).
+1. **Source-document inventory** — `ls` the `inbox/` zone and its typed subfolders (`strategy/`, `transcripts/`, `correspondence/`, `research/`, `brand-material/`) by file size. Documents >2KB are candidate sources. Count how many fall into each bucket (use the keyword patterns in `reference/harvest-patterns.md`).
 2. **Dependency state** — for each STUB/MISSING file, check whether its `depends_on:` upstream files are FILLED (from Step 1).
 
 Score each STUB/MISSING file:
@@ -153,7 +160,7 @@ Recommended: stepwise for VOICE + COMPETITIVE_LANDSCAPE (or scrape first).
 
 The harvest has two passes. Both feed the same per-bucket index.
 
-**2a — Local file harvest.** Recursively scan `clients-cloud/<slug>/**/*.md` (excluding `brand/`, `_archive/`, `recordings/audio/`, `inbox/_processed/`) for adjacent intelligence. Use the keyword patterns in `reference/harvest-patterns.md` to classify each found paragraph into one of the 8 buckets.
+**2a — Local file harvest.** Recursively scan the `inbox/` zone (`inbox/**/*.md`, excluding `inbox/_processed/`) for intelligence — plus any markdown elsewhere in the granted folder outside the `brand/` zone. Use the keyword patterns in `reference/harvest-patterns.md` to classify each found paragraph into one of the 8 buckets.
 
 **2b — Website harvest.** The client's live website is often the **highest-signal source** for voice, positioning, and ICP — local files describe the brand; the website *is* the brand.
 
@@ -163,9 +170,9 @@ The harvest has two passes. Both feed the same per-bucket index.
 - **Tier 1 — `Claude in Chrome`.** Escalate to the browser connector when WebFetch returns thin content (heavy JS rendering).
 - **Tier 2 — Firecrawl (optional).** For full-site `map` crawls, large competitor sweeps, or anti-bot-heavy domains. Requires the Firecrawl MCP connector (per-client, paid) added to `allowed-tools` + `.mcp.json`. Not bundled by default.
 
-**⚠ Cowork — the `WebFetch` provenance gate.** On the Claude Cowork runtime, `WebFetch` only retrieves URLs that **appeared in a user message** (or in a prior `WebFetch` result). A URL the skill read from `CLIENT_CONFIG.md` / `DOMAIN_CHANNEL_MAP.md`, or that the user picked from an options list, is **not** in the provenance set — `WebFetch` refuses it with *"URL not in provenance set."* This is a Cowork runtime rule, not a harvest failure. So at Tier 0, before any config-derived fetch:
+**⚠ Cowork — the `WebFetch` provenance gate.** On the Claude Cowork runtime, `WebFetch` only retrieves URLs that **appeared in a user message** (or in a prior `WebFetch` result). A URL the skill read from `client/CLIENT_CONFIG.md` / `client/DOMAIN_CHANNEL_MAP.yaml`, or that the user picked from an options list, is **not** in the provenance set — `WebFetch` refuses it with *"URL not in provenance set."* This is a Cowork runtime rule, not a harvest failure. So at Tier 0, before any config-derived fetch:
 
-1. **Ask the user to paste the site URL(s) into chat — then fetch in the same turn.** State exactly which domain(s) you intend to harvest (from `CLIENT_CONFIG.md` / `DOMAIN_CHANNEL_MAP.md`) and ask the user to paste them back. The provenance window may be only the **immediately-prior** user message — so `WebFetch` the pasted URLs *in the very next step*, before doing anything else. If other turns have intervened since the paste, treat the URL as possibly aged out of the provenance set and **re-ask** rather than assume it is still fetchable. A URL only the *skill* mentioned (in its own prior response) is never provenance-eligible.
+1. **Ask the user to paste the site URL(s) into chat — then fetch in the same turn.** State exactly which domain(s) you intend to harvest (from `client/CLIENT_CONFIG.md` / `client/DOMAIN_CHANNEL_MAP.yaml`) and ask the user to paste them back. The provenance window may be only the **immediately-prior** user message — so `WebFetch` the pasted URLs *in the very next step*, before doing anything else. If other turns have intervened since the paste, treat the URL as possibly aged out of the provenance set and **re-ask** rather than assume it is still fetchable. A URL only the *skill* mentioned (in its own prior response) is never provenance-eligible.
 2. After the homepage is fetched, links **discovered inside that fetched page** are themselves in the provenance set — so sitemap-/homepage-discovered sub-pages can be `WebFetch`-ed normally without a second paste.
 3. If the user declines to paste, treat website harvest as unavailable and fall through to the website-required gate below (waiver / defer) — exactly as for missing Firecrawl auth. Never report a harvest as "failed" when it was never provenance-eligible.
 
@@ -186,8 +193,8 @@ The `--skip-website` flag is a global waiver for the entire run. Logged once at 
 
 URLs to scrape come from (in priority order):
 
-1. `clients-cloud/<slug>/CLIENT_CONFIG.md` — primary domain
-2. `clients-cloud/<slug>/DOMAIN_CHANNEL_MAP.md` — all domains owned by the client (multi-domain clients have several)
+1. `client/CLIENT_CONFIG.md` — primary domain
+2. `client/DOMAIN_CHANNEL_MAP.yaml` — all domains owned by the client (multi-domain clients have several)
 3. Competitor URLs found during local harvest (any external domain mentioned in strategic / competitor docs)
 
 Per-domain scrape plan:
@@ -195,7 +202,7 @@ Per-domain scrape plan:
 - Enumerate top URLs — **Tier 0:** `WebFetch` `/sitemap.xml` or extract links from the homepage; **Tier 2:** `mcp__firecrawl__firecrawl_map` (limit ≤30 to control cost)
 - Score discovered URLs by path-keyword priority. **High priority:** `/`, `/about*`, `/rolunk`, `/who-we-are`, `/team`, `/services*`, `/szolgaltatasok`, `/products*`, `/termekek`, `/case-stud*`, `/esettanulmany*`, `/testimonial*`, `/velemenyek`, `/blog*`, `/hirek*`, `/manifesto`, `/kuldetes`. **Skip:** `/contact*`, `/legal*`, `/privacy*`, `/cookie*`, `/sitemap*`, `/login*`, `/admin*`, anything with `?utm_`, file-extension `.pdf|.jpg|.png|.zip`.
 - Fetch the top 8–12 URLs per primary domain — **Tier 0:** `WebFetch` each (markdown); **Tier 2:** `mcp__firecrawl__firecrawl_scrape` (markdown, main content only)
-- Cache the scraped markdown under `clients-cloud/<slug>/.cache/website-harvest/<domain>/<slugified-path>.md` with frontmatter recording `scraped_at`, `url`, `status_code`. Subsequent runs reuse the cache if newer than 14 days.
+- Cache the scraped markdown under `.aos/cache/website-harvest/<domain>/<slugified-path>.md` (the `.aos/` runtime zone, rebuildable) with frontmatter recording `scraped_at`, `url`, `status_code`. Subsequent runs reuse the cache if newer than 14 days.
 - For each cached scrape: apply the same harvest-pattern classification as local files, but with **website-specific bucket boosts** (per `reference/harvest-patterns.md` "Website harvest patterns"). Example: H1 + H2 of homepage count as strong POSITIONING signal; testimonial sections count as strong ICP signal.
 - For competitor URLs found during local harvest: scrape only their landing page (depth 0, one URL each). These feed only the COMPETITIVE_LANDSCAPE bucket.
 
@@ -203,14 +210,14 @@ Per-domain scrape plan:
 
 - `WebFetch` refuses with *"URL not in provenance set"* (Cowork provenance gate) → **not a harvest failure.** Ask the user to paste the site URL into chat, then retry the fetch. Only if they decline does this fall through to local-only harvest. See the provenance-gate box in Step 2b.
 - Firecrawl unavailable / no auth → log it, continue with local-only harvest, flag the affected files (VOICE, POSITIONING, ICP especially) as drawing from local-only signal.
-- Domain returns 4xx/5xx → record in scorecard as a gap; ask user to verify URL in CLIENT_CONFIG.md.
+- Domain returns 4xx/5xx → record in scorecard as a gap; ask user to verify URL in `client/CLIENT_CONFIG.md`.
 - Domain returns mostly JS-rendered shell with no usable content → Firecrawl handles this internally; if extracted content < 500 chars per page, treat the domain as low-signal and warn user.
-- Multilingual sites (e.g., Deluxe Hungarian + English variants) → scrape the language matching the brand's primary register (per CLIENT_CONFIG.md `primary_language` field if present; otherwise ask).
+- Multilingual sites (e.g., Hungarian + English variants) → scrape the language matching the brand's primary register (per `client/CLIENT_CONFIG.md` `primary_language` field if present; otherwise ask).
 
 **2c — Output: harvest index.** Combined index keyed by intelligence file, with source-type labels:
 
 ```
-Harvest index — <slug>
+Harvest index
 ICP signals (18 matches — 12 local, 6 website):
   [LOCAL]    2026-05-03_kocsibeallo-master-plan.md:L42 — "Premium garage segment, age 35-55..."
   [LOCAL]    DELUXE_STRATEGIC_PLAN_Q1_Q2_2026.md:L88 — "Two distinct customer types..."
@@ -290,7 +297,7 @@ Surface the chosen mode to the user before drafting begins. Mode auto-recommenda
 
 ### Step 4 — Hard gate
 
-After the per-file pass, re-run `node scripts/survey.mjs`. If completeness < 7/7:
+After the per-file pass, re-run the survey (Step 1 — bash baseline, or `node scripts/survey.mjs` as the accelerator). If completeness < 7/7:
 
 ```
 ⚠️ HARD GATE — incomplete profile
@@ -312,7 +319,7 @@ Do NOT mark the profile complete. Emit a `PROFILE_SCORECARD.md` showing what's d
 When 7/7 is reached:
 
 1. Write `brand/PROFILE_SCORECARD.md` with the final state, sources used per file, and unblock-signal for `/build-content-system`.
-2. Append entry to `clients-cloud/<slug>/CAPTAINS_LOG.md`: "Client intelligence profile completed via /build-brand-system v0.1 — 7/7 files filled."
+2. Append an entry to `CAPTAINS_LOG.md` (granted-folder root): "Client intelligence profile completed via /build-brand-system — 7/7 files filled."
 3. Surface to user: profile complete, content-system unblocked, suggest next step.
 
 ## Hard rules
@@ -320,10 +327,9 @@ When 7/7 is reached:
 1. **Cite every claim.** Every drafted paragraph in every file must have a source citation (file:line) from the harvest. No invented intelligence. If no source exists, the file gets routed to a sub-skill, not faked.
 2. **User confirms each draft.** No silent writes. Accept / Revise / Regenerate is mandatory per file.
 3. **Hard gate stands.** Do not announce profile complete with <7 substantive files. The gate exists to keep downstream skills from generating thin content on thin intelligence.
-4. **Single client.** Operate only within the resolved client's tree. Do not read other clients' brand files for "inspiration" — that's a cross-client leak per `.claude/rules/cross-client-confidentiality.md`.
-5. **Do not enumerate.** If slug resolution fails, ask the user to type the slug. Never list available clients per `.claude/rules/skill-privacy.md`.
-6. **Idempotent.** Re-running this skill on a 7/7 client should: re-survey, report "already complete", offer a refresh path (per-file regeneration). Never overwrite without confirmation.
-7. **Discovery, not pronouncement.** Every draft ends with *"What did we get wrong? What's missing?"* before user accepts.
+4. **Single client.** The granted folder is one client's folder — operate only within it. There are no other clients' files to read; never reach outside the granted folder for "inspiration."
+5. **Idempotent.** Re-running this skill on a 7/7 profile should: re-survey, report "already complete", offer a refresh path (per-file regeneration). Never overwrite without confirmation.
+6. **Discovery, not pronouncement.** Every draft ends with *"What did we get wrong? What's missing?"* before user accepts.
 
 ## Output sections
 
@@ -338,9 +344,9 @@ Final user-facing output:
 
 ## Integration
 
-- **Upstream:** `/add-client` (sets up the client tree); `/7layer`, `/belief-profile`, `/aos-build-brand`, `/craft-offer`, `/analyze-gtm`, `/competitor-monitor` (the diagnostic sub-skills this orchestrates)
+- **Upstream:** `aos-onboard` (scaffolds the granted folder); `/7layer`, `/belief-profile`, `/aos-build-brand`, `/craft-offer`, `/analyze-gtm`, `/competitor-monitor` (the diagnostic sub-skills this orchestrates)
 - **Downstream:** `/build-content-system` (gated on 7/7 from this skill); `/blog-draft` and other content skills (consume the filled brand intelligence)
-- **Related:** `core/methodology/CLIENT_INTELLIGENCE_PROFILE.md` (the canonical 7-file standard this skill enforces)
+- **Related:** the Client Intelligence Profile standard is the 8 `brand/` files this skill enforces (defined in Step 3.1 above) — there is no separate spec file.
 
 ## Versioning
 
