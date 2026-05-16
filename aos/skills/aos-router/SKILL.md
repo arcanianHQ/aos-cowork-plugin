@@ -7,7 +7,7 @@ class: router
 domain: routing
 layer: all
 client-scope: single-client
-version: 0.0.1
+version: 0.1.0
 owner: arcanian
 allowed-tools: ["Read", "Glob", "Grep"]
 ontology:
@@ -58,13 +58,22 @@ the right workflow. **You route — you do not do the work yourself.**
 The router routes by the 7+1 layer (L0–L7) a question lands in. Generated from
 each skill's `layer:` frontmatter — keep in sync as skills are added.
 
-| Layer band | Skill / workflow | Use for |
-|---|---|---|
-| L0–L3 — foundation + value | `build-brand-system` | client intelligence: the 7-file brand profile |
-| L1–L2 — identity + positioning | `build-brand` | brand strategy — associations, growth, pivot |
-| L6–L7 — audience + market | `content-draft` | draft a content piece (reference / blog / linkbait) |
-| cross-layer — discovery prep | `catalogue` | index inbox material before discovery |
-| cross-layer — setup | `aos-onboard` | first-run / "set me up" |
+| Layer band | Skill / workflow | Use for | Connector |
+|---|---|---|---|
+| L0–L3 — foundation + value | `build-brand-system` | client intelligence: the 7-file brand profile | — |
+| L1–L2 — identity + positioning | `build-brand` | brand strategy — associations, growth, pivot | — |
+| L4 — funnel + conversion | `aos-diagnose-funnel` *(planned — AOS-743)* | diagnose conversion / funnel performance | **Databox** |
+| L5 — CRM + lifecycle | `aos-diagnose-lifecycle` *(planned — AOS-743)* | diagnose lifecycle / retention / CRM health | **HubSpot** |
+| L6–L7 — audience + market | `content-draft` | draft a content piece (reference / blog / linkbait) | — |
+| cross-layer — discovery prep | `catalogue` | index inbox material before discovery | — |
+| cross-layer — setup | `aos-onboard` | first-run / "set me up" | — |
+
+**Connector gating.** A workflow tagged with a connector needs that connector's
+MCP tools available in the session. A connector counts as connected **only if
+its MCP tools are present in the session** — nothing else. If they are absent,
+**do not route into the workflow**: state that the connector is missing, and
+offer a degraded fallback — the closest local-only workflow, or `aos-onboard`
+to connect it. Never route into a connector-gated workflow on faith.
 
 ## Status
 
