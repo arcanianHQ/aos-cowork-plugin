@@ -30,8 +30,8 @@ privacy:
   enumerates-accounts: false
   cross-client-reads: false
 safety:
-  mode: read-only
-  requires_confirmation: false
+  mode: mutates-state
+  requires_confirmation: true
 tags: [diagnostic, intelligence, seven-layer, constraint]
 ---
 
