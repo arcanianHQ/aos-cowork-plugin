@@ -10,10 +10,12 @@ in the ADF repo.
 
 ## Status
 
-`v0.5.0` — **scaffold**. The structural skills (`aos-route-question`, `aos-onboard`) are
+`v0.6.0` — **scaffold**. The structural skills (`aos-route-question`, `aos-onboard`) are
 starter drafts; building-block skills are ported under AOS-725 (the first three —
 `aos-build-brand`, `aos-build-brand-system`, `aos-draft-content` — are rewired onto
 the granted-folder / data-access-router model) and workflow skills under AOS-728.
+`aos-localize-hu` (AOS-749) is the first **language pack** — a Hungarian nativeness
+pass over content-language artifacts; see `docs/language-packs.md`.
 
 ## Storage model
 
