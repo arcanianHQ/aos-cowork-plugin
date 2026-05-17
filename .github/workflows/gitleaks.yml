@@ -1,0 +1,33 @@
+name: secret-scan
+
+# Scans the repo (and its git history) for committed secrets — API keys,
+# tokens, credentials — using the open-source gitleaks tool. Run on every push
+# and PR. This is the one security check that genuinely fits this repo: a
+# Claude plugin is markdown skills + JSON config, so a leaked token in a
+# SKILL.md or .mcp.json is the real risk. (gitleaks is run from its official
+# OSS image directly — the gitleaks-action wrapper needs a paid licence for
+# org repos; the tool itself is MIT-licensed and free.)
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  gitleaks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: gitleaks — scan for committed secrets
+        run: |
+          docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:latest \
+            detect \
+              --source=/repo \
+              --redact \
+              --verbose \
+              --exit-code=1

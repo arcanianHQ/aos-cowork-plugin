@@ -232,6 +232,8 @@ For `--type=reference`, the draft includes three sections in the same file:
 
 For `--type=blog` and `--type=linkbait`: single blog draft only. The user re-runs with `--type=reference` if they want social/Pinterest derivatives.
 
+**Privacy note (reference type).** A reference post is a real-project case study — it routinely names or quotes a real customer. That is third-party personal data: flag at draft time that the piece must pass `aos-anonymize` — or have recorded consent — before `aos-distribute` ships it (`aos-distribute`'s Step 0 privacy gate enforces this).
+
 ### Step 5 — Write
 
 Output path (relative to the granted-folder root). A single-piece draft is written

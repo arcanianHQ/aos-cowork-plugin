@@ -115,6 +115,10 @@ A draft built on thin context must not fabricate. Before write:
   user) or cut — never invented.
 - A `reference` piece with no real, supplied result is not drafted as a proof
   piece — tell the user it needs the actual outcome, or re-type it to `blog-post`.
+- A `reference` piece that **names or quotes a real customer** carries
+  third-party personal data. Flag at draft time that it must pass `aos-anonymize`
+  — or have recorded consent — before `aos-distribute` ships it (`aos-distribute`'s
+  privacy gate enforces this; flagging it here saves a round-trip).
 
 ---
 

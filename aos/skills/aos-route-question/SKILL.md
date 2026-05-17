@@ -87,6 +87,7 @@ each skill's `layer:` frontmatter — keep in sync as skills are added.
 | L2–L3 — competition | `aos-analyze-competition` | map the competitive field + positioning gaps → `COMPETITIVE_LANDSCAPE.md` — "who are our competitors" | SEMrush |
 | L6 — audience / ICP | `aos-build-icp` | define the Ideal Customer Profile → `ICP.md` — "who is the customer", "build the persona" | — |
 | L2–L4 — strategy + prioritisation | `aos-plan` | turn the brand profile + content-system into a prioritised GTM plan (the loop's planning stage) — "what should we do next" | — |
+| L3–L7 — campaign planning | `aos-plan-campaign` | write a campaign brief (dealer / retail / brand) — "plan the <occasion> campaign", "brief the promotion" | — |
 | L4 — funnel + conversion | `aos-diagnose-funnel` | diagnose conversion / funnel performance | **Databox** |
 | L4–L7 — results + learning | `aos-measure` | measure shipped content / campaigns, emit findings (the loop's measurement stage) — "how did it do" | **Databox** |
 | L5 — CRM + lifecycle | `aos-diagnose-lifecycle` | diagnose lifecycle / retention / CRM health | **HubSpot** |
@@ -97,6 +98,8 @@ each skill's `layer:` frontmatter — keep in sync as skills are added.
 | cross-layer — discovery prep | `aos-catalogue` | index inbox material + content before discovery | — |
 | cross-layer — knowledge graph | `aos-index-ontology` | index the ontology — rebuild `INDEX.md`, surface unactioned findings ("what have we learned") | — |
 | cross-layer — provenance | `aos-back-statements` | tag material statements with evidence classes — `[DATA]` / `[STATED]` / `[INFERRED]` / `[NARRATIVE]` — and report unsourced claims | — |
+| cross-layer — privacy | `aos-anonymize` | scan an artifact for personal data + produce an anonymised copy — "anonymise this", "scrub the PII", "safe to share" (the privacy gate before anything leaves the granted folder) | — |
+| cross-layer — team / process | `aos-map-jtbd` | survey the GTM team, map input→output per role, find process gaps — "map the team", "who does what" | — |
 | cross-layer — setup | `aos-onboard` | first-run / "set me up" | — |
 | cross-layer — maintenance | `aos-migrate` | upgrade a data folder behind the plugin's schema | — |
 

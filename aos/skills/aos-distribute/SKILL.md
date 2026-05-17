@@ -124,7 +124,8 @@ This skill operates on the **granted folder** — which is the client's folder.
 3. Detect per-BU layout — `ls content-system/*/distribution.md`. If any match, `--bu` is required; abort with the BU list if missing.
 4. Resolve and Read the `--piece` file. Verify it exists and is a content draft (has content-piece frontmatter). If it is a stub or missing — abort with a clear message.
 5. **Review gate.** Before shipping, the piece must have passed the quality gate. Check for a `PASS`-verdict review of this piece in `deliverables/<YYYY-MM>/review-<piece-slug>.md` (a report `aos-review` writes). If none exists, or the latest review verdict is `REVISE` / `BLOCK`, **do not ship** — route the user to run `aos-review` on the piece first, and (on `REVISE` / `BLOCK`) back to `aos-draft-content` to fix it. Shipping an unreviewed piece is never the default path. The user may override with explicit confirmation (e.g. an internal-only piece) — log the override in the ship entry.
-6. **Connector check** — determine whether a channel connector's MCP tools are present for the target channel. Record the result; it sets the ship mode (connector-assisted vs manual hand-off).
+6. **Privacy gate.** If the piece names or quotes a **real third-party individual** — a customer, a named non-public person (a reference / case-study piece is the common case) — it must not ship until the personal data is cleared: either an `aos-anonymize` pass has produced a cleared version, or the user explicitly confirms the named people consented to public use. Log the decision in the ship entry. The client's own public identity (brand name, a by-lined founder) is not third-party PII and does not gate. A piece naming no real third-party person skips this gate.
+7. **Connector check** — determine whether a channel connector's MCP tools are present for the target channel. Record the result; it sets the ship mode (connector-assisted vs manual hand-off).
 
 ### Step 1 — Resolve the channel
 
@@ -175,6 +176,7 @@ place.
 
 1. **Never autonomously publish.** The skill prepares and hands off. A piece moves to `published` only on explicit user confirmation that it went live.
 2. **Review before ship.** A piece ships only after `aos-review` has cleared it (`PASS` verdict). No `PASS` review → route to `aos-review` first. Override only with explicit user confirmation, logged in the ship entry.
+2a. **Privacy before ship.** A piece that names or quotes a real third-party individual ships only after `aos-anonymize` has cleared it, or the user confirms consent — see Step 0.6. Third-party personal data never ships unchecked.
 3. **Degrade, never fail, when no channel connector exists.** Manual hand-off is the normal path — prepare the file and instruct the user.
 4. **Voice survives the format pass.** Run the `brand/VOICE.md` banned-words / register check on the channel-formatted output; rewrite any hit before write.
 5. **Never downgrade a status.** `published` is terminal; `scheduled` never returns to `draft` via this skill.
