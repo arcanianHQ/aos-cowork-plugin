@@ -102,6 +102,7 @@ each skill's `layer:` frontmatter — keep in sync as skills are added.
 | cross-layer — knowledge graph | `aos-index-ontology` | index the ontology — rebuild `INDEX.md`, surface unactioned findings ("what have we learned") | — |
 | cross-layer — provenance | `aos-back-statements` | tag material statements with evidence classes — `[DATA]` / `[STATED]` / `[INFERRED]` / `[NARRATIVE]` — and report unsourced claims | — |
 | cross-layer — privacy | `aos-anonymize` | scan an artifact for personal data + produce an anonymised copy — "anonymise this", "scrub the PII", "safe to share" (the privacy gate before anything leaves the granted folder) | — |
+| cross-layer — feedback | `aos-feedback` | report a bug / confusion / missing feature / praise from inside the plugin — "report feedback", "this is broken", "feature request" | — |
 | cross-layer — team / process | `aos-map-jtbd` | survey the GTM team, map input→output per role, find process gaps — "map the team", "who does what" | — |
 | cross-layer — knowledge assembly | `aos-discovery-package` | assemble a populated data folder — import existing material + a fresh-discovery intake — "build the discovery package" | — |
 | cross-layer — registry | `aos-registry` | the person/BU dictionary + account map + access dashboard → `client/REGISTRY.md` — "who has access to what" | — |
