@@ -10,7 +10,7 @@ Design + the four invariants (ordered, idempotent, non-destructive, logged):
 
 ## Current state
 
-**Schema version: `3`.** Two migration steps — `1→2` and `2→3`, below.
+**Schema version: `4`.** Three migration steps — `1→2`, `2→3`, `3→4`, below.
 
 ### Step 1→2 — the per-client `## Connectors` block
 
@@ -59,6 +59,31 @@ no client data is inferred or filled.
 
 **Log line.** Append to `CAPTAINS_LOG.md`: `schema 2 → 3 — added the LEADS.md /
 content/SCHEDULE.md / metrics/ file-zones`.
+
+### Step 3→4 — the `campaigns/` zone
+
+**What changed.** Campaigns moved from the flat `dictionaries/campaign.yaml`
+into a `campaigns/` zone — `campaigns/INDEX.md` + per-campaign files
+`campaigns/<slug>.md` (record + brief). `aos-plan-campaign` v0.2.0 writes it
+(AOS-834). The schema version moved from 3 to 4.
+
+**Zones / files touched.** Creates `campaigns/INDEX.md` and `campaigns/README.md`.
+`dictionaries/campaign.yaml` is **left in place** as legacy — not read, not
+removed (non-destructive).
+
+**Idempotency check.** Skip if `campaigns/INDEX.md` already exists.
+
+**Operations.** If `campaigns/` has no `INDEX.md`, create the `campaigns/`
+directory and copy `INDEX.md` + `README.md` verbatim from
+`data-template/campaigns/`. If the legacy `dictionaries/campaign.yaml` lists any
+campaigns, note them for the user to re-file via `aos-plan-campaign` — do not
+auto-convert (the new per-campaign file needs a brief the flat YAML never had).
+
+**Superseded files.** None removed — `dictionaries/campaign.yaml` stays as
+legacy. Purely additive.
+
+**Log line.** Append to `CAPTAINS_LOG.md`: `schema 3 → 4 — added the campaigns/
+zone`.
 
 ## Step template — copy this when adding a step
 

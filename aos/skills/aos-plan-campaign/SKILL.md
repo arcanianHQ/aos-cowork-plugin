@@ -7,7 +7,7 @@ class: intelligence
 domain: strategy
 layer: [L3, L6, L7]
 client-scope: single-client
-version: 0.1.0
+version: 0.2.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write]
 args-hint: "--type=<dealer|retail|brand> --occasion=\"<phrase>\" [--bu=<bu-slug>] — operates on the granted folder"
@@ -20,7 +20,8 @@ inputs:
   - ontology/recommendations/ (open RECs — a campaign may execute one)
   - the user — the campaign frame (occasion, objective, offer, timeframe, budget) is captured interactively
 outputs:
-  - deliverables/<YYYY-MM>/campaign-brief-<slug>.md (the campaign brief)
+  - campaigns/<slug>.md (the campaign record — frontmatter — + the brief as the body)
+  - campaigns/INDEX.md (the campaign index — theme + campaign rows, refreshed)
 preflight:
   - client-config
 ontology:
@@ -133,9 +134,19 @@ the `--type`'s emphasis (`reference/brief-types.md`) and the brief shell
 
 ### Step 3 — Surface and write
 
-Present the brief to the user — Accept / Revise / Regenerate. On Accept, write to
-`deliverables/<YYYY-MM>/campaign-brief-<slug>.md` with the standard provenance
-block. End the file with *"What did we get wrong? What's missing?"*
+Present the brief to the user — Accept / Revise / Regenerate. On Accept, write
+the campaign into the **`campaigns/` zone** (schema v4):
+
+- **`campaigns/<slug>.md`** — the per-campaign file: a frontmatter **record**
+  (`campaign`, `slug`, `theme`, `campaign_type`, `business_unit`, `budget`,
+  `start`, `end`, `status`, `kpi`, `platforms`) + the **brief as the body**, with
+  the standard provenance block. Record and brief are one artifact — see
+  `campaigns/README.md`. End the file with *"What did we get wrong? What's
+  missing?"*
+- **`campaigns/INDEX.md`** — add (or refresh) the campaign's row in the index,
+  under its theme, with the `BU` column set.
+
+The old flat `dictionaries/campaign.yaml` is superseded by this zone.
 
 ## Provenance
 
@@ -181,6 +192,7 @@ User-facing summary at end of run:
 
 ## Versioning
 
+- **v0.2.0** — writes into the new **`campaigns/` zone** (AOS-834, schema v4): a per-campaign file `campaigns/<slug>.md` — a frontmatter record (theme / type / BU / budget / window / status / KPI / platforms) + the brief as the body — and a row in `campaigns/INDEX.md`. Supersedes the prose-brief-in-`deliverables/` + flat `dictionaries/campaign.yaml` split.
 - **v0.1.0** — initial Cowork-plugin authoring (AOS-787, Milestone 4 feature wave). Three brief types (dealer / retail / brand). Validated against real seasonal campaign briefs; the per-type emphasis and the brief shell likely need refinement after first real runs.
 
 **What did we get wrong? What's missing?**

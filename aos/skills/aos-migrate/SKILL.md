@@ -7,7 +7,7 @@ class: system
 domain: onboarding
 layer: all
 client-scope: single-client
-version: 0.1.3
+version: 0.1.4
 owner: arcanian
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep", "Bash"]
 args-hint: "(no args — operates on the granted folder)"
@@ -31,22 +31,22 @@ version** has moved ahead of the folder's. Design: `docs/artifact-versioning.md`
 - **Folder schema version** — `schema-version` in `AOS_CONFIG.md` at the
   granted-folder root. The layout version *this folder* is at.
 - **Plugin current schema version** — **this plugin build is schema version
-  `3`**, stated here and in the plugin's own `docs/CURRENT_SCHEMA_VERSION`. The
+  `4`**, stated here and in the plugin's own `docs/CURRENT_SCHEMA_VERSION`. The
   layout version *this build of the plugin* expects.
 
 > **Never read the plugin schema version from the granted folder** or from any
 > `aos/` directory inside or beside it — the granted folder holds *client data
 > only*, never plugin files. A stray `aos/` copy near the granted folder is not
-> "the plugin". The literal `3` in this skill is authoritative.
+> "the plugin". The literal `4` in this skill is authoritative.
 
-A migration is due when **plugin current (`3`) > folder**.
+A migration is due when **plugin current (`4`) > folder**.
 
 ## Steps
 
 1. **Read the folder version.** Resolve the granted-folder root, read
    `schema-version` from `AOS_CONFIG.md`.
 
-2. **The plugin target version is `3`** — this plugin build (see "The two
+2. **The plugin target version is `4`** — this plugin build (see "The two
    version numbers"). Do **not** read it from the granted folder or any `aos/`
    directory in its tree; a stray `aos/` near the granted folder is not the
    plugin.
@@ -92,11 +92,11 @@ A migration is due when **plugin current (`3`) > folder**.
 
 ## Current state
 
-Schema version is **`3`** (`docs/CURRENT_SCHEMA_VERSION`). Two migration steps
-are defined — `1→2` (the `## Connectors` block in `CLIENT_CONFIG.md`) and `2→3`
-(the `LEADS.md` / `content/SCHEDULE.md` / `metrics/` file-zones) — registered in
-`reference/migration-steps.md`. A folder onboarded before schema 3 reports
-*behind* and this skill runs the steps in the gap.
+Schema version is **`4`** (`docs/CURRENT_SCHEMA_VERSION`). Three migration steps
+are defined — `1→2` (the `## Connectors` block), `2→3` (the `LEADS.md` /
+`content/SCHEDULE.md` / `metrics/` file-zones), and `3→4` (the `campaigns/`
+zone) — registered in `reference/migration-steps.md`. A folder onboarded before
+schema 4 reports *behind* and this skill runs the steps in the gap.
 
 ## Adding a migration step (future work)
 
@@ -131,7 +131,10 @@ from `reference/migration-steps.md` and runs every one in the gap.
 
 ## Status
 
-v0.1.3 — the `2→3` migration step (the no-DAL file-zones `LEADS.md` /
+v0.1.4 — the `3→4` migration step (the `campaigns/` zone); schema literal
+moved 3 → 4 (AOS-834).
+
+Prior: v0.1.3 — the `2→3` migration step (the no-DAL file-zones `LEADS.md` /
 `content/SCHEDULE.md` / `metrics/`); schema literal moved 2 → 3 (AOS-832).
 
 Prior: v0.1.2 — a completed migration refreshes the `plugin-version` stamp in

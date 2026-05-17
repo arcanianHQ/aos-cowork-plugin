@@ -37,9 +37,11 @@ AOS/                           the granted folder
 │   ├── <bu>/                  multi-BU: series + single pieces nest under the BU folder
 │   ├── CATALOGUE.md            content index — by series — built by the `aos-catalogue` skill
 │   └── SCHEDULE.md             content calendar — scheduled + published (BU column)
+├── campaigns/                  the campaign zone — themes + per-campaign files
+│   ├── INDEX.md               campaign index — themes + campaigns, BU-tagged
+│   └── <slug>.md              one file per campaign — record (frontmatter) + brief
 ├── dictionaries/
 │   ├── access.yaml            Access dictionary — accounts / properties
-│   ├── campaign.yaml          Campaign dictionary
 │   └── subscription.yaml      Subscription dictionary
 ├── ontology/                  the FND/REC/GOT knowledge graph (see ontology/README.md)
 │   ├── findings/              FND-NNN-*.md  — what was learned
@@ -99,6 +101,14 @@ They are the **filesystem form** of the leads / content-schedule / metrics zones
 — present for every install, so a customer without the `aos-data-layer` overlay
 still has the full data. The overlay only ever *accelerates* these zones; it
 never introduces one.
+
+**`campaigns/` is the campaign zone** (schema version 4) — `campaigns/INDEX.md`
+(themes + campaigns, BU-tagged) plus one file per campaign, `campaigns/<slug>.md`
+(a frontmatter record + the brief as the body — see `campaigns/README.md`). It
+**supersedes the flat `dictionaries/campaign.yaml`**, which is removed from the
+template; an existing folder's `campaign.yaml` is left in place as legacy.
+`aos-plan-campaign` writes the zone. It is the filesystem form of the campaign
+model — themes, campaigns, platforms, budgets, KPIs.
 
 Rationale: a zone nests per-BU when its *content genuinely differs per BU*
 (messaging, pillars, the content itself). A zone stays per-client when it is a

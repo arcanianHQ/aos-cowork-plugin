@@ -3,6 +3,20 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.29.0] — 2026-05-17
+
+**The `campaigns/` zone — campaigns modelled properly (AOS-834, schema v4).**
+
+- New **`campaigns/` zone** — `campaigns/INDEX.md` (themes + campaigns, BU-tagged)
+  + per-campaign files `campaigns/<slug>.md` (a frontmatter record — theme, type,
+  BU, budget, window, status, KPI, platforms — plus the brief as the body).
+- Supersedes the flat `dictionaries/campaign.yaml` (removed from the template;
+  an existing folder's copy is left as legacy).
+- `aos-plan-campaign` v0.2.0 — writes the `campaigns/` zone instead of a prose
+  brief in `deliverables/`: the campaign record and its brief are now one file.
+- Schema version → **4**. `aos-migrate` ships the `3→4` step (additive). The
+  AOS Cloud campaign schema-side of AOS-834 is tracked separately.
+
 ## [0.28.0] — 2026-05-17
 
 **The no-DAL file-zones — every zone has a filesystem form (AOS-832, schema v3).**
