@@ -1,0 +1,29 @@
+name: plugin-guard
+
+# Poisoning guards for a plugin whose SKILL.md files are executed as agent
+# instructions:
+#   unicode       — no hidden invisible / bidirectional Unicode in markdown
+#   allowed-tools — every skill stays within the vetted tool allowlist
+# Together with gitleaks (secret-scan) and required PR review, these are the
+# layered defence for this repo.
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  unicode:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: No invisible / bidirectional Unicode in markdown
+        run: python3 .github/scripts/check-unicode.py
+
+  allowed-tools:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Skill allowed-tools within the vetted allowlist
+        run: bash .github/scripts/check-allowed-tools.sh
