@@ -74,3 +74,6 @@ This repo is a single-plugin marketplace — root `.claude-plugin/marketplace.js
 - **Claude Code:** `claude plugin marketplace add arcanianHQ/aos-cowork-plugin`, then `claude plugin install aos@aos-cowork`.
 - **Local dev / testing:** `claude --plugin-dir <path>/aos-cowork-plugin/aos`.
 - **Cowork:** add the repo as a private marketplace in the admin Plugins panel (or upload a ZIP).
+
+Full install + first-run + troubleshooting: **`docs/install.md`**. Release
+history: **`CHANGELOG.md`** (repo root).
