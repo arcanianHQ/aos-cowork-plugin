@@ -7,7 +7,7 @@ class: reading
 domain: routing
 layer: all
 client-scope: single-client
-version: 0.4.0
+version: 0.5.0
 owner: arcanian
 allowed-tools: ["Read", "Glob", "Grep"]
 ontology:
@@ -75,43 +75,46 @@ Honor the **language context** (`docs/language-context.md`) on every turn:
   note when routing that artifacts in that language get a final nativeness pass
   through that pack. If no matching pack exists, base-system output ships as-is.
 
-## Routing table — by 7+1 layer
+## The skill set — discovered, not hard-coded
 
-The router routes by the 7+1 layer (L0–L7) a question lands in. Generated from
-each skill's `layer:` frontmatter — keep in sync as skills are added.
+The router routes against the **skills available in this session** — every
+installed skill, from **every** plugin: the core `aos` plugin **and** any private
+**overlay** plugin a customer has installed (`docs/overlay-architecture.md`).
 
-| Layer band | Skill / workflow | Use for | Connector |
-|---|---|---|---|
-| L0–L3 — foundation + value | `aos-build-brand-system` | client intelligence: the 9-file brand profile | — |
-| L1–L2 — identity + positioning | `aos-build-brand` | brand strategy — associations, growth, pivot | — |
-| L2–L3 — competition | `aos-analyze-competition` | map the competitive field + positioning gaps → `COMPETITIVE_LANDSCAPE.md` — "who are our competitors" | SEMrush |
-| L6 — audience / ICP | `aos-build-icp` | define the Ideal Customer Profile → `ICP.md` — "who is the customer", "build the persona" | — |
-| L2–L4 — strategy + prioritisation | `aos-plan` | turn the brand profile + content-system into a prioritised GTM plan (the loop's planning stage) — "what should we do next" | — |
-| L3–L7 — campaign planning | `aos-plan-campaign` | write a campaign brief (dealer / retail / brand) — "plan the <occasion> campaign", "brief the promotion" | — |
-| L4 — funnel + conversion | `aos-diagnose-funnel` | diagnose conversion / funnel performance | **Databox** |
-| L4–L7 — results + learning | `aos-measure` | measure shipped content / campaigns, emit findings (the loop's measurement stage) — "how did it do" | **Databox** |
-| L4–L7 — baseline | `aos-set-baseline` | set a seasonality-aware performance baseline before a campaign — "what's normal for this metric" | Databox |
-| L5 — CRM + lifecycle | `aos-diagnose-lifecycle` | diagnose lifecycle / retention / CRM health | **HubSpot** |
-| L6–L7 — content drafting | `aos-write` | draft one content piece fast — light context, no brand-profile gate (the mid-level writer) — "write a post / draft content" | — |
-| L6–L7 — audience + market | `aos-draft-content` | draft content on a complete brand profile + content-system — a single piece or a multi-piece series (the advanced tier) | — |
-| L6–L7 — content patterns | `aos-build-patterns` | build the client's content pattern library + dialect tone layer → `content-system/patterns.md` | — |
-| L6–L7 — quality gate | `aos-review` | review an artifact against brand + content-system + completeness before it ships — "review this", "is this ready to publish" (the loop's quality gate) | — |
-| cross-layer — coaching | `aos-coach-am` | red-team a plan / brief / deliverable before the client sees it — "pressure-test this", "what am I missing" | — |
-| L6–L7 — distribution | `aos-distribute` | ship a content piece to its channel — channel-format it, advance its status (the loop's distribution stage) | — |
-| cross-layer — discovery prep | `aos-catalogue` | index inbox material + content before discovery | — |
-| cross-layer — knowledge graph | `aos-index-ontology` | index the ontology — rebuild `INDEX.md`, surface unactioned findings ("what have we learned") | — |
-| cross-layer — provenance | `aos-back-statements` | tag material statements with evidence classes — `[DATA]` / `[STATED]` / `[INFERRED]` / `[NARRATIVE]` — and report unsourced claims | — |
-| cross-layer — privacy | `aos-anonymize` | scan an artifact for personal data + produce an anonymised copy — "anonymise this", "scrub the PII", "safe to share" (the privacy gate before anything leaves the granted folder) | — |
-| cross-layer — feedback | `aos-feedback` | report a bug / confusion / missing feature / praise from inside the plugin — "report feedback", "this is broken", "feature request" | — |
-| cross-layer — team / process | `aos-map-jtbd` | survey the GTM team, map input→output per role, find process gaps — "map the team", "who does what" | — |
-| cross-layer — knowledge assembly | `aos-discovery-package` | assemble a populated data folder — import existing material + a fresh-discovery intake — "build the discovery package" | — |
-| cross-layer — registry | `aos-registry` | the person/BU dictionary + account map + access dashboard → `client/REGISTRY.md` — "who has access to what" | — |
-| cross-layer — meeting ingestion | `aos-ingest-meeting` | turn a meeting transcript into tasks — "process this meeting", "turn these notes into tasks" | — |
-| cross-layer — daily routine | `aos-daily` | morning briefing / end-of-day wrap — "start my day", "wrap up the day" | — |
-| cross-layer — operating framework | `aos-fit-framework` | fit AOS to the client's framework (EOS, OKR…) — "we run EOS", "use our meeting format" | — |
-| cross-layer — pitch prep | `aos-prep-pitch` | analyse a tender / RFP, prep the response strategy — "prep this pitch", "should we bid" | — |
-| cross-layer — setup | `aos-onboard` | first-run / "set me up" | — |
-| cross-layer — maintenance | `aos-migrate` | upgrade a data folder behind the plugin's schema | — |
+There is **no hard-coded routing table.** A frozen list cannot see an overlay's
+skills and rots as the core set grows — so the router *compiles* the routing
+picture each turn from the skills actually present. This is how Drupal builds its
+route table (parse every module's routes, compile) and Magento its router chain.
+
+### Compile the routing picture — each routing turn
+
+1. **Enumerate** the skills available this session — every skill the runtime
+   exposes, core and overlay. When layer precision is needed, `Glob` the skill
+   files and `Read` / `Grep` their frontmatter: `name`, `description`, `layer`,
+   `domain`, `connector`, and (overlay) `overlay-mode` / `wraps` / `replaces`.
+2. **Place each** on the 7+1 Layer Framework by its `layer:` frontmatter.
+3. **Match** the user's question to the best-fitting skill (Decision logic above).
+   For a "what can you do" overview, organise the *discovered* set by layer.
+
+### Overlay skills
+
+Overlay skills are discovered exactly like core skills — same frontmatter, same
+layer placement — so a private overlay routes with **zero edits to this skill**.
+Two overlay rules the router honours (`docs/overlay-architecture.md`):
+
+- **Namespaced** — an overlay skill's `name:` is `<customer>-<skill>`; match it
+  by layer + description like any skill.
+- **`overlay-mode:`** — `add` is a normal skill; `wrap` composes before/after a
+  named core skill (route to the core skill; the wrap runs around it);
+  **`replace`** supersedes a named core skill — when a `replace`-mode overlay
+  skill is present, route to **it** instead of the core skill it `replaces:`.
+
+### The AOS loop
+
+The core skill set covers the full loop — `onboard → catalogue → discover →
+brand → plan → content → review → distribute → measure → FND ↺` — across the
+7+1 layers; the loop stages are `aos-plan` / `aos-draft-content` (and `aos-write`)
+/ `aos-review` / `aos-distribute` / `aos-measure` / `aos-index-ontology`.
 
 **Connector gating.** A workflow tagged with a connector needs that connector's
 MCP tools available in the session. A connector counts as connected **only if
@@ -122,11 +125,11 @@ to connect it. Never route into a connector-gated workflow on faith.
 
 ## Status
 
-v0.4.0 — layer-indexed routing + connector gating + language context. The
-routing table covers the full **AOS loop** — `onboard → catalogue → discover →
-brand → plan → content → review → distribute → measure → FND ↺` — with
-`aos-plan`, `aos-review`, `aos-distribute`, `aos-measure`, and the ontology-graph
-maintainer `aos-index-ontology` (architecture-gaps §1 + §2 + §7; see
-`docs/the-loop.md`). `aos-review` (AOS-738, Milestone 1) is the loop's quality
-gate — the workflow tier is complete via the loop + orchestrators (architecture-gaps
-§3, closed). Pattern: `docs/aos-cowork-merged-architecture.md` (ADF repo).
+v0.5.0 — **discovery-based routing** (AOS-809, M11). The hand-maintained routing
+table is gone: the router compiles the routing picture each turn from the skills
+actually available — core **and** any private overlay plugin — so overlay skills
+route with zero edits to this skill, and the core table no longer rots. Overlay
+`overlay-mode` (`add` / `wrap` / `replace`) is honoured. See
+`docs/overlay-architecture.md`.
+
+Prior: v0.4.0 — layer-indexed routing + connector gating + language context.
