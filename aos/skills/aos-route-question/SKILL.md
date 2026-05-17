@@ -88,7 +88,8 @@ each skill's `layer:` frontmatter — keep in sync as skills are added.
 | L4 — funnel + conversion | `aos-diagnose-funnel` | diagnose conversion / funnel performance | **Databox** |
 | L4–L7 — results + learning | `aos-measure` | measure shipped content / campaigns, emit findings (the loop's measurement stage) — "how did it do" | **Databox** |
 | L5 — CRM + lifecycle | `aos-diagnose-lifecycle` | diagnose lifecycle / retention / CRM health | **HubSpot** |
-| L6–L7 — audience + market | `aos-draft-content` | draft a content piece (reference / blog / linkbait) | — |
+| L6–L7 — content drafting | `aos-write` | draft one content piece fast — light context, no brand-profile gate (the mid-level writer) — "write a post / draft content" | — |
+| L6–L7 — audience + market | `aos-draft-content` | draft content on a complete brand profile + content-system — a single piece or a multi-piece series (the advanced tier) | — |
 | L6–L7 — quality gate | `aos-review` | review an artifact against brand + content-system + completeness before it ships — "review this", "is this ready to publish" (the loop's quality gate) | — |
 | L6–L7 — distribution | `aos-distribute` | ship a content piece to its channel — channel-format it, advance its status (the loop's distribution stage) | — |
 | cross-layer — discovery prep | `aos-catalogue` | index inbox material + content before discovery | — |

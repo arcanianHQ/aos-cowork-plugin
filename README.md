@@ -21,10 +21,11 @@ This repo is a single-plugin marketplace — the root
 
 ## What's inside
 
-The `aos` plugin (`aos/`) ships 6 skills — `aos-route-question`, `aos-onboard`,
-`aos-catalogue`, `aos-build-brand`, `aos-build-brand-system`, `aos-draft-content` — plus the
-granted-folder data template and docs. See [`aos/README.md`](aos/README.md) for
-the full picture.
+The `aos` plugin (`aos/`) ships 20 skills — onboarding, cataloguing, brand
+intelligence, content drafting (`aos-write` and `aos-draft-content`), the GTM
+loop (`aos-plan` → `aos-distribute` → `aos-measure` → `aos-review` →
+`aos-index-ontology`), diagnostics, and routing — plus the granted-folder data
+template and docs. See [`aos/README.md`](aos/README.md) for the full picture.
 
 ## Layout
 
