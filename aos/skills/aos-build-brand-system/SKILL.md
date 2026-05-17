@@ -66,7 +66,7 @@ It is an **orchestrator**, not a thinker. The thinking belongs to the sub-skills
 2. Surface it per intelligence file.
 3. Draft each missing file.
 4. Get user confirmation.
-5. Hard-gate on 9/9 before downstream work runs.
+5. Hard-gate on 9/9 FILLED before downstream work runs — every slot is either FILLED or an honest stub-with-reason (never silently skipped).
 
 **Anti-goal:** This skill does NOT replace the sub-skills. If a file is missing rich diagnostic work (e.g., no 7-layer has ever been run), the orchestrator routes the user to run that sub-skill first rather than fake the output.
 
@@ -117,6 +117,7 @@ Completeness: 2/9 (22%)
 Substance thresholds (per `reference/file-substance-criteria.md`):
 - **FILLED**: ≥1500 bytes AND has ≥3 H2/H3 headings AND has ≥1 evidence tag or cited source
 - **STUB**: file exists but <500 bytes, or has fewer than 2 headings
+- **NO-SOURCE**: file exists with `status: stub-no-source` — explicit stub written when harvest had zero matches for that bucket (see Step 3.1)
 - **PARTIAL**: between the two — gets treated as STUB for the gap pass but flagged for user review
 - **MISSING**: file does not exist on disk
 
@@ -260,7 +261,7 @@ Surface this to the user — they should see **what already exists** before any 
 
 Surface the chosen mode to the user before drafting begins. Mode auto-recommendations should err toward stepwise on borderline cases — batch is the optimization, not the default.
 
-**Step 3.1 — Per-file procedure.** Process STUB/PARTIAL/MISSING files in dependency order. Skip files marked FILLED.
+**Step 3.1 — Per-file procedure.** Process STUB/PARTIAL/MISSING files in dependency order. Skip files marked FILLED. The profile always keeps its full 9-file shape: every slot ends **FILLED** or as an honest stub-with-reason — never silently skipped.
 
 **Order (do not change without updating downstream skills):**
 
@@ -274,11 +275,34 @@ Surface the chosen mode to the user before drafting begins. Mode auto-recommenda
 8. `VOICE.md` — depends on BELIEF_PROFILE + ICP
 9. `COMPETITIVE_LANDSCAPE.md` — depends on POSITIONING
 
-**Per-file procedure:**
+**Per-file procedure** — four paths (pick one per file):
 
-1. **Check harvest sufficiency.** Read `reference/file-substance-criteria.md` for the minimum-substance criteria of this file. If harvest matches < minimum:
-   - Route user to run the appropriate sub-skill first: e.g., *"No 7-layer signals found in harvest. Run `/7layer` before this orchestrator can draft 7LAYER_DIAGNOSTIC.md."*
-   - Skip this file for now; continue to next file (but track as blocked at end).
+1. **Classify harvest signal** for this file's bucket in the Step 2c harvest index. Read `reference/file-substance-criteria.md` for minimum-substance criteria and the per-file unblock action.
+   - **Zero matches** → **No-source stub** (below). Do not draft — drafting from zero source is hallucination. Do not silently skip.
+   - **Some matches but below minimum** → **Route** to the appropriate sub-skill (e.g. *"Run `/7layer` before this orchestrator can draft 7LAYER_DIAGNOSTIC.md."*). Do not draft. Continue to the next file; track as blocked in the scorecard.
+   - **Meets minimum** → **Draft** (step 2).
+   - **Website-required defer** (Step 2b gate) → **Defer** — keep STUB; scorecard notes `blocked-on-website-harvest`.
+
+   **No-source stub.** Write `brand/<FILE>.md` immediately (no Accept/Revise/Regenerate — nothing was drafted). Frontmatter:
+
+   ```yaml
+   ---
+   scope: int-confidential
+   client: <slug>
+   generated_by: aos-build-brand-system
+   skill_version: <this skill's version: frontmatter value>
+   generated_date: YYYY-MM-DD
+   aos_schema: <schema-version read from AOS_CONFIG.md>
+   status: stub-no-source
+   ---
+   ```
+
+   Body (one short block, plain language):
+
+   > No source material — this file cannot be drafted from the current harvest. To fill it: <specific unblock from `reference/file-substance-criteria.md` for this file>.
+
+   Surface a one-line note to the user, then write. Re-survey shows **NO-SOURCE** (per `reference/file-substance-criteria.md`).
+
 2. **Draft.** Synthesize a draft from harvested material, using `reference/file-templates/<FILE>.md` as the skeleton. Every claim cites its source file:line.
 3. **Surface to user** (stepwise mode) or **defer to end of batch** (batch mode). When surfacing, show three options:
    - **Accept** — write to `brand/<FILE>.md`
@@ -313,9 +337,9 @@ After the per-file pass, re-run the survey (Step 1 — bash baseline, or `node s
 ```
 ⚠️ HARD GATE — incomplete profile
 
-Blocked files (need sub-skill runs first):
+Blocked / no-source files (not FILLED — need sub-skill, more harvest, or website):
   - 7LAYER_DIAGNOSTIC.md → run /7layer
-  - VOICE.md → run /build-brand (this is the existing thinking skill for associations)
+  - VOICE.md (NO-SOURCE) → add founder correspondence to inbox/ or run website harvest, then re-run
 
 User skipped:
   - POSITIONING.md (regenerate requested but not provided)
@@ -335,7 +359,7 @@ When 9/9 is reached:
 
 ## Hard rules
 
-1. **Cite every claim.** Every drafted paragraph in every file must have a source citation (file:line) from the harvest. No invented intelligence. If no source exists, the file gets routed to a sub-skill, not faked.
+1. **Cite every claim.** Every drafted paragraph must have a source citation (file:line) from the harvest. No invented intelligence. Zero harvest signal → write a **no-source stub** (`status: stub-no-source`), not a draft. Thin but non-zero signal → route to a sub-skill, do not fake-draft.
 2. **User confirms each draft.** No silent writes. Accept / Revise / Regenerate is mandatory per file.
 3. **Hard gate stands.** Do not announce profile complete with <7 substantive files. The gate exists to keep downstream skills from generating thin content on thin intelligence.
 4. **Single client.** The granted folder is one client's folder — operate only within it. There are no other clients' files to read; never reach outside the granted folder for "inspiration."
