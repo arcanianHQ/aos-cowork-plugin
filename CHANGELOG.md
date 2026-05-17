@@ -3,6 +3,17 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.25.2] — 2026-05-17
+
+**M12 dogfood finding — `aos-todoist` Todoist ID round-trip fixed.**
+
+- `aos-todoist` v0.1.2 — the `Todoist ID` column was added only to `## Open`, so
+  a row moving to `## Done` dropped its Todoist link: the "Done row →
+  re-complete" reconcile case was unreachable and a re-opened Todoist task could
+  never be matched back. The ID column now lives on **both** tables and travels
+  with the row; a new reconcile case pulls a task re-opened in Todoist back to
+  `## Open`.
+
 ## [0.25.1] — 2026-05-17
 
 **M12 dogfood finding — `aos-todoist` confirmation gate hardened.**

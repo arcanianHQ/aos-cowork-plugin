@@ -7,7 +7,7 @@ class: system
 domain: strategy
 layer: all
 client-scope: single-client
-version: 0.1.1
+version: 0.1.2
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write, Edit]
 args-hint: "[--mode=<sync|push|pull>] — operates on the granted folder; uses the Todoist connector when present"
@@ -104,11 +104,15 @@ MCP tools are present in the session**.
 | A row in the `## Done` table | a **completed** task |
 | `Source` (the `REC-NNN` / skill) | appended to the task **description**, so the AOS provenance survives in Todoist |
 
-The join key is a **`Todoist ID` column** added to the `## Open` table. On its
-first run against a `TASKS.md` that has the original five columns, `aos-todoist`
-appends a sixth column, `Todoist ID`, and fills it as it creates Todoist tasks.
-That ID is what makes every later sync deterministic and idempotent — a task is
-matched by ID, never re-created by title.
+The join key is a **`Todoist ID` column**, carried on **both** the `## Open`
+and the `## Done` tables. On its first run against a `TASKS.md` with the
+original columns, `aos-todoist` appends `Todoist ID` to each table and fills it
+as it creates Todoist tasks. The ID **travels with a row** when it moves between
+Open and Done — so a completed task can still be traced back to its Todoist
+record, and a task **re-opened** in Todoist can be matched and moved back to
+`## Open`. Dropping the ID at the Open→Done boundary would sever that link and
+break the round-trip. That ID is what makes every sync deterministic and
+idempotent — a task is matched by ID, never re-created by title.
 
 ## Process
 
@@ -149,8 +153,9 @@ Build the reconciliation plan by the join key. The cases (v0.1.0):
 |---|---|
 | Open row, **no** `Todoist ID` | **create** a Todoist task; write the new ID back to the row |
 | Open row, has `Todoist ID`, Todoist task **open**, fields differ | **update** the Todoist task to match `TASKS.md` (`push`/`sync`) |
-| Open row, has `Todoist ID`, Todoist task **completed** | **pull**: move the row to `## Done` in `TASKS.md` |
+| Open row, has `Todoist ID`, Todoist task **completed** | **pull**: move the row to `## Done`, carrying its `Todoist ID` |
 | `Done` row, has `Todoist ID`, Todoist task still **open** | **push**: `complete-tasks` the Todoist task |
+| `Done` row, has `Todoist ID`, Todoist task **re-opened** (uncompleted in Todoist) | **pull**: move the row back to `## Open`, carrying its `Todoist ID` |
 | A Todoist task in the project with **no matching row** | **pull**: offer to add it to `## Open` (a task the operator created directly in Todoist) |
 | Same task changed **on both sides** since last sync | **divergence — do not auto-resolve.** Surface both versions to the user and let them choose. (See Hard Rules.) |
 
@@ -169,8 +174,11 @@ report after. Plan → Accept → write. Then:
 
 - `add-tasks` (max 25 per call) / `update-tasks` / `complete-tasks` on Todoist;
   use `reschedule-tasks`, never `update-tasks`, to move a due date.
-- `Edit` `TASKS.md` — write back `Todoist ID`s, move pulled completions to
-  `## Done`, append operator-added tasks to `## Open`, update `Last updated:`.
+- `Edit` `TASKS.md` — write back `Todoist ID`s; move a pulled completion to
+  `## Done` **carrying its `Todoist ID`** (and a re-opened task back to
+  `## Open` the same way); append operator-added tasks to `## Open`; update
+  `Last updated:`. The `## Done` table gains the `Todoist ID` column on first
+  run, exactly as `## Open` does.
 
 ### Step 5 — Confirm & summarise
 
@@ -226,6 +234,12 @@ provenance survives a round-trip.
 
 ## Versioning
 
+- **v0.1.2** — the `Todoist ID` round-trip fixed (AOS-817 dogfood finding,
+  2026-05-17): the ID column was only added to `## Open`, so a row moving to
+  `## Done` dropped its Todoist link — making the "Done row → re-complete" case
+  unreachable and a re-opened Todoist task impossible to match. The ID column
+  now lives on **both** tables and travels with the row; a new reconcile case
+  pulls a task **re-opened** in Todoist back to `## Open`.
 - **v0.1.1** — the reconciliation-plan confirmation gate hardened (AOS-817
   dogfood finding, 2026-05-17): a live run skipped the Accept/Revise gate on a
   push, self-justifying "the mapping is mechanical". Step 4 + Hard Rule 4 now
