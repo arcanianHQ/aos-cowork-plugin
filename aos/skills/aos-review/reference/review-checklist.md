@@ -49,6 +49,20 @@ Run, in order:
 1. **Assertion test.** Does the piece *say what this brand is*? A piece that
    could be any competitor's — that asserts no `brand/POSITIONING.md` identity —
    is weak. Class `REVISE` (a positioning line can be worked in).
+
+   **Series-beat exception.** If the piece carries `series_framework:` and
+   `beat:` frontmatter, read the beat's role *before* applying the assertion
+   test. Some beats deliberately withhold the brand: a Before-After-Bridge
+   **"Before"** beat (the pain, before the brand enters), a Hero's-Journey
+   **"Ordinary World" / early-arc** beat. For such an identity-withholding beat,
+   asserting no explicit brand identity is the framework working as designed —
+   it is **not** an issue. Apply the assertion test to the brand's **worldview**
+   instead: the piece must still embody the positioning's underlying belief /
+   epistemology (e.g. a measurement-led brand's "Before" beat still frames the
+   pain in measurement terms). Worldview present → pass; worldview absent on an
+   identity-withholding beat → class `REVISE`. The brand-assertion beats of the
+   series (the **"Bridge"**, the Hero's-Journey **"Return"**) still get the full
+   identity assertion test.
 2. **Contradiction test.** Does any line *contradict* `brand/POSITIONING.md` —
    claim a position the brand has explicitly rejected, target an audience the
    positioning excludes, or compete on an axis the positioning disowns? A
@@ -84,11 +98,23 @@ the messaging line.
 For product-tied content (the piece references a product / offer):
 
 1. Read `content-system/[<bu>/]products.md`.
-2. Check **every** product claim in the piece — feature, price, availability,
-   guarantee, comparison — against `products.md`.
-3. A claim `products.md` does not support is class **`BLOCK`**. Shipping an
-   inaccurate product claim is a client-facing factual error — it must not pass.
-   Quote the claim and the `products.md` line (or its absence).
+2. Check every **durable product claim** in the piece — feature, price, spec,
+   guarantee, comparison — against `products.md`. A claim `products.md` does not
+   support is class **`BLOCK`**. Shipping an inaccurate product claim is a
+   client-facing factual error — it must not pass. Quote the claim and the
+   `products.md` line (or its absence).
+3. **Temporal availability claims** — "in stock", "back in stock", "shipping
+   now", "sold out", a stated lead time — are **not** product specs and are
+   **not** verified against `products.md`. `products.md` is a product-spec
+   contract, not live inventory; it carries no stock state and should not. An
+   availability claim is verified by **operator confirmation** — or a
+   campaign-trigger entry in `CAPTAINS_LOG.md`. Do **not** raise an issue
+   against such a claim for "products.md does not support it". Instead record an
+   **operator-confirm note** in the review report's Hand-back section ("confirm
+   <claim> is live before `aos-distribute` ships"). The verdict is unaffected —
+   an otherwise-clean piece still earns `PASS` with the operator-confirm note
+   attached. (It becomes an issue only if the claim is internally contradictory
+   or contradicts a durable `products.md` fact.)
 
 A piece with no product claim skips 2c — note "n/a, no product claim" in the
 report.

@@ -7,7 +7,7 @@ class: intelligence
 domain: quality
 layer: [L6, L7]
 client-scope: single-client
-version: 0.1.0
+version: 0.1.1
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write, Edit]
 args-hint: "--piece=<path-or-slug under content/> [--bu=<bu-slug>] — operates on the granted folder; reviews one artifact"
@@ -233,5 +233,6 @@ Never hard-code `skill_version` or `aos_schema` — read them at write time.
 ## Versioning
 
 - **v0.1.0** — initial Cowork-plugin authoring (AOS-738, architecture-gaps §7 / Milestone 1). The quality gate of the AOS loop — the plugin analogue of the ADF verification gate. The checklist thresholds and the `REVISE` / `BLOCK` boundary likely need refinement after first real runs.
+- **v0.1.1** — first-run refinements (Milestone 2 / v0.15.0 loop re-test). §2c no longer checks temporal availability ("in stock") against `products.md` — `products.md` is a product-spec contract, not live inventory; availability is operator-confirmed via a Hand-back note, verdict unaffected. §1b assertion test is now series-beat-aware — an identity-withholding beat (BAB "Before", Hero's-Journey early arc) is checked for brand *worldview*, not brand *identity*.
 
 **What did we get wrong? What's missing?**

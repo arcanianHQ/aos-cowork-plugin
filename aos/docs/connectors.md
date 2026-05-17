@@ -10,10 +10,18 @@ Installed by default; the client authorises each via OAuth on first use.
 
 | Connector | Endpoint | For |
 |---|---|---|
-| Databox | `https://mcp.databox.com/mcp` | analytics / metrics |
-| HubSpot | `https://mcp.hubspot.com/anthropic` | CRM, leads, campaigns |
-| Google Ads | endpoint TBD — confirm in AOS-724 | paid-search data |
-| GA4 | endpoint TBD — confirm in AOS-724 | web analytics |
+| Databox | `https://mcp.databox.com/mcp` | analytics / metrics — **bundled** in `.mcp.json` |
+| HubSpot | `https://mcp.hubspot.com/anthropic` | CRM, leads, campaigns — **bundled** in `.mcp.json` |
+| Google Ads | no vendor-hosted MCP — **gap** (see below) | paid-search data |
+| GA4 | no vendor-hosted MCP — **gap** (see below) | web analytics |
+
+**Google Ads / GA4 — documented gap (AOS-724).** As of 2026-05, Google ships no
+official vendor-hosted MCP server for Google Ads or GA4. They are therefore
+**not bundled**. Two follow-up paths, neither blocking the plugin: (a) adopt a
+community / BYO MCP per client if one matures, added to that client's
+`.mcp.json`; (b) until then, paid-search and web-analytics signal reaches the
+plugin through **Databox** (which aggregates both) — so `aos-measure` and the
+diagnostics are not blocked.
 
 ## Conditional — per client (NOT bundled)
 
@@ -51,8 +59,20 @@ So any skill that harvests a live page (e.g. `aos-build-brand-system`'s website
 harvest) must **ask the user to paste the URL into chat**, then fetch it in the
 same turn. See `aos-build-brand-system` Step 2b. Tracked: AOS-746.
 
-## Endpoint confirmation
+## Endpoint confirmation (AOS-724)
 
-The Google Ads, GA4, Meta Ads, Semrush, ActiveCampaign and Todoist MCP endpoints
-are not yet confirmed — finalising them (and whether each is a vendor-hosted or community
-MCP) is **AOS-724**.
+- **Bundled, confirmed:** Databox (`https://mcp.databox.com/mcp`), HubSpot
+  (`https://mcp.hubspot.com/anthropic`) — both vendor-hosted, in `.mcp.json`.
+- **Documented gap:** Google Ads, GA4 — no vendor-hosted MCP exists (see the
+  Core table note above); Databox covers the signal in the interim.
+- **Conditional, per-client:** Canva and Slack have vendor-hosted endpoints;
+  Meta Ads, Semrush, ActiveCampaign and Todoist endpoints stay unconfirmed and
+  are added per-client only if and when that client needs them.
+- **Excluded by architecture:** Supabase and Google Drive are *not* connectors —
+  the plugin has no control layer and storage is the granted folder
+  (`DECISIONS_2026-05-15_aos-cowork-no-control-layer.md` §7). The original
+  AOS-724 scope predates that decision.
+
+> **Remaining acceptance item:** live authentication of each bundled connector
+> inside a real Cowork session (OAuth handshake + a data round-trip) is a manual
+> QA step — it cannot be verified from Claude Code / a terminal.
