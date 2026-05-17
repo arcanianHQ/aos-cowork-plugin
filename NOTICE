@@ -16,3 +16,39 @@ services around AOS but does not own the underlying IP.
 
 The full AOS system — the complete skill and pattern libraries, cohort tooling,
 and server-side components — is not part of this repository.
+
+
+Third-party methodologies, frameworks & trademarks
+---------------------------------------------------
+
+AOS is an original synthesis — the 7+1 Layer Framework and the AOS skill set are
+the authors' own work. Where AOS applies established third-party methodologies,
+credit is given here:
+
+- Jobs-to-be-Done (JTBD) — the term was coined by Anthony (Tony) W. Ulwick
+  (Strategyn) in 1990; the "Jobs Theory" framing was popularised by the late
+  Clayton M. Christensen. AOS uses "Jobs-to-be-Done" / "JTBD" as a generic
+  methodology term — no active trademark covers it (a 2015 application was
+  abandoned). AOS does not use, and does not imply endorsement of, Strategyn's
+  Outcome-Driven Innovation process.
+
+- The Hero's Journey (the monomyth) — Joseph Campbell, "The Hero with a Thousand
+  Faces" (1949). Used as one storytelling-framework option in the
+  content-framework library.
+
+- Before-After-Bridge — a classic direct-response copywriting formula in
+  long-standing common use, with no single attributable author. Used as a
+  storytelling-framework option.
+
+- Stages of Awareness ("the awareness ladder") — Eugene M. Schwartz,
+  "Breakthrough Advertising" (1966). Informs the ICP buying-stage model.
+
+Trademarks:
+
+- Outcome-Driven Innovation(R) and Strategyn(R) are trademarks of Strategyn
+  Holdings, LLC. AOS does not use these marks.
+- Claude, Claude Code, and Cowork are trademarks of Anthropic PBC. AOS is an
+  independent plugin for the Claude platform; it is not affiliated with, nor
+  endorsed by, Anthropic.
+
+All other trademarks are the property of their respective owners.

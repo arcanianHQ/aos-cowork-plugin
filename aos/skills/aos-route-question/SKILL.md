@@ -84,6 +84,8 @@ each skill's `layer:` frontmatter — keep in sync as skills are added.
 |---|---|---|---|
 | L0–L3 — foundation + value | `aos-build-brand-system` | client intelligence: the 9-file brand profile | — |
 | L1–L2 — identity + positioning | `aos-build-brand` | brand strategy — associations, growth, pivot | — |
+| L2–L3 — competition | `aos-analyze-competition` | map the competitive field + positioning gaps → `COMPETITIVE_LANDSCAPE.md` — "who are our competitors" | SEMrush |
+| L6 — audience / ICP | `aos-build-icp` | define the Ideal Customer Profile → `ICP.md` — "who is the customer", "build the persona" | — |
 | L2–L4 — strategy + prioritisation | `aos-plan` | turn the brand profile + content-system into a prioritised GTM plan (the loop's planning stage) — "what should we do next" | — |
 | L4 — funnel + conversion | `aos-diagnose-funnel` | diagnose conversion / funnel performance | **Databox** |
 | L4–L7 — results + learning | `aos-measure` | measure shipped content / campaigns, emit findings (the loop's measurement stage) — "how did it do" | **Databox** |

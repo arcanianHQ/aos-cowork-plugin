@@ -136,6 +136,9 @@ Harvest signal patterns:
 
 If harvest yields < 1 substantive segment description → route to `/jtbd-map` instead of drafting.
 
+For a deep, dedicated pass, this file is also filled by the **`aos-build-icp`**
+sub-skill — the deep counterpart to the orchestrator's inline ICP pass.
+
 ---
 
 ## POSITIONING.md
@@ -216,6 +219,9 @@ Minimum-FILLED requires all of:
 - ≥3 monitored pages or keyword clusters per competitor (URLs / keywords for ongoing watch)
 - Cadence statement (how often this gets refreshed)
 - Cites sources (SEMrush data, manual research, Ahrefs, etc.)
+
+For a deep, dedicated pass, this file is filled by the **`aos-analyze-competition`**
+sub-skill — the deep counterpart to the orchestrator's inline competitive pass.
 
 Harvest signal patterns:
 - Competitor research docs anywhere in the client tree
