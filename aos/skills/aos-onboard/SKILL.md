@@ -7,7 +7,7 @@ class: system
 domain: onboarding
 layer: all
 client-scope: single-client
-version: 0.5.0
+version: 0.6.0
 owner: arcanian
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Bash"]
 preflight: []
@@ -56,9 +56,27 @@ Walk the user through first-run setup.
    written in) — they may differ — and write both into `AOS_CONFIG.md`. See
    `docs/language-context.md`.
 
-5. **Connect Databox.** Guide the user to authorise the Databox connector
-   (Settings → Connectors). Confirm with a `List Accounts` call; note the client
-   should authorise *their own* Databox scope.
+5. **Connect the connectors.** Guide the user through Settings → Connectors:
+   - **Bundled** — Databox, HubSpot, Semrush ship in `.mcp.json`; the user
+     authorises each via OAuth on first use. Confirm Databox with a `List
+     Accounts` call; the client authorises *their own* Databox scope.
+   - **ActiveCampaign (per client) — keep it one input.** AC has **no universal
+     endpoint** (each account is its own subdomain), so it is not bundled. Do
+     not make the user hand-craft a connector URL. Ask whether the client uses
+     ActiveCampaign; if so, ask only for their **AC URL** — the one thing they
+     already know (e.g. `wellis14726.activehosted.com`). AOS does the rest:
+     1. derive the account slug from that URL;
+     2. build the connector URL `https://<slug>.activehosted.com/api/agents/mcp/http`;
+     3. write it as an `activecampaign` server into the granted folder's
+        per-client `.mcp.json` (created at the granted-folder root if absent —
+        the documented home for per-client connectors, see `docs/connectors.md`);
+     4. record the slug in `client/REGISTRY.md`;
+     5. hand the user the finished connector URL with **one** paste step —
+        Settings → Connectors → add a remote MCP connector — as the fallback for
+        runtimes that do not auto-load the granted-folder `.mcp.json`.
+     One AC account per install.
+   - **Other conditional connectors** (Canva, Slack, …) — add the same way,
+     only if the client uses that tool. See `docs/connectors.md`.
 
 6. **Set the cadence.** Walk the user through the `schedules:` block in
    `AOS_CONFIG.md` (seeded commented-out from `data-template/`). Recommend the
@@ -135,7 +153,14 @@ is **not** part of this plugin; it extends the operator's `finalize-engagement`
 
 ## Status
 
-v0.5.0 — graduate-bundle import path (AOS-739, Milestone 3): `aos-onboard`
+v0.6.0 — Step 5 broadened to **connect the connectors** (M9): bundled connectors
+(Databox / HubSpot / Semrush) authorise on first use; **ActiveCampaign is added
+per client** — AC has no universal endpoint, so onboarding takes one input (the
+client's AC URL), derives the per-account connector, and writes it to the
+granted folder's per-client `.mcp.json`. AC was removed from the bundled
+`.mcp.json` (a placeholder host is an invalid URL and fails plugin validation).
+
+Prior: v0.5.0 — graduate-bundle import path (AOS-739, Milestone 3): `aos-onboard`
 detects an operator-exported graduate bundle and imports the client's data
 (brand, content, ontology, history) instead of scaffolding an empty template —
 the client-run side of the Stage 1→3 seam. The operator-side export is out of

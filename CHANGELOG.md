@@ -3,6 +3,28 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.23.0] — 2026-05-17
+
+**Connectors — ActiveCampaign per-client (M9).**
+
+- Removed `activecampaign` from the bundled `.mcp.json` — its placeholder host
+  (`YOUR_ACCOUNT.activehosted.com`, an underscore = invalid hostname) failed
+  Cowork plugin validation. AC has no universal endpoint (per-account).
+- `aos-onboard` v0.6.0 — Step 5 "connect the connectors": bundled connectors
+  authorise on first use; **ActiveCampaign is added per client** from one input
+  (the client's AC URL) → the per-account connector, written to the granted
+  folder's `.mcp.json`. `docs/connectors.md` — AC moved to "Conditional".
+
+## [0.22.0] — 2026-05-17
+
+**M11 — the overlay model.**
+
+- `aos-route-question` v0.5.0 — **discovery-based routing**: the hand-maintained
+  routing table is gone; the router compiles the routing picture each turn from
+  the skills actually present, core **and** any private overlay plugin.
+- `docs/overlay-architecture.md` + `docs/overlay-skill-contract.md` — the
+  core/overlay/site model, namespacing, the 3 override modes (add/wrap/replace).
+
 ## [0.21.0] — 2026-05-17
 
 **M3 multi-tenant, M7 feedback, M5 launch docs.**
