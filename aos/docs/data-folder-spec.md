@@ -80,6 +80,14 @@ rule — so a 4-BU client (Wellis) and a single-BU client lay out consistently.
 to resolve the `brand/` path; `content-system/` and `content/` nest per-BU
 regardless of the model.
 
+**`client/CLIENT_CONFIG.md` declares the connectors** — the `## Connectors`
+block lists this client's `required` connectors (`aos-onboard` must wire them),
+`optional` connectors (wired only if the client uses them), and `overlays` (the
+paid product overlays the client is entitled to — e.g. `aos-todoist-overlay`).
+`aos-onboard` Step 5 reads the block and provisions exactly that set; because
+the file lives in the granted folder, the definition is shared across every
+operator working the client. Added in schema version 2.
+
 Rationale: a zone nests per-BU when its *content genuinely differs per BU*
 (messaging, pillars, the content itself). A zone stays per-client when it is a
 **graph or an index** that benefits from being whole — the ontology's edges and

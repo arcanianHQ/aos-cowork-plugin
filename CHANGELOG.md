@@ -3,6 +3,20 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.27.0] — 2026-05-17
+
+**Per-client connectors definition — `CLIENT_CONFIG.md` (AOS-831, schema v2).**
+
+- `client/CLIENT_CONFIG.md` gains a `## Connectors` block: `required` /
+  `optional` connectors + `overlays` (the paid product overlays the client is
+  entitled to). It is the per-client connector definition — and lives in the
+  granted folder, so it is shared across every operator working that client.
+- `aos-onboard` v0.7.0 — Step 4 captures the block; Step 5 reads it and
+  provisions exactly that set instead of asking generically.
+- Schema version → **2**. `aos-migrate` ships the `1→2` step (additive — seeds
+  the empty `## Connectors` block into an older folder).
+- `docs/data-folder-spec.md` documents the block.
+
 ## [0.26.0] — 2026-05-17
 
 **Todoist extracted to a paid-extra overlay — removed from core.**

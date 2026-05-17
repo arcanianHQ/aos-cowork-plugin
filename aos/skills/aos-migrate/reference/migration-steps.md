@@ -10,11 +10,32 @@ Design + the four invariants (ordered, idempotent, non-destructive, logged):
 
 ## Current state
 
-**Schema version: `1`.** There are **no migration steps** — `1` is the initial
-schema, so there is nothing below it to migrate *from*. Every onboarded folder
-is created at `1` (the value in `data-template/AOS_CONFIG.md`).
+**Schema version: `2`.** One migration step — `1→2`, below.
 
-This file is the registry the first real step gets added to.
+### Step 1→2 — the per-client `## Connectors` block
+
+**What changed.** `client/CLIENT_CONFIG.md` gained a `## Connectors` block —
+`required` / `optional` connectors and paid `overlays` — read by `aos-onboard`
+Step 5 to provision exactly the connectors a client needs (AOS-831). The schema
+version moved from 1 to 2.
+
+**Zones / files touched.** `client/CLIENT_CONFIG.md` only.
+
+**Idempotency check.** Skip if `client/CLIENT_CONFIG.md` already contains a
+`## Connectors` heading.
+
+**Operations.** If `client/CLIENT_CONFIG.md` has no `## Connectors` section,
+insert one immediately before `## Notes` (or at end of file if `## Notes` is
+absent) — the `## Connectors` heading, the explanatory line, and the three empty
+fields `required:` / `optional:` / `overlays:` with their guidance comments,
+copied verbatim from `data-template/client/CLIENT_CONFIG.md`. Leave the values
+**blank** — the operator fills them (a later `aos-onboard` run prompts for them).
+Never guess a client's connectors from `.mcp.json`.
+
+**Superseded files.** None — purely additive.
+
+**Log line.** Append to `CAPTAINS_LOG.md`: `schema 1 → 2 — added the
+CLIENT_CONFIG.md ## Connectors block`.
 
 ## Step template — copy this when adding a step
 

@@ -7,7 +7,7 @@ class: system
 domain: onboarding
 layer: all
 client-scope: single-client
-version: 0.6.0
+version: 0.7.0
 owner: arcanian
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Bash"]
 preflight: []
@@ -51,12 +51,19 @@ Walk the user through first-run setup.
 
 4. **Capture client context + languages.** Fill `client/CLIENT_CONFIG.md` and
    `client/DOMAIN_CHANNEL_MAP.yaml` — the client, its business units, domains
-   and channels. Then ask the user the **communication language** (how AOS
-   talks to them) and the **content language** (what created artifacts are
-   written in) — they may differ — and write both into `AOS_CONFIG.md`. See
-   `docs/language-context.md`.
+   and channels. **Capture the `## Connectors` block** — ask which connectors
+   this client *requires*, which are *optional*, and which paid *overlays* they
+   are entitled to; write `required` / `optional` / `overlays`. Then ask the
+   user the **communication language** (how AOS talks to them) and the
+   **content language** (what created artifacts are written in) — they may
+   differ — and write both into `AOS_CONFIG.md`. See `docs/language-context.md`.
 
-5. **Connect the connectors.** Guide the user through Settings → Connectors:
+5. **Connect the connectors.** Read the `## Connectors` block from
+   `client/CLIENT_CONFIG.md` (captured in Step 4) — it is the per-client
+   connector definition, and it tells you exactly what to wire: provision the
+   `required` set, offer each `optional` connector as "connect if the client
+   uses it", and tell the user which paid `overlays` to install (e.g.
+   `aos-todoist-overlay`). Then guide them through Settings → Connectors:
    - **Bundled** — Databox, HubSpot, Semrush ship in `.mcp.json`; the user
      authorises each via OAuth on first use. Confirm Databox with a `List
      Accounts` call; the client authorises *their own* Databox scope.
@@ -153,7 +160,13 @@ is **not** part of this plugin; it extends the operator's `finalize-engagement`
 
 ## Status
 
-v0.6.0 — Step 5 broadened to **connect the connectors** (M9): bundled connectors
+v0.7.0 — the **per-client connectors definition** (AOS-831, schema v2): Step 4
+captures a `## Connectors` block in `CLIENT_CONFIG.md` (`required` / `optional` /
+`overlays`); Step 5 reads it and provisions exactly that set instead of asking
+generically. The block lives in the granted folder, so it is shared across every
+operator working the client. `aos-migrate` seeds it on a v1→v2 folder.
+
+Prior: v0.6.0 — Step 5 broadened to **connect the connectors** (M9): bundled connectors
 (Databox / HubSpot / Semrush) authorise on first use; **ActiveCampaign is added
 per client** — AC has no universal endpoint, so onboarding takes one input (the
 client's AC URL), derives the per-account connector, and writes it to the
