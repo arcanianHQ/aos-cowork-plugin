@@ -12,6 +12,9 @@ default-content-type: linkedin-post
 > is the guide. Run once, it yields **11 distinct content pieces** — one series —
 > that together walk a prospect from "I have an unspoken problem" to "I trust this
 > brand to help me solve it."
+>
+> *Credit: the Hero's Journey / monomyth is Joseph Campbell, "The Hero with a
+> Thousand Faces" (1949). Applied here as a content-series structure. See `NOTICE`.*
 
 ## Arc
 
