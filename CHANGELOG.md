@@ -3,6 +3,18 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.30.1] — 2026-05-17
+
+**Fix — the Zones manifest was behind the structure (Wellis dogfood finding).**
+
+- The `campaigns/` (v4) and `metrics/` (v3) zones were added to the data-folder
+  tree + the data-access router, but **not** to the `AOS_CONFIG.md` Zones
+  manifest table — so the manifest was stale in the template and every
+  scaffolded folder. `data-template/AOS_CONFIG.md` now lists all 10 zones.
+- `aos-migrate` — the `2→3` and `3→4` steps now also add the `metrics` /
+  `campaigns` rows to the manifest. (`aos-onboard`'s "patch the Zones manifest"
+  gap-closer already self-heals an existing folder.)
+
 ## [0.30.0] — 2026-05-17
 
 **Campaign model finalised (AOS-834, schema v5).**

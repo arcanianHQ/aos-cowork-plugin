@@ -53,7 +53,8 @@ customer without the `aos-data-layer` overlay still holds 100% of their data:
 (`data-template/LEADS.md`, `data-template/content/SCHEDULE.md`,
 `data-template/metrics/METRICS.md`) to the matching path in the granted folder,
 creating the `metrics/` directory if absent. The files are empty templates —
-no client data is inferred or filled.
+no client data is inferred or filled. **Also add a `| metrics | granted | fs |`
+row to the `AOS_CONFIG.md` Zones-manifest table** (skip if already present).
 
 **Superseded files.** None — purely additive.
 
@@ -78,6 +79,8 @@ directory and copy `INDEX.md` + `README.md` verbatim from
 `data-template/campaigns/`. If the legacy `dictionaries/campaign.yaml` lists any
 campaigns, note them for the user to re-file via `aos-plan-campaign` — do not
 auto-convert (the new per-campaign file needs a brief the flat YAML never had).
+**Also add a `| campaigns | granted | fs |` row to the `AOS_CONFIG.md`
+Zones-manifest table** (skip if already present).
 
 **Superseded files.** None removed — `dictionaries/campaign.yaml` stays as
 legacy. Purely additive.

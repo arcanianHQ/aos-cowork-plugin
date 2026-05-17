@@ -50,6 +50,8 @@ elsewhere (then give an absolute path + the matching adapter).
 | brand | granted | fs |
 | content | granted | fs |
 | content-system | granted | fs |
+| campaigns | granted | fs |
 | dictionaries | granted | fs |
 | ontology | granted | fs |
+| metrics | granted | fs |
 | deliverables | granted | fs |
