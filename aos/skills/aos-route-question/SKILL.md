@@ -41,8 +41,10 @@ the right workflow. **You route — you do not do the work yourself.**
 
 ## Preflight before routing
 
-- Confirm the granted-folder data structure exists (`AOS_CONFIG.md`, `client/`).
-  If absent → route to `aos-onboard`.
+- **Onboarding gate.** The granted folder counts as onboarded only when
+  `AOS_CONFIG.md` and `client/` exist *and* `AOS_CONFIG.md`'s `client` field is
+  filled with a real slug — not the `<client-slug>` placeholder from
+  `data-template/`. If missing or still a placeholder → route to `aos-onboard`.
 - **Schema check.** Compare `AOS_CONFIG.md`'s `schema-version` to the plugin's
   current schema version in `docs/CURRENT_SCHEMA_VERSION`. If the folder is
   **behind** the plugin, route to `aos-migrate` first — never route into a
