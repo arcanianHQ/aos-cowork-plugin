@@ -10,8 +10,10 @@ Installed by default; the client authorises each via OAuth on first use.
 
 | Connector | Endpoint | For |
 |---|---|---|
-| Databox | `https://mcp.databox.com/mcp` | analytics / metrics — **bundled** in `.mcp.json` |
-| HubSpot | `https://mcp.hubspot.com/anthropic` | CRM, leads, campaigns — **bundled** in `.mcp.json` |
+| Databox | `https://mcp.databox.com/mcp` | analytics / metrics |
+| HubSpot | `https://mcp.hubspot.com/anthropic` | CRM, leads, campaigns |
+| Semrush | `https://mcp.semrush.com/v1/mcp` | SEO / competitive / keyword data |
+| ActiveCampaign | `https://<account>.activehosted.com/api/agents/mcp/http` | email marketing / automation / CRM (see scope note below) |
 | Google Ads | no vendor-hosted MCP — **gap** (see below) | paid-search data |
 | GA4 | no vendor-hosted MCP — **gap** (see below) | web analytics |
 
@@ -23,6 +25,21 @@ community / BYO MCP per client if one matures, added to that client's
 plugin through **Databox** (which aggregates both) — so `aos-measure` and the
 diagnostics are not blocked.
 
+**ActiveCampaign — single connection (Cowork).** ActiveCampaign's official
+Remote MCP is **vendor-hosted per account** on
+`https://<account>.activehosted.com/api/agents/mcp/http` (see
+[ActiveCampaign Remote MCP](https://developers.activecampaign.com/page/mcp)).
+The bundled `.mcp.json` entry ships with the placeholder subdomain
+`YOUR_ACCOUNT` — replace it with the client's account slug (the hostname of
+their AC URL, e.g. `wellis14726` from `wellis14726.activehosted.com`) in
+Settings → Connectors before first use. **One AC account per Cowork install**
+— multi-account / multi-AC connection management (EU + USA instances,
+switching accounts) is **Code-only** (`COWORK_FEATURE_CATALOGUE.md` §6).
+
+**Semrush — bundled.** Vendor-hosted streamable HTTP MCP per
+[Semrush MCP docs](https://developer.semrush.com/api/introduction/semrush-mcp/).
+OAuth or API-key auth depending on the client runtime.
+
 ## Conditional — per client (NOT bundled)
 
 Kept as options — added to a specific client's `.mcp.json` **only if that client
@@ -33,8 +50,6 @@ uses the tool**. Not bundled by default (minimal-connector principle).
 | Canva | `https://mcp.canva.com/mcp` | produces visual content assets |
 | Slack | `https://mcp.slack.com/mcp` | wants briefs / reports delivered to Slack |
 | Meta Ads | endpoint TBD | runs Meta advertising |
-| Semrush | endpoint TBD | wants SEO / competitive data |
-| ActiveCampaign | endpoint TBD | runs email marketing / automation on ActiveCampaign |
 | Todoist | endpoint TBD | manages tasks in Todoist (sync with `TASKS.md`) |
 
 ## Excluded — not used
@@ -59,15 +74,18 @@ So any skill that harvests a live page (e.g. `aos-build-brand-system`'s website
 harvest) must **ask the user to paste the URL into chat**, then fetch it in the
 same turn. See `aos-build-brand-system` Step 2b. Tracked: AOS-746.
 
-## Endpoint confirmation (AOS-724)
+## Endpoint confirmation (AOS-724 / AOS-797)
 
 - **Bundled, confirmed:** Databox (`https://mcp.databox.com/mcp`), HubSpot
-  (`https://mcp.hubspot.com/anthropic`) — both vendor-hosted, in `.mcp.json`.
+  (`https://mcp.hubspot.com/anthropic`), Semrush (`https://mcp.semrush.com/v1/mcp`),
+  ActiveCampaign (per-account
+  `https://<account>.activehosted.com/api/agents/mcp/http` — replace
+  `YOUR_ACCOUNT` in `.mcp.json` on install).
 - **Documented gap:** Google Ads, GA4 — no vendor-hosted MCP exists (see the
   Core table note above); Databox covers the signal in the interim.
 - **Conditional, per-client:** Canva and Slack have vendor-hosted endpoints;
-  Meta Ads, Semrush, ActiveCampaign and Todoist endpoints stay unconfirmed and
-  are added per-client only if and when that client needs them.
+  Meta Ads and Todoist endpoints stay unconfirmed and are added per-client only
+  if and when that client needs them.
 - **Excluded by architecture:** Supabase and Google Drive are *not* connectors —
   the plugin has no control layer and storage is the granted folder
   (`DECISIONS_2026-05-15_aos-cowork-no-control-layer.md` §7). The original

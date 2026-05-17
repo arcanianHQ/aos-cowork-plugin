@@ -94,6 +94,7 @@ each skill's `layer:` frontmatter — keep in sync as skills are added.
 | L6–L7 — distribution | `aos-distribute` | ship a content piece to its channel — channel-format it, advance its status (the loop's distribution stage) | — |
 | cross-layer — discovery prep | `aos-catalogue` | index inbox material + content before discovery | — |
 | cross-layer — knowledge graph | `aos-index-ontology` | index the ontology — rebuild `INDEX.md`, surface unactioned findings ("what have we learned") | — |
+| cross-layer — provenance | `aos-back-statements` | tag material statements with evidence classes — `[DATA]` / `[STATED]` / `[INFERRED]` / `[NARRATIVE]` — and report unsourced claims | — |
 | cross-layer — setup | `aos-onboard` | first-run / "set me up" | — |
 | cross-layer — maintenance | `aos-migrate` | upgrade a data folder behind the plugin's schema | — |
 
