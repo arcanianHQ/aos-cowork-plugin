@@ -10,7 +10,7 @@ every skill to resolve where data lives — see `docs/data-access-router.md`.
 - **communication-language**: <lang>  # how skills talk to the user (see docs/language-context.md)
 - **content-language**: <lang>         # language of created / delivered artifacts
 - **plugin-version**: <plugin-version>
-- **schema-version**: 4               # data-folder layout version (migration — AOS-755)
+- **schema-version**: 5               # data-folder layout version (migration — AOS-755)
 - **created**: <date>
 
 ## Schedules — recurring workflows

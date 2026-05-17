@@ -8,14 +8,14 @@ overlay.
 
 ## Scheduled
 
-| Title | Type | Channel | Scheduled for | Status | Piece | BU |
-|---|---|---|---|---|---|---|
-| _(none yet — scheduled pieces are added as the plan sets dates)_ | | | | | | |
+| Title | Campaign | Type | Channel | Scheduled for | Status | Piece | BU |
+|---|---|---|---|---|---|---|---|
+| _(none yet — scheduled pieces are added as the plan sets dates)_ | | | | | | | |
 
 ## Published
 
-| Title | Channel | URL | Published |
-|---|---|---|---|
+| Title | Campaign | Channel | URL | Published |
+|---|---|---|---|---|
 
 ---
 Last updated: —

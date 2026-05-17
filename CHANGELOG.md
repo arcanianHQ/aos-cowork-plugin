@@ -3,6 +3,20 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.30.0] — 2026-05-17
+
+**Campaign model finalised (AOS-834, schema v5).**
+
+- Per-campaign files gain a **`## KPIs` table** (one row per metric — target /
+  actual / unit); the single `kpi:` frontmatter field is dropped.
+- **Themes get their own files** — `campaigns/themes/<slug>.md` (narrative,
+  budget, window); a campaign's `theme:` is a slug referencing one.
+- `content/SCHEDULE.md` + `content/CATALOGUE.md` gain a **`Campaign`** column.
+- `aos-plan-campaign` v0.3.0 — writes the KPIs table + the theme file.
+- Schema → **5**; `aos-migrate` ships the additive `4→5` step.
+- DB side (applied to AOS Cloud): a `campaign_kpis` table, `campaign_id` on
+  `content_schedule` / `publications`, `slug` on `campaigns` / `campaign_themes`.
+
 ## [0.29.0] — 2026-05-17
 
 **The `campaigns/` zone — campaigns modelled properly (AOS-834, schema v4).**

@@ -17,10 +17,10 @@ _(empty — run the `aos-catalogue` skill once content exists)_
 ### <series-slug>  ·  framework: <storytelling-framework>  ·  BU: <bu or —>
 Run: <YYYY-MM-DD>  ·  <N>/<total> pieces drafted  ·  status: in-progress | complete
 
-| # | Piece | Beat | Content type | Pillar | Status | Created |
-|---|---|---|---|---|---|---|
-| 01 | <file> | <beat> | linkedin-post | <pillar> | draft | <date> |
-| …  | …      | …      | …             | …        | …     | …      |
+| # | Piece | Beat | Content type | Pillar | Campaign | Status | Created |
+|---|---|---|---|---|---|---|---|
+| 01 | <file> | <beat> | linkedin-post | <pillar> | <campaign or —> | draft | <date> |
+| …  | …      | …      | …             | …        | …               | …     | …      |
 -->
 
 ## Single pieces (not part of a series)

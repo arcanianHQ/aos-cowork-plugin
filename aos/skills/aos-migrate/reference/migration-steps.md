@@ -10,7 +10,7 @@ Design + the four invariants (ordered, idempotent, non-destructive, logged):
 
 ## Current state
 
-**Schema version: `4`.** Three migration steps — `1→2`, `2→3`, `3→4`, below.
+**Schema version: `5`.** Four migration steps — `1→2`, `2→3`, `3→4`, `4→5`, below.
 
 ### Step 1→2 — the per-client `## Connectors` block
 
@@ -84,6 +84,31 @@ legacy. Purely additive.
 
 **Log line.** Append to `CAPTAINS_LOG.md`: `schema 3 → 4 — added the campaigns/
 zone`.
+
+### Step 4→5 — the campaign model refinements
+
+**What changed.** The finalised campaign model (AOS-834): per-campaign files
+gain a `## KPIs` table, themes get their own files in `campaigns/themes/`, and
+`content/SCHEDULE.md` + `content/CATALOGUE.md` gain a `Campaign` column. The
+schema version moved from 4 to 5.
+
+**Zones / files touched.** Creates `campaigns/themes/`. Adds a `Campaign`
+column to `content/SCHEDULE.md` and `content/CATALOGUE.md` if missing.
+
+**Idempotency check.** Skip the directory step if `campaigns/themes/` exists;
+skip the column step on a file that already has a `Campaign` column.
+
+**Operations.** Create the `campaigns/themes/` directory (copy
+`data-template/campaigns/themes/.gitkeep`). For `content/SCHEDULE.md` and
+`content/CATALOGUE.md`, add a `Campaign` column to their tables if absent —
+header + separator + an empty cell per existing row; never drop a row. Existing
+per-campaign files keep working; the `## KPIs` table is added by
+`aos-plan-campaign` on the next campaign run, not retro-fitted here.
+
+**Superseded files.** None — purely additive.
+
+**Log line.** Append to `CAPTAINS_LOG.md`: `schema 4 → 5 — campaign model
+refinements (campaigns/themes/, Campaign column)`.
 
 ## Step template — copy this when adding a step
 
