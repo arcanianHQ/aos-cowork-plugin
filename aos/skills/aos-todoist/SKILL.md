@@ -7,7 +7,7 @@ class: system
 domain: strategy
 layer: all
 client-scope: single-client
-version: 0.1.0
+version: 0.1.1
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write, Edit]
 args-hint: "[--mode=<sync|push|pull>] — operates on the granted folder; uses the Todoist connector when present"
@@ -159,8 +159,13 @@ Build the reconciliation plan by the join key. The cases (v0.1.0):
 
 ### Step 4 — Apply
 
-Present the full reconciliation plan — every create / update / complete / pull,
-counted — and get **Accept / Revise** before any write. Then:
+**Show the reconciliation plan first — then write. This gate is not skippable.**
+Present every create / update / complete / pull, counted, and get **Accept /
+Revise** before *any* Todoist write or `TASKS.md` edit. A push that looks
+mechanical ("just three creates", "the mapping is obvious") still creates real
+tasks in the user's **real Todoist account** — an outward-facing write that is
+not freely reversible. "It's mechanical" is never grounds to execute first and
+report after. Plan → Accept → write. Then:
 
 - `add-tasks` (max 25 per call) / `update-tasks` / `complete-tasks` on Todoist;
   use `reschedule-tasks`, never `update-tasks`, to move a due date.
@@ -188,8 +193,11 @@ provenance survives a round-trip.
 3. **Never auto-resolve a divergence.** A task edited on both sides since the
    last sync is shown to the user with both versions — the user decides. Same
    posture as a wiki conflict: surface, don't guess.
-4. **Confirm before writing.** The reconciliation plan is shown — Accept /
-   Revise — before any Todoist write or any `TASKS.md` edit.
+4. **Confirm before writing — no exceptions.** The reconciliation plan is shown
+   and **Accepted** before any Todoist write or any `TASKS.md` edit. "The
+   mapping is mechanical" / "it is only a few creates" is **not** grounds to
+   skip the gate — a push writes to the user's real Todoist account. Plan →
+   Accept → write, every run, every direction.
 5. **`TASKS.md` stays authoritative for existence; Todoist for completion.** A
    task is born in `TASKS.md`; it is finished in Todoist. Respect both.
 6. **Single client.** One granted folder ⇄ one Todoist project. Never touch
@@ -218,6 +226,11 @@ provenance survives a round-trip.
 
 ## Versioning
 
+- **v0.1.1** — the reconciliation-plan confirmation gate hardened (AOS-817
+  dogfood finding, 2026-05-17): a live run skipped the Accept/Revise gate on a
+  push, self-justifying "the mapping is mechanical". Step 4 + Hard Rule 4 now
+  state the gate is not skippable — a push creates real tasks in the user's real
+  Todoist account; plan → Accept → write, every run.
 - **v0.1.0** — initial Cowork-plugin authoring (AOS-817, Milestone 12 —
   Arcanian Dogfood). The `TASKS.md` ⇄ Todoist sync bridge: connector-gated,
   ID-keyed and idempotent, `TASKS.md`-authoritative-for-existence /

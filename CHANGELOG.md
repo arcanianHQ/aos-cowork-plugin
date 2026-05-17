@@ -3,6 +3,16 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.25.1] — 2026-05-17
+
+**M12 dogfood finding — `aos-todoist` confirmation gate hardened.**
+
+- `aos-todoist` v0.1.1 — a live Cowork run skipped the reconciliation-plan
+  Accept/Revise gate on a push, self-justifying "the mapping is mechanical".
+  Step 4 + Hard Rule 4 now state the gate is **not skippable** — a push creates
+  real tasks in the user's real Todoist account (outward-facing, not freely
+  reversible). Plan → Accept → write, every run, every direction.
+
 ## [0.25.0] — 2026-05-17
 
 **M12 — Todoist connector wiring (AOS-820).**
