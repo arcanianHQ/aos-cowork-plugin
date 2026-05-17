@@ -3,6 +3,19 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.25.0] — 2026-05-17
+
+**M12 — Todoist connector wiring (AOS-820).**
+
+- `docs/connectors.md` — Todoist moved from "endpoint TBD" to a documented
+  conditional connector: added from Settings → Connectors (OAuth, no custom
+  URL), paired with `aos-todoist`.
+- `aos-onboard` Step 5 — adds the Todoist connector per install when the
+  operator runs tasks in Todoist.
+- `aos-daily` v0.2.0 — brackets the day with `aos-todoist`: `--mode=pull` before
+  the morning brief so `TASKS.md` is current, `--mode=sync` at the end-of-day
+  wrap. No dependency — skipped cleanly when Todoist is absent.
+
 ## [0.24.0] — 2026-05-17
 
 **M12 — `aos-todoist`, the task-sync bridge.**
