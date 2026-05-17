@@ -90,16 +90,25 @@ each skill's `layer:` frontmatter — keep in sync as skills are added.
 | L3–L7 — campaign planning | `aos-plan-campaign` | write a campaign brief (dealer / retail / brand) — "plan the <occasion> campaign", "brief the promotion" | — |
 | L4 — funnel + conversion | `aos-diagnose-funnel` | diagnose conversion / funnel performance | **Databox** |
 | L4–L7 — results + learning | `aos-measure` | measure shipped content / campaigns, emit findings (the loop's measurement stage) — "how did it do" | **Databox** |
+| L4–L7 — baseline | `aos-set-baseline` | set a seasonality-aware performance baseline before a campaign — "what's normal for this metric" | Databox |
 | L5 — CRM + lifecycle | `aos-diagnose-lifecycle` | diagnose lifecycle / retention / CRM health | **HubSpot** |
 | L6–L7 — content drafting | `aos-write` | draft one content piece fast — light context, no brand-profile gate (the mid-level writer) — "write a post / draft content" | — |
 | L6–L7 — audience + market | `aos-draft-content` | draft content on a complete brand profile + content-system — a single piece or a multi-piece series (the advanced tier) | — |
+| L6–L7 — content patterns | `aos-build-patterns` | build the client's content pattern library + dialect tone layer → `content-system/patterns.md` | — |
 | L6–L7 — quality gate | `aos-review` | review an artifact against brand + content-system + completeness before it ships — "review this", "is this ready to publish" (the loop's quality gate) | — |
+| cross-layer — coaching | `aos-coach-am` | red-team a plan / brief / deliverable before the client sees it — "pressure-test this", "what am I missing" | — |
 | L6–L7 — distribution | `aos-distribute` | ship a content piece to its channel — channel-format it, advance its status (the loop's distribution stage) | — |
 | cross-layer — discovery prep | `aos-catalogue` | index inbox material + content before discovery | — |
 | cross-layer — knowledge graph | `aos-index-ontology` | index the ontology — rebuild `INDEX.md`, surface unactioned findings ("what have we learned") | — |
 | cross-layer — provenance | `aos-back-statements` | tag material statements with evidence classes — `[DATA]` / `[STATED]` / `[INFERRED]` / `[NARRATIVE]` — and report unsourced claims | — |
 | cross-layer — privacy | `aos-anonymize` | scan an artifact for personal data + produce an anonymised copy — "anonymise this", "scrub the PII", "safe to share" (the privacy gate before anything leaves the granted folder) | — |
 | cross-layer — team / process | `aos-map-jtbd` | survey the GTM team, map input→output per role, find process gaps — "map the team", "who does what" | — |
+| cross-layer — knowledge assembly | `aos-discovery-package` | assemble a populated data folder — import existing material + a fresh-discovery intake — "build the discovery package" | — |
+| cross-layer — registry | `aos-registry` | the person/BU dictionary + account map + access dashboard → `client/REGISTRY.md` — "who has access to what" | — |
+| cross-layer — meeting ingestion | `aos-ingest-meeting` | turn a meeting transcript into tasks — "process this meeting", "turn these notes into tasks" | — |
+| cross-layer — daily routine | `aos-daily` | morning briefing / end-of-day wrap — "start my day", "wrap up the day" | — |
+| cross-layer — operating framework | `aos-fit-framework` | fit AOS to the client's framework (EOS, OKR…) — "we run EOS", "use our meeting format" | — |
+| cross-layer — pitch prep | `aos-prep-pitch` | analyse a tender / RFP, prep the response strategy — "prep this pitch", "should we bid" | — |
 | cross-layer — setup | `aos-onboard` | first-run / "set me up" | — |
 | cross-layer — maintenance | `aos-migrate` | upgrade a data folder behind the plugin's schema | — |
 
