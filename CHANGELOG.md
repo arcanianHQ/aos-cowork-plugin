@@ -3,6 +3,19 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.24.0] — 2026-05-17
+
+**M12 — `aos-todoist`, the task-sync bridge.**
+
+- **`aos-todoist`** — syncs the engagement task list (`TASKS.md`) with a Todoist
+  project. Connector-gated on Todoist (no degraded mode — a task sync with no
+  target has no half-state). ID-keyed via a `Todoist ID` column → idempotent.
+  `TASKS.md` stays authoritative for *what work exists*; Todoist is authoritative
+  for *completion*. Divergence is surfaced to the user, never auto-resolved.
+- Lets the operator run a busy day (5–10 parallel tasks) in Todoist while AOS
+  keeps `TASKS.md` as the system of record. Folds in the AOS-818 mapping model +
+  AOS-819 conflict semantics at v0.1.0 strength.
+
 ## [0.23.0] — 2026-05-17
 
 **Connectors — ActiveCampaign per-client (M9).**
