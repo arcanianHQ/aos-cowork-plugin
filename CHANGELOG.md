@@ -3,6 +3,20 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.27.1] — 2026-05-17
+
+**M12 dogfood finding — schema check poisoned by a stray `aos/` copy.**
+
+- A live `aos-onboard` run compared the folder's `schema-version` against a
+  **stale `aos/` plugin copy** that happened to sit beside the granted folder
+  (schema 1) instead of the installed plugin (schema 2) — so a folder that was
+  *behind* read as *current*, and migration was wrongly skipped.
+- `aos-onboard` v0.7.1 + `aos-migrate` v0.1.1 — the plugin schema version is now
+  pinned to the literal `2` in the skill text, and both skills are explicitly
+  barred from reading schema / version / template files out of the granted
+  folder or any `aos/` directory in its tree. New `aos-onboard` guardrail:
+  plugin files never live in the granted folder.
+
 ## [0.27.0] — 2026-05-17
 
 **Per-client connectors definition — `CLIENT_CONFIG.md` (AOS-831, schema v2).**

@@ -7,7 +7,7 @@ class: system
 domain: onboarding
 layer: all
 client-scope: single-client
-version: 0.7.0
+version: 0.7.1
 owner: arcanian
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Bash"]
 preflight: []
@@ -102,18 +102,24 @@ Walk the user through first-run setup.
 
 When this skill runs against a granted folder that **already has** an
 `AOS_CONFIG.md` (a re-run, or onboarding onto a previously-used folder), compare
-its `schema-version` to the plugin's current schema version in
-`docs/CURRENT_SCHEMA_VERSION`:
+its `schema-version` to **this plugin build's schema version, which is `2`**.
 
-- folder `schema-version` **<** plugin's → the folder is **behind**. Do not
+> **The plugin schema version is the literal `2`** — stated here and in the
+> plugin's own `docs/CURRENT_SCHEMA_VERSION`. **Never read it from the granted
+> folder or from any `aos/` directory inside or beside it.** The granted folder
+> holds *client data only* — it never contains plugin files. A stray `aos/`
+> copy near the granted folder is **not** "the plugin"; ignore it entirely. The
+> literal `2` in this skill is authoritative.
+
+- folder `schema-version` **<** `2` → the folder is **behind**. Do not
   re-scaffold; tell the user the data folder predates this plugin build and
   **suggest running `aos-migrate`** before any workflow.
-- folder `schema-version` **>** plugin's → the folder is newer than the plugin;
+- folder `schema-version` **>** `2` → the folder is newer than the plugin;
   advise updating the plugin (do not write to the folder).
-- equal → current; proceed normally.
+- folder `schema-version` **==** `2` → current; proceed normally.
 
-A fresh install seeds `schema-version` from `data-template/AOS_CONFIG.md`, so a
-brand-new folder is always current. See `docs/artifact-versioning.md` §2.
+A fresh install seeds `schema-version: 2` from `data-template/AOS_CONFIG.md`, so
+a brand-new folder is always current. See `docs/artifact-versioning.md` §2.
 
 ## Graduate-bundle import (Stage 1 → 3)
 
@@ -154,13 +160,25 @@ is **not** part of this plugin; it extends the operator's `finalize-engagement`
   empty one. Confirm with the user before writing.
 - Storage is plain file ops. Never create a database file on a granted / FUSE
   folder (FUSE mounts can't host a live SQLite DB).
+- **Plugin files never live in the granted folder.** `docs/`, `data-template/`,
+  `CURRENT_SCHEMA_VERSION`, `plugin.json` belong to the *installed plugin*, not
+  the client's data folder. If an `aos/` directory appears inside or beside the
+  granted folder, it is stale client-side cruft — **never** read schema,
+  version, or template data from it. Resolve the schema version from the literal
+  in "Existing-folder schema check"; resolve the template from the installed
+  plugin only.
 - **The manifest and the structure must match.** Every zone the Zones manifest
   declares must actually be scaffolded at that location — a manifest entry with
   no folder behind it is a broken install the data-access router will fail on.
 
 ## Status
 
-v0.7.0 — the **per-client connectors definition** (AOS-831, schema v2): Step 4
+v0.7.1 — the schema check is pinned to the literal plugin schema version (`2`)
+and barred from reading schema/version/template files out of the granted-folder
+tree (M12 dogfood finding: a stray `aos/` plugin copy beside the granted folder
+was mistaken for "the plugin", so a behind folder read as current).
+
+Prior: v0.7.0 — the **per-client connectors definition** (AOS-831, schema v2): Step 4
 captures a `## Connectors` block in `CLIENT_CONFIG.md` (`required` / `optional` /
 `overlays`); Step 5 reads it and provisions exactly that set instead of asking
 generically. The block lives in the granted folder, so it is shared across every
