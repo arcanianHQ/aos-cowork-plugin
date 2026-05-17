@@ -37,8 +37,8 @@ overridden only when it genuinely lives elsewhere.
 ## Zones
 
 `client` · `inbox` · `brand` · `content` · `content-system` · `dictionaries` ·
-`ontology` · `deliverables` — plus the root files (`AOS_CONFIG.md`, `TASKS.md`,
-`CAPTAINS_LOG.md`).
+`ontology` · `metrics` · `deliverables` — plus the root files (`AOS_CONFIG.md`,
+`TASKS.md`, `LEADS.md`, `CAPTAINS_LOG.md`).
 
 ## Resolution — what a skill does
 

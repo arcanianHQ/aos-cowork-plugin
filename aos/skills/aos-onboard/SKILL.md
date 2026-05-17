@@ -7,7 +7,7 @@ class: system
 domain: onboarding
 layer: all
 client-scope: single-client
-version: 0.7.2
+version: 0.7.3
 owner: arcanian
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Bash"]
 preflight: []
@@ -102,23 +102,23 @@ Walk the user through first-run setup.
 
 When this skill runs against a granted folder that **already has** an
 `AOS_CONFIG.md` (a re-run, or onboarding onto a previously-used folder), compare
-its `schema-version` to **this plugin build's schema version, which is `2`**.
+its `schema-version` to **this plugin build's schema version, which is `3`**.
 
-> **The plugin schema version is the literal `2`** — stated here and in the
+> **The plugin schema version is the literal `3`** — stated here and in the
 > plugin's own `docs/CURRENT_SCHEMA_VERSION`. **Never read it from the granted
 > folder or from any `aos/` directory inside or beside it.** The granted folder
 > holds *client data only* — it never contains plugin files. A stray `aos/`
 > copy near the granted folder is **not** "the plugin"; ignore it entirely. The
-> literal `2` in this skill is authoritative.
+> literal `3` in this skill is authoritative.
 
-- folder `schema-version` **<** `2` → the folder is **behind**. Do not
+- folder `schema-version` **<** `3` → the folder is **behind**. Do not
   re-scaffold; tell the user the data folder predates this plugin build and
   **suggest running `aos-migrate`** before any workflow.
-- folder `schema-version` **>** `2` → the folder is newer than the plugin;
+- folder `schema-version` **>** `3` → the folder is newer than the plugin;
   advise updating the plugin (do not write to the folder).
-- folder `schema-version` **==** `2` → current; proceed normally.
+- folder `schema-version` **==** `3` → current; proceed normally.
 
-A fresh install seeds `schema-version: 2` from `data-template/AOS_CONFIG.md`, so
+A fresh install seeds `schema-version: 3` from `data-template/AOS_CONFIG.md`, so
 a brand-new folder is always current. See `docs/artifact-versioning.md` §2.
 
 **Refresh the `plugin-version` stamp.** Whenever this skill runs against an
@@ -181,7 +181,11 @@ is **not** part of this plugin; it extends the operator's `finalize-engagement`
 
 ## Status
 
-v0.7.2 — a run against an existing folder refreshes the `plugin-version` stamp
+v0.7.3 — schema version 3: the no-DAL file-zones (`LEADS.md`,
+`content/SCHEDULE.md`, `metrics/`) are scaffolded on a fresh install; the schema
+literal moved 2 → 3 (AOS-832).
+
+Prior: v0.7.2 — a run against an existing folder refreshes the `plugin-version` stamp
 in `AOS_CONFIG.md` (M12 dogfood finding: the stamp went stale at `0.13.0`),
 read from the installed plugin, never the granted-folder tree.
 

@@ -18,6 +18,7 @@ is simply local-only — still works.
 AOS/                           the granted folder
 ├── AOS_CONFIG.md              install config — client, BUs, paths, mode
 ├── TASKS.md                   engagement task list — REC → tasks, layer-tagged
+├── LEADS.md                    lead pipeline — stage / score / source, BU-tagged
 ├── CAPTAINS_LOG.md             running engagement log — sessions, decisions, events
 ├── client/
 │   ├── CLIENT_CONFIG.md       client profile
@@ -34,7 +35,8 @@ AOS/                           the granted folder
 ├── content/
 │   ├── <series-slug>/         a content series (one storytelling-framework run, ~10–11 pieces + INDEX.md)
 │   ├── <bu>/                  multi-BU: series + single pieces nest under the BU folder
-│   └── CATALOGUE.md            content index — by series — built by the `aos-catalogue` skill
+│   ├── CATALOGUE.md            content index — by series — built by the `aos-catalogue` skill
+│   └── SCHEDULE.md             content calendar — scheduled + published (BU column)
 ├── dictionaries/
 │   ├── access.yaml            Access dictionary — accounts / properties
 │   ├── campaign.yaml          Campaign dictionary
@@ -44,6 +46,8 @@ AOS/                           the granted folder
 │   ├── recommendations/       REC-NNN-*.md  — what to do
 │   ├── gotchas/               GOT-NNN-*.md  — anti-patterns / traps to avoid
 │   └── INDEX.md               graph view — built by the `ontology` skill
+├── metrics/                   measurement inputs — channel metrics + analytics exports
+│   └── METRICS.md             the metrics table, BU-tagged
 ├── deliverables/
 │   └── <YYYY-MM>/             reports, decks
 └── .aos/                      runtime artifacts (rebuildable; safe to delete)
@@ -87,6 +91,14 @@ paid product overlays the client is entitled to — e.g. `aos-todoist-overlay`).
 `aos-onboard` Step 5 reads the block and provisions exactly that set; because
 the file lives in the granted folder, the definition is shared across every
 operator working the client. Added in schema version 2.
+
+**`LEADS.md`, `content/SCHEDULE.md` and `metrics/` are per-client tables**
+(schema version 3) — like `TASKS.md` and `content/CATALOGUE.md` they are
+*indexes*, so they do not nest per-BU; each row carries a `BU` column instead.
+They are the **filesystem form** of the leads / content-schedule / metrics zones
+— present for every install, so a customer without the `aos-data-layer` overlay
+still has the full data. The overlay only ever *accelerates* these zones; it
+never introduces one.
 
 Rationale: a zone nests per-BU when its *content genuinely differs per BU*
 (messaging, pillars, the content itself). A zone stays per-client when it is a

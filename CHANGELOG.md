@@ -3,6 +3,20 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.28.0] — 2026-05-17
+
+**The no-DAL file-zones — every zone has a filesystem form (AOS-832, schema v3).**
+
+- New filesystem zones so a customer without the `aos-data-layer` overlay holds
+  100% of their data: **`LEADS.md`** (root — the lead pipeline), **`content/SCHEDULE.md`**
+  (the content calendar), and the **`metrics/`** zone (`metrics/METRICS.md` —
+  measurement inputs). All are per-client tables with a `BU` column — indexes
+  do not nest per-BU.
+- Schema version → **3**. `aos-migrate` ships the `2→3` step (additive — copies
+  the three templates into an older folder). `aos-onboard` v0.7.3 / `aos-migrate`
+  v0.1.3 — schema literal moved 2 → 3.
+- `docs/data-folder-spec.md` + `docs/data-access-router.md` document the zones.
+
 ## [0.27.2] — 2026-05-17
 
 **M12 dogfood finding — the `plugin-version` stamp self-heals.**

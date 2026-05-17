@@ -1,6 +1,6 @@
 {
   "name": "aos",
-  "version": "0.27.2",
+  "version": "0.28.0",
   "description": "AOS — the Go-To-Market operating system as a Claude plugin. Layer-indexed routing (7+1 Layer Framework) over GTM workflows and skills. Client-run Stage-3 delivery for Cowork; self-contained, no backend.",
   "author": { "name": "Arcanian" },
   "keywords": ["aos", "gtm", "go-to-market", "marketing", "arcanian", "cowork"]

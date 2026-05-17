@@ -10,7 +10,7 @@ Design + the four invariants (ordered, idempotent, non-destructive, logged):
 
 ## Current state
 
-**Schema version: `2`.** One migration step — `1→2`, below.
+**Schema version: `3`.** Two migration steps — `1→2` and `2→3`, below.
 
 ### Step 1→2 — the per-client `## Connectors` block
 
@@ -36,6 +36,29 @@ Never guess a client's connectors from `.mcp.json`.
 
 **Log line.** Append to `CAPTAINS_LOG.md`: `schema 1 → 2 — added the
 CLIENT_CONFIG.md ## Connectors block`.
+
+### Step 2→3 — the no-DAL file-zones (leads, content schedule, metrics)
+
+**What changed.** The data-folder model gained three filesystem zones so a
+customer without the `aos-data-layer` overlay still holds 100% of their data:
+`LEADS.md` (root), `content/SCHEDULE.md`, and the `metrics/` zone with
+`metrics/METRICS.md` (AOS-832). The schema version moved from 2 to 3.
+
+**Zones / files touched.** Creates `LEADS.md`, `content/SCHEDULE.md`,
+`metrics/METRICS.md` — nothing existing is read or rewritten.
+
+**Idempotency check.** For each of the three files, skip if it already exists.
+
+**Operations.** For each missing file, copy it verbatim from `data-template/`
+(`data-template/LEADS.md`, `data-template/content/SCHEDULE.md`,
+`data-template/metrics/METRICS.md`) to the matching path in the granted folder,
+creating the `metrics/` directory if absent. The files are empty templates —
+no client data is inferred or filled.
+
+**Superseded files.** None — purely additive.
+
+**Log line.** Append to `CAPTAINS_LOG.md`: `schema 2 → 3 — added the LEADS.md /
+content/SCHEDULE.md / metrics/ file-zones`.
 
 ## Step template — copy this when adding a step
 
