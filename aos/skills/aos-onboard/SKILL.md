@@ -7,7 +7,7 @@ class: system
 domain: onboarding
 layer: all
 client-scope: single-client
-version: 0.4.0
+version: 0.5.0
 owner: arcanian
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Bash"]
 preflight: []
@@ -35,9 +35,13 @@ Walk the user through first-run setup.
    Drive folder. Note each choice — it drives the manifest in Step 3.
 
 3. **Instantiate + write the location manifest.**
-   - If the granted folder is empty, copy this plugin's `data-template/` into it.
-     Scaffold **every zone at the location chosen in Step 2** — a zone placed
-     elsewhere is created *there*, not in the granted folder.
+   - **First, check for a graduate bundle** (see "Graduate-bundle import" below).
+     If the granted folder holds — or the user points at — an operator-exported
+     graduate bundle, **import it** instead of scaffolding an empty template, then
+     continue at the `AOS_CONFIG.md` bullet.
+   - Otherwise, if the granted folder is empty, copy this plugin's `data-template/`
+     into it. Scaffold **every zone at the location chosen in Step 2** — a zone
+     placed elsewhere is created *there*, not in the granted folder.
    - Write `AOS_CONFIG.md` at the granted-folder root, **including the Zones
      location manifest** (the zone → location → adapter table). The data-access
      router and every skill resolve zones through it — see
@@ -86,6 +90,39 @@ its `schema-version` to the plugin's current schema version in
 A fresh install seeds `schema-version` from `data-template/AOS_CONFIG.md`, so a
 brand-new folder is always current. See `docs/artifact-versioning.md` §2.
 
+## Graduate-bundle import (Stage 1 → 3)
+
+A client's engagement can move **operator-run → client-run** — Stage 1/2 to
+Stage 3. When it does, the client's existing data must come *with* them: the
+brand profile, the content, the ontology graph, the captain's log. A Stage-3
+client-run install that started from an empty template would throw away the
+whole engagement's history.
+
+The **graduate path** (`aos-onboard`'s side of it):
+
+1. **Detect.** A graduate bundle is an operator-exported, **granted-folder-shaped**
+   directory (or archive) — the same zone layout as `data-folder-spec.md`,
+   carrying a root marker file `GRADUATE_BUNDLE.md` (the export's manifest:
+   source client, export date, schema-version, a zone inventory). On first run,
+   look for `GRADUATE_BUNDLE.md` in the granted folder or at a path the user
+   gives. If none → normal empty-template scaffolding.
+2. **Import, do not scaffold.** Copy the bundle's zones into the granted folder
+   at the Step-2 locations — `brand/`, `content/`, `content-system/`, `ontology/`,
+   `dictionaries/`, `deliverables/`, `CAPTAINS_LOG.md`, `TASKS.md` — **preserving
+   every artifact's history**. Never overwrite imported data with a template stub.
+3. **Write `AOS_CONFIG.md` fresh** for the client-run install — new
+   `granted-folder` path, the bundle's `client`, `schema-version` from the
+   bundle. Set `client/CLIENT_CONFIG.md` `aos-stage: 3`.
+4. **Schema-reconcile.** If the bundle's `schema-version` is **behind** the
+   plugin, do not import-and-run blind — tell the user and route to `aos-migrate`
+   before any workflow (same rule as the existing-folder schema check).
+5. **Append a graduation entry** to `CAPTAINS_LOG.md` — the engagement graduated
+   to client-run on this date, importing the bundle.
+
+The **operator-side export** — producing the bundle from the operator surface —
+is **not** part of this plugin; it extends the operator's `finalize-engagement`
+(a different surface). `aos-onboard` owns only the *import* half of the seam.
+
 ## Guardrails
 
 - Never overwrite an existing populated data folder — instantiate only into an
@@ -98,7 +135,13 @@ brand-new folder is always current. See `docs/artifact-versioning.md` §2.
 
 ## Status
 
-v0.4.0 — router-aware scaffolding (AOS-757) + captures the communication /
+v0.5.0 — graduate-bundle import path (AOS-739, Milestone 3): `aos-onboard`
+detects an operator-exported graduate bundle and imports the client's data
+(brand, content, ontology, history) instead of scaffolding an empty template —
+the client-run side of the Stage 1→3 seam. The operator-side export is out of
+plugin scope.
+
+Prior: v0.4.0 — router-aware scaffolding (AOS-757) + captures the communication /
 content language pair into `AOS_CONFIG.md` (AOS-750) + an existing-folder
 schema-version check that suggests `aos-migrate` when the folder is behind the
 plugin (AOS-755) + sets the recurring-workflow cadence via the `schedules:`

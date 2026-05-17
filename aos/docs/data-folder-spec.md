@@ -26,7 +26,8 @@ AOS/                           the granted folder
 │   ├── strategy/ · transcripts/ · correspondence/ · research/ · brand-material/
 │   ├── CATALOGUE.md            index of inbox material — built by the `aos-catalogue` skill
 │   └── _processed/             harvested items, excluded from re-harvest
-├── brand/                     7-file Client Intelligence Profile (build-brand-system)
+├── brand/                     9-file Client Intelligence Profile (build-brand-system)
+│   └── <bu>/                  multi-BU: only when BUs are distinct brands — see Multi-BU resolution
 ├── content-system/
 │   ├── <bu>/                  pillars · messaging · products · distribution (per BU)
 │   └── frameworks/            content framework library — storytelling · content-types · structures
@@ -56,9 +57,34 @@ AOS/                           the granted folder
 - **Human-readable formats** — YAML / markdown-with-frontmatter, never opaque
   blobs — so the data is inspectable and editable.
 - **One client per folder.** A Cowork install serves one client; business units
-  nest *inside* it — a `business_units` field, or `business-units/<bu>/` subtrees
-  under `dictionaries` / `ontology` / `deliverables` for multi-BU clients.
+  are resolved per the **Multi-BU resolution** rule below — not ad hoc.
 - The DAL reads/writes this via the existing `dal-fs` adapter.
+
+## Multi-BU resolution
+
+Some clients run multiple business units (BUs) under one tenant. Which zones
+**nest per-BU** (`<zone>/<bu>/`) and which stay **per-client** is fixed by this
+rule — so a 4-BU client (Wellis) and a single-BU client lay out consistently.
+
+| Zone | Resolution |
+|---|---|
+| `content-system/` | **Per-BU** — `content-system/<bu>/`, for any multi-BU client. Each BU has its own pillars / messaging / products / distribution. |
+| `content/` | **Per-BU** — `content/<bu>/` — series + single pieces nest under the BU. |
+| `brand/` | **Per-BU *only when the BUs are genuinely distinct brands*** (the Deluxe case — `kocsibeallo` vs `deluxebuilding`). A **single-brand** multi-BU client keeps **one** `brand/` — one identity, one founder, one positioning. |
+| `dictionaries/` | **Per-client** — never nested. Each entry carries a `business_unit` field instead. |
+| `ontology/` | **Per-client** — never nested. Each FND / REC / GOT carries a `business_unit` field instead. |
+| `deliverables/` | **Per-client**, dated (`<YYYY-MM>/`); a deliverable names its BU in frontmatter (`business_unit:`). |
+
+**`client/CLIENT_CONFIG.md` declares the BU model** — the `bu-model` field is
+`single-brand` (one `brand/`) or `distinct-brand` (`brand/<bu>/`). Skills read it
+to resolve the `brand/` path; `content-system/` and `content/` nest per-BU
+regardless of the model.
+
+Rationale: a zone nests per-BU when its *content genuinely differs per BU*
+(messaging, pillars, the content itself). A zone stays per-client when it is a
+**graph or an index** that benefits from being whole — the ontology's edges and
+the dictionaries' lookups fragment if split — so those carry a `business_unit`
+field per entry instead.
 
 ## Lifecycle
 
