@@ -10,7 +10,7 @@ in the ADF repo.
 
 ## Status
 
-`v0.13.0` — **scaffold**. The structural skills (`aos-route-question`, `aos-onboard`) are
+`v0.14.0` — **scaffold + the loop**. The structural skills (`aos-route-question`, `aos-onboard`) are
 starter drafts; building-block skills are ported under AOS-725 (`aos-build-brand`,
 `aos-build-brand-system`, `aos-draft-content`) and the diagnostic skills under AOS-744
 (`aos-diagnose-7layer` — the L0–L7 Marketing Control Framework diagnostic — and
@@ -44,6 +44,20 @@ version (`docs/CURRENT_SCHEMA_VERSION`) and runs the ordered, idempotent,
 non-destructive migration steps for the gap. `aos-onboard` and `aos-route-question`
 detect a folder behind the plugin and route to `aos-migrate`. Design:
 `docs/artifact-versioning.md`.
+**v0.14.0 closes the loop** (architecture-gaps §1 + §2). AOS is a GTM *operating
+system* — a loop, not a one-way pipeline. Four net-new skills turn
+`onboard → catalogue → discover → brand → content → stop` into
+`onboard → catalogue → discover → brand → plan → content → distribute → measure → FND ↺`:
+`aos-plan` (intelligence) turns the 9-file brand profile + content-system into a
+prioritised GTM plan and emits `REC` artifacts; `aos-distribute` (content) ships
+a content piece to its channel — channel-formats it and advances its
+`content/CATALOGUE.md` status; `aos-measure` (intelligence, Databox-gated,
+degrades gracefully) reads results for shipped content and emits `FND` artifacts;
+`aos-index-ontology` (reading, sibling of `aos-catalogue`) scans
+`ontology/findings/` + `ontology/recommendations/`, walks the FND/REC edges, and
+writes `ontology/INDEX.md`. The **feedback edge** — `aos-measure`'s findings feed
+the next `aos-plan` / `discover` cycle — is what makes it a loop. Design:
+`docs/the-loop.md`.
 
 ## Storage model
 

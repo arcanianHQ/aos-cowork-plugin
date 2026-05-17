@@ -7,7 +7,7 @@ class: reading
 domain: routing
 layer: all
 client-scope: single-client
-version: 0.2.0
+version: 0.3.0
 owner: arcanian
 allowed-tools: ["Read", "Glob", "Grep"]
 ontology:
@@ -82,10 +82,14 @@ each skill's `layer:` frontmatter — keep in sync as skills are added.
 |---|---|---|---|
 | L0–L3 — foundation + value | `aos-build-brand-system` | client intelligence: the 9-file brand profile | — |
 | L1–L2 — identity + positioning | `aos-build-brand` | brand strategy — associations, growth, pivot | — |
+| L2–L4 — strategy + prioritisation | `aos-plan` | turn the brand profile + content-system into a prioritised GTM plan (the loop's planning stage) — "what should we do next" | — |
 | L4 — funnel + conversion | `aos-diagnose-funnel` | diagnose conversion / funnel performance | **Databox** |
+| L4–L7 — results + learning | `aos-measure` | measure shipped content / campaigns, emit findings (the loop's measurement stage) — "how did it do" | **Databox** |
 | L5 — CRM + lifecycle | `aos-diagnose-lifecycle` | diagnose lifecycle / retention / CRM health | **HubSpot** |
 | L6–L7 — audience + market | `aos-draft-content` | draft a content piece (reference / blog / linkbait) | — |
-| cross-layer — discovery prep | `aos-catalogue` | index inbox material before discovery | — |
+| L6–L7 — distribution | `aos-distribute` | ship a content piece to its channel — channel-format it, advance its status (the loop's distribution stage) | — |
+| cross-layer — discovery prep | `aos-catalogue` | index inbox material + content before discovery | — |
+| cross-layer — knowledge graph | `aos-index-ontology` | index the ontology — rebuild `INDEX.md`, surface unactioned findings ("what have we learned") | — |
 | cross-layer — setup | `aos-onboard` | first-run / "set me up" | — |
 | cross-layer — maintenance | `aos-migrate` | upgrade a data folder behind the plugin's schema | — |
 
@@ -98,6 +102,10 @@ to connect it. Never route into a connector-gated workflow on faith.
 
 ## Status
 
-v0.2.0 — layer-indexed routing + connector gating + language context. The
-routing table grows as workflows are added (AOS-728). Pattern:
+v0.3.0 — layer-indexed routing + connector gating + language context. The
+routing table now covers the full **AOS loop** — `onboard → catalogue →
+discover → brand → plan → content → distribute → measure → FND ↺` — with
+`aos-plan`, `aos-distribute`, `aos-measure`, and the ontology-graph maintainer
+`aos-index-ontology` added (architecture-gaps §1 + §2; see `docs/the-loop.md`).
+The routing table grows as workflows are added (AOS-728). Pattern:
 `docs/aos-cowork-merged-architecture.md` (ADF repo).
