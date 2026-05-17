@@ -8,6 +8,17 @@ The threshold each `brand/<FILE>.md` must clear to count as **FILLED**. Used by 
 
 Every file must also have valid frontmatter (`scope`, `client`, `status`) and a footer line: *"What did we get wrong? What's missing?"*.
 
+## Profile file states
+
+| State | Meaning | Counts toward 9/9 FILLED gate? |
+|---|---|---|
+| **FILLED** | Meets the minimum-substance criteria for that file (below) | yes |
+| **NO-SOURCE** | Orchestrator ran; harvest index had **zero** matches for this file's bucket — file written as an explicit stub (`status: stub-no-source`) naming the unblock | no — honest placeholder |
+| **STUB** | File exists but was not filled this run (scaffold, deferred, or routed away without a no-source write) | no |
+| **MISSING** | File does not exist on disk — never attempted | no |
+
+`PROFILE_SCORECARD.md` reports each of the 9 files as **FILLED**, **NO-SOURCE**, **STUB**, or **MISSING**.
+
 ## Website source preference (per-file)
 
 The orchestrator's Step 2b website-harvest gate uses this to decide which files require live-site signal before drafting can complete.
