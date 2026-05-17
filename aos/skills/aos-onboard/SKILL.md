@@ -7,7 +7,7 @@ class: system
 domain: onboarding
 layer: all
 client-scope: single-client
-version: 0.7.1
+version: 0.7.2
 owner: arcanian
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Bash"]
 preflight: []
@@ -121,6 +121,14 @@ its `schema-version` to **this plugin build's schema version, which is `2`**.
 A fresh install seeds `schema-version: 2` from `data-template/AOS_CONFIG.md`, so
 a brand-new folder is always current. See `docs/artifact-versioning.md` §2.
 
+**Refresh the `plugin-version` stamp.** Whenever this skill runs against an
+existing folder, set `AOS_CONFIG.md`'s `plugin-version` to the **running
+plugin's version** — read from the *installed plugin's* own
+`.claude-plugin/plugin.json` (`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`
+when the runtime provides that variable). **Never** read it from an `aos/`
+directory in the granted-folder tree. If it cannot be resolved, leave the
+existing stamp unchanged — never guess.
+
 ## Graduate-bundle import (Stage 1 → 3)
 
 A client's engagement can move **operator-run → client-run** — Stage 1/2 to
@@ -173,7 +181,11 @@ is **not** part of this plugin; it extends the operator's `finalize-engagement`
 
 ## Status
 
-v0.7.1 — the schema check is pinned to the literal plugin schema version (`2`)
+v0.7.2 — a run against an existing folder refreshes the `plugin-version` stamp
+in `AOS_CONFIG.md` (M12 dogfood finding: the stamp went stale at `0.13.0`),
+read from the installed plugin, never the granted-folder tree.
+
+Prior: v0.7.1 — the schema check is pinned to the literal plugin schema version (`2`)
 and barred from reading schema/version/template files out of the granted-folder
 tree (M12 dogfood finding: a stray `aos/` plugin copy beside the granted folder
 was mistaken for "the plugin", so a behind folder read as current).

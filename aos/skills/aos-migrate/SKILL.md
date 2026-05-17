@@ -7,7 +7,7 @@ class: system
 domain: onboarding
 layer: all
 client-scope: single-client
-version: 0.1.1
+version: 0.1.2
 owner: arcanian
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep", "Bash"]
 args-hint: "(no args — operates on the granted folder)"
@@ -78,19 +78,24 @@ A migration is due when **plugin current (`2`) > folder**.
    - On failure: stop. Do not advance `schema-version` past the failed step. Log
      the failure to `CAPTAINS_LOG.md` and report it to the user.
 
-6. **Confirm.** When the folder reaches the target version, summarise: versions
+6. **Refresh the plugin-version stamp.** After the folder reaches the target
+   schema version, set `AOS_CONFIG.md`'s `plugin-version` field to the **running
+   plugin's version** — read it from the *installed plugin's* own
+   `.claude-plugin/plugin.json` (`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`
+   when the runtime provides that variable). **Never read it from the granted
+   folder or any `aos/` directory in its tree.** If the plugin version cannot be
+   resolved, leave the existing stamp unchanged — never guess, never blank it.
+
+7. **Confirm.** When the folder reaches the target version, summarise: versions
    before/after, steps run, files touched, anything moved to
    `.aos/migration-backup/`. Suggest the user re-run their original workflow.
 
 ## Current state
 
-Schema version is **`1`**. `docs/CURRENT_SCHEMA_VERSION` is `1`. **There are no
-migration steps yet** — every freshly-onboarded folder is already at the current
-version, so today this skill only ever reports *"up to date"*.
-
-The skill exists now so the **mechanism** is in place. When the first
-schema-changing migration ships, it becomes a drop-in — see *Adding a migration
-step* below and §2 of `docs/artifact-versioning.md`.
+Schema version is **`2`** (`docs/CURRENT_SCHEMA_VERSION`). One migration step is
+defined — `1→2`, the per-client `## Connectors` block in `CLIENT_CONFIG.md` —
+registered in `reference/migration-steps.md`. A folder onboarded before schema 2
+reports *behind* and this skill runs the `1→2` step.
 
 ## Adding a migration step (future work)
 
@@ -125,7 +130,11 @@ from `reference/migration-steps.md` and runs every one in the gap.
 
 ## Status
 
-v0.1.1 — the plugin target schema version is pinned to the literal `2` in this
+v0.1.2 — a completed migration refreshes the `plugin-version` stamp in
+`AOS_CONFIG.md` (step 6), read from the installed plugin; the stale "## Current
+state" section is corrected to schema 2 + the `1→2` step.
+
+Prior: v0.1.1 — the plugin target schema version is pinned to the literal `2` in this
 skill, and the skill is barred from reading it out of the granted-folder tree
 (an M12 dogfood finding: a stray `aos/` copy beside the granted folder poisoned
 the comparison). The `1→2` migration step (the `CLIENT_CONFIG.md` `## Connectors`

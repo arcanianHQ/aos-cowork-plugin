@@ -3,6 +3,19 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.27.2] — 2026-05-17
+
+**M12 dogfood finding — the `plugin-version` stamp self-heals.**
+
+- `AOS_CONFIG.md`'s `plugin-version` stamp went stale (stayed `0.13.0` while the
+  plugin moved to v0.27). `aos-onboard` v0.7.2 — a run against an existing
+  folder refreshes the stamp; `aos-migrate` v0.1.2 — a completed migration
+  refreshes it (step 6). The version is read from the installed plugin's own
+  `plugin.json`, never from an `aos/` directory in the granted-folder tree;
+  unresolvable → the stamp is left untouched, never guessed.
+- `aos-migrate` — the stale "Current state" section corrected (schema 2, the
+  `1→2` step registered).
+
 ## [0.27.1] — 2026-05-17
 
 **M12 dogfood finding — schema check poisoned by a stray `aos/` copy.**
