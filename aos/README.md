@@ -10,7 +10,7 @@ in the ADF repo.
 
 ## Status
 
-`v0.14.0` — **scaffold + the loop**. The structural skills (`aos-route-question`, `aos-onboard`) are
+`v0.15.0` — **Milestone 1: complete the operating system**. The structural skills (`aos-route-question`, `aos-onboard`) are
 starter drafts; building-block skills are ported under AOS-725 (`aos-build-brand`,
 `aos-build-brand-system`, `aos-draft-content`) and the diagnostic skills under AOS-744
 (`aos-diagnose-7layer` — the L0–L7 Marketing Control Framework diagnostic — and
@@ -58,6 +58,23 @@ degrades gracefully) reads results for shipped content and emits `FND` artifacts
 writes `ontology/INDEX.md`. The **feedback edge** — `aos-measure`'s findings feed
 the next `aos-plan` / `discover` cycle — is what makes it a loop. Design:
 `docs/the-loop.md`.
+**v0.15.0 — Milestone 1: complete the operating system** (architecture-gaps §3
++ §4 + §7). Three gaps close. **§3 workflow tier** — reconciled, not padded: the
+tier was already complete via the loop stages + orchestrators (`aos-plan`,
+`aos-draft-content`, `aos-distribute`, `aos-measure`, `aos-build-brand-system`,
+the diagnostics, the maintenance skills); §3 closed with the one genuine net-new
+workflow it still needed — the quality gate. **§7 review/QA** — `aos-review`
+(intelligence / quality) is the loop's **quality gate**: before a piece moves
+`draft → published` it is checked against the brand profile (voice + positioning),
+the content-system contract, and completeness, and given a `PASS` / `REVISE` /
+`BLOCK` verdict — the plugin analogue of the ADF verification gate. It is routed
+by `aos-route-question`, and `aos-distribute` now ships only `PASS`-cleared
+pieces. **§4 cadence** — recurring work is declared as a `schedules:` block in
+`AOS_CONFIG.md` (`workflow: cadence` pairs); Cowork's `/schedule` fires them while
+the desktop app is open; unattended-critical jobs carry `runner: server` as a
+documented escalation (the client-run plugin has no backend). Design:
+`docs/cadence.md`. The loop is now `onboard → catalogue → discover → brand →
+plan → content → review → distribute → measure → FND ↺`.
 
 ## Storage model
 

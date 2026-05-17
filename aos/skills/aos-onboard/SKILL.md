@@ -7,7 +7,7 @@ class: system
 domain: onboarding
 layer: all
 client-scope: single-client
-version: 0.3.0
+version: 0.4.0
 owner: arcanian
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Bash"]
 preflight: []
@@ -56,8 +56,18 @@ Walk the user through first-run setup.
    (Settings → Connectors). Confirm with a `List Accounts` call; note the client
    should authorise *their own* Databox scope.
 
-6. **Confirm & summarise.** Show what was set up — including each zone's
-   resolved location — and suggest a check-in cadence.
+6. **Set the cadence.** Walk the user through the `schedules:` block in
+   `AOS_CONFIG.md` (seeded commented-out from `data-template/`). Recommend the
+   default recurring work — `catalogue: weekly`, `index-ontology: weekly`,
+   `monday-brief: weekly`, `discover-refresh: monthly` — and uncomment the rows
+   the user wants. For each enabled row, tell the user to register it with
+   Cowork's `/schedule` command, and state the caveat plainly: `/schedule` runs a
+   job **only while the desktop app is open**. If the user names an
+   unattended-critical job, flag it `runner: server` — the Cowork plugin cannot
+   guarantee it. See `docs/cadence.md`.
+
+7. **Confirm & summarise.** Show what was set up — including each zone's
+   resolved location and the enabled schedule rows.
 
 ## Existing-folder schema check
 
@@ -88,7 +98,8 @@ brand-new folder is always current. See `docs/artifact-versioning.md` §2.
 
 ## Status
 
-v0.3.0 — router-aware scaffolding (AOS-757) + captures the communication /
+v0.4.0 — router-aware scaffolding (AOS-757) + captures the communication /
 content language pair into `AOS_CONFIG.md` (AOS-750) + an existing-folder
 schema-version check that suggests `aos-migrate` when the folder is behind the
-plugin (AOS-755).
+plugin (AOS-755) + sets the recurring-workflow cadence via the `schedules:`
+block and Cowork `/schedule` (AOS-735, Milestone 1; see `docs/cadence.md`).

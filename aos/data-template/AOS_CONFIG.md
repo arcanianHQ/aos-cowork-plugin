@@ -13,6 +13,29 @@ every skill to resolve where data lives — see `docs/data-access-router.md`.
 - **schema-version**: 1               # data-folder layout version (migration — AOS-755)
 - **created**: <date>
 
+## Schedules — recurring workflows
+
+Recurring AOS work — declared as `workflow: cadence` pairs. Cowork's `/schedule`
+runs these **only while the desktop app is open**; see `docs/cadence.md` for the
+mechanism, the cadence vocabulary, and the unattended-critical caveat.
+
+Each row names a workflow (a routable skill or a named recurring run) and a
+cadence. `aos-onboard` seeds this block commented-out; the user uncomments and
+edits it. An empty block means no recurring work is scheduled — the default.
+
+```yaml
+schedules:
+  # workflow            cadence       notes
+  # catalogue:          weekly        # re-index inbox/ + content/
+  # monday-brief:       weekly        # the loop's weekly read-out
+  # discover-refresh:   monthly       # re-run discovery on fresh inbox material
+  # index-ontology:     weekly        # rebuild ontology/INDEX.md
+```
+
+Cadence vocabulary: `daily` · `weekly` · `monthly` · `quarterly`. A workflow that
+must run unattended (no one at the desktop) is **not reliable in Cowork** — flag
+it `runner: server` and see `docs/cadence.md` §3.
+
 ## Zones — location manifest
 
 Where each data zone lives. The data-access router resolves a zone here before

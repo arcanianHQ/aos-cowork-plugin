@@ -16,14 +16,20 @@ The scaffold's flow was one-way and stopped:
 onboard → catalogue → discover → brand → content → ✗ stop
 ```
 
-The loop adds the missing stages — `plan`, `distribute`, `measure` — and the
-**feedback edge** from `measure` back to `discover` / `plan`:
+The loop adds the missing stages — `plan`, `review`, `distribute`, `measure` —
+and the **feedback edge** from `measure` back to `discover` / `plan`:
 
 ```
-  onboard → catalogue → discover → brand → plan → content → distribute → measure
-                            ▲                                              │
-                            └──────────────── FND feedback edge ───────────┘
+  onboard → catalogue → discover → brand → plan → content → review → distribute → measure
+                            ▲                                                        │
+                            └──────────────── FND feedback edge ─────────────────────┘
 ```
+
+The `review` stage (`aos-review`, AOS-738) is the loop's **quality gate** — the
+plugin analogue of the ADF verification gate. Before a piece reaches `distribute`
+it is checked against the brand profile, the content-system contract, and
+completeness, and given a `PASS` / `REVISE` / `BLOCK` verdict. `aos-distribute`
+ships only `PASS`-cleared pieces. See `architecture-gaps.md` §7.
 
 Read as a loop: each turn through it leaves the engagement knowing more than the
 last, because `measure` writes down what was learned and `plan` reads it back.
@@ -38,6 +44,7 @@ last, because `measure` writes down what was learned and `plan` reads it back.
 | brand | `aos-build-brand-system` (+ `aos-build-brand`, `aos-build-offer`, `aos-build-belief-profile`) | intelligence | the 9-file `brand/` profile |
 | **plan** | **`aos-plan`** | intelligence | `deliverables/<YYYY-MM>/gtm-plan.md`; **REC** artifacts |
 | content | `aos-draft-content` | content | content pieces / series in `content/` |
+| **review** | **`aos-review`** | intelligence | quality verdict (`PASS`/`REVISE`/`BLOCK`) + `deliverables/<YYYY-MM>/review-*.md` |
 | **distribute** | **`aos-distribute`** | content | channel-formatted publish-ready pieces; `CATALOGUE.md` status advanced |
 | **measure** | **`aos-measure`** | intelligence | `deliverables/<YYYY-MM>/results.md`; **FND** artifacts |
 
@@ -104,11 +111,40 @@ and `aos-route-question` is the front door. A typical turn through the loop:
 
 1. `aos-plan` — what should we do this month? → a prioritised plan + RECs.
 2. `aos-draft-content` — draft the content the plan calls for.
-3. `aos-distribute` — ship each piece to its channel; advance `CATALOGUE.md`.
-4. *(time passes — the content runs)*
-5. `aos-measure` — read the results; emit FNDs.
-6. `aos-index-ontology` — rebuild `INDEX.md`; see the new unactioned findings.
-7. back to `aos-plan` — now reading the findings from step 5.
+3. `aos-review` — check each piece against brand + content-system + completeness.
+4. `aos-distribute` — ship each `PASS`-cleared piece; advance `CATALOGUE.md`.
+5. *(time passes — the content runs)*
+6. `aos-measure` — read the results; emit FNDs.
+7. `aos-index-ontology` — rebuild `INDEX.md`; see the new unactioned findings.
+8. back to `aos-plan` — now reading the findings from step 6.
 
 Each loop closes a little tighter than the last. That is the difference between a
 pipeline and an operating system.
+
+## The workflow tier (architecture-gaps §3 — closed)
+
+`architecture-gaps.md` §3 — "fill the workflow tier" — was written before the
+loop and the diagnostics existed, when the plugin had a router, building blocks,
+and *no* `class: workflow` orchestrators. That gap is now closed, and §3 closes
+**with the loop**, not with a separate batch of skills:
+
+- **Pipeline-stage workflows** — `aos-plan`, `aos-draft-content`, `aos-review`,
+  `aos-distribute`, `aos-measure` are the loop's stage orchestrators. Each chains
+  building blocks behind a declarative `safety.requires_confirmation` gate.
+- **Discover / brand workflow** — `aos-build-brand-system` is the orchestrator
+  that runs the diagnostic sub-skills end-to-end and hard-gates on 9/9.
+- **The cross-layer diagnostic workflow** — `aos-diagnose-7layer` (the full
+  L0–L7 pass) and `aos-analyze-gtm` (the GTM-Strategist gap analysis), with
+  `aos-diagnose-funnel` / `aos-diagnose-lifecycle` as the focused per-layer
+  diagnostics.
+- **Maintenance workflows** — `aos-catalogue`, `aos-index-ontology`, `aos-migrate`.
+
+§3 also asked for "one workflow per active 7+1 layer". In practice the loop
+*is* that coverage: a layer's work is reached through the loop stage that owns it
+(L0–L3 brand via `aos-build-brand-system`, L4 via `aos-diagnose-funnel`, L5 via
+`aos-diagnose-lifecycle`, L6–L7 content via draft/review/distribute), routed by
+`aos-route-question`'s layer-indexed table. A standalone per-layer workflow on
+top of that would be a fifth name for work the loop already does — so none were
+added. The workflow tier is **complete via the loop + orchestrators**; the only
+genuine net-new workflow §3 still needed was the quality gate, which is
+`aos-review` (§7 / AOS-738). **§3 is closed.**

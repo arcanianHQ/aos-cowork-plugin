@@ -58,6 +58,19 @@ the cross-layer **diagnostic** workflow, and the pipeline-stage workflows from �
 
 **Owner:** AOS-728.
 
+**Status — CLOSED (Milestone 1).** Reconciled honestly: §3 was written before the
+loop and the diagnostics existed. The workflow tier is now complete **via the
+loop + orchestrators** — `aos-plan` / `aos-draft-content` / `aos-review` /
+`aos-distribute` / `aos-measure` (loop stages), `aos-build-brand-system`
+(discover/brand), `aos-diagnose-7layer` / `aos-analyze-gtm` / `aos-diagnose-funnel`
+/ `aos-diagnose-lifecycle` (the cross-layer + focused diagnostics), and
+`aos-catalogue` / `aos-index-ontology` / `aos-migrate` (maintenance). The
+"one workflow per active layer" ask is satisfied by routing each layer's work
+through the loop stage that owns it — no standalone per-layer workflows were
+added (they would duplicate the loop). The only genuine net-new workflow §3 still
+needed was the quality gate — `aos-review` (§7). See `docs/the-loop.md` →
+"The workflow tier".
+
 ---
 
 ## 4. Cadence / recurring architecture
@@ -71,7 +84,17 @@ block) lists `workflow: cadence` pairs — e.g. `monday-brief: weekly`,
 **while the desktop app is open**; any unattended-critical job is flagged as
 needing a server-side runner (it won't fire reliably in Cowork).
 
-**Owner:** new — file under AOS-721.
+**Owner:** AOS-735.
+
+**Status — CLOSED (Milestone 1).** Built as a `schedules:` block in
+`AOS_CONFIG.md` (not a separate `schedules.md` — a standalone file would compete
+with `AOS_CONFIG.md` as a second source of install config). `aos-onboard` seeds
+the block commented-out; the user uncomments the rows they want. Cadence
+vocabulary: `daily`/`weekly`/`monthly`/`quarterly`. Cowork's `/schedule` fires
+them while the app is open; unattended-critical jobs carry `runner: server` —
+a documented escalation, since the client-run plugin has no backend. No skill was
+added (the mechanism is config + the runtime's own scheduler). See
+`docs/cadence.md`.
 
 ---
 
@@ -116,7 +139,15 @@ never delete or overwrite client data. Each plugin release ships its schema delt
 (voice + positioning adherence), the `content-system` contract, and completeness.
 The plugin analogue of the ADF verification gate.
 
-**Owner:** new workflow — AOS-728-adjacent.
+**Owner:** AOS-738.
+
+**Status — CLOSED (Milestone 1).** Built as `aos-review` (`class: intelligence`,
+`domain: quality`) — the loop's quality gate, sitting between `content` and
+`distribute`. It checks one artifact against the three contracts and issues a
+`PASS` / `REVISE` / `BLOCK` verdict with a review report in
+`deliverables/<YYYY-MM>/`. Wired into `aos-route-question`'s routing table;
+`aos-distribute` Step 0 now requires a `PASS` review before it ships a piece.
+See `skills/aos-review/`.
 
 ---
 

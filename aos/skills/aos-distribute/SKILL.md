@@ -7,7 +7,7 @@ class: content
 domain: content
 layer: [L6, L7]
 client-scope: single-client
-version: 0.1.0
+version: 0.2.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write, Edit]
 args-hint: "--piece=<path-or-slug under content/> [--channel=<channel from distribution.md>] [--bu=<bu-slug>] — operates on the granted folder"
@@ -123,7 +123,8 @@ This skill operates on the **granted folder** — which is the client's folder.
 2. Verify `client/CLIENT_CONFIG.md` exists. If not — suggest `aos-onboard`.
 3. Detect per-BU layout — `ls content-system/*/distribution.md`. If any match, `--bu` is required; abort with the BU list if missing.
 4. Resolve and Read the `--piece` file. Verify it exists and is a content draft (has content-piece frontmatter). If it is a stub or missing — abort with a clear message.
-5. **Connector check** — determine whether a channel connector's MCP tools are present for the target channel. Record the result; it sets the ship mode (connector-assisted vs manual hand-off).
+5. **Review gate.** Before shipping, the piece must have passed the quality gate. Check for a `PASS`-verdict review of this piece in `deliverables/<YYYY-MM>/review-<piece-slug>.md` (a report `aos-review` writes). If none exists, or the latest review verdict is `REVISE` / `BLOCK`, **do not ship** — route the user to run `aos-review` on the piece first, and (on `REVISE` / `BLOCK`) back to `aos-draft-content` to fix it. Shipping an unreviewed piece is never the default path. The user may override with explicit confirmation (e.g. an internal-only piece) — log the override in the ship entry.
+6. **Connector check** — determine whether a channel connector's MCP tools are present for the target channel. Record the result; it sets the ship mode (connector-assisted vs manual hand-off).
 
 ### Step 1 — Resolve the channel
 
@@ -173,21 +174,23 @@ place.
 ## Hard Rules
 
 1. **Never autonomously publish.** The skill prepares and hands off. A piece moves to `published` only on explicit user confirmation that it went live.
-2. **Degrade, never fail, when no channel connector exists.** Manual hand-off is the normal path — prepare the file and instruct the user.
-3. **Voice survives the format pass.** Run the `brand/VOICE.md` banned-words / register check on the channel-formatted output; rewrite any hit before write.
-4. **Never downgrade a status.** `published` is terminal; `scheduled` never returns to `draft` via this skill.
-5. **Channel comes from `distribution.md`.** Do not invent a channel the BU's `distribution.md` does not declare.
-6. **Per BU.** For multi-BU clients, ship per BU — never mix a BU's piece onto another BU's channel.
-7. **Single client.** Operate only within the granted folder; never reach outside it.
-8. **Discovery, not pronouncement.** Present the formatted version + status change for confirmation before writing.
+2. **Review before ship.** A piece ships only after `aos-review` has cleared it (`PASS` verdict). No `PASS` review → route to `aos-review` first. Override only with explicit user confirmation, logged in the ship entry.
+3. **Degrade, never fail, when no channel connector exists.** Manual hand-off is the normal path — prepare the file and instruct the user.
+4. **Voice survives the format pass.** Run the `brand/VOICE.md` banned-words / register check on the channel-formatted output; rewrite any hit before write.
+5. **Never downgrade a status.** `published` is terminal; `scheduled` never returns to `draft` via this skill.
+6. **Channel comes from `distribution.md`.** Do not invent a channel the BU's `distribution.md` does not declare.
+7. **Per BU.** For multi-BU clients, ship per BU — never mix a BU's piece onto another BU's channel.
+8. **Single client.** Operate only within the granted folder; never reach outside it.
+9. **Discovery, not pronouncement.** Present the formatted version + status change for confirmation before writing.
 
 ## Integration
 
-- **Upstream:** `aos-draft-content` (produces the draft this ships); `aos-plan` (the plan that called for the content); `aos-route-question` routes "ship this" / "publish" / "get this out" requests here.
+- **Upstream:** `aos-draft-content` (produces the draft this ships); `aos-review` (the quality gate — a piece ships only after a `PASS` review); `aos-plan` (the plan that called for the content); `aos-route-question` routes "ship this" / "publish" / "get this out" requests here.
 - **Downstream:** `aos-measure` reads results for pieces marked `published` here and emits FNDs; `aos-catalogue` re-indexes `content/` and preserves the `published` status this skill set.
 
 ## Versioning
 
 - **v0.1.0** — initial Cowork-plugin authoring. The distribution stage of the AOS loop (architecture-gaps §1). Channel-format rules likely need refinement after first real runs; channel-connector integration is intentionally minimal until per-client connector endpoints are confirmed (AOS-724).
+- **v0.2.0** — review gate added (AOS-738, Milestone 1). Step 0 now requires a `PASS`-verdict `aos-review` of the piece before it ships; no `PASS` review routes the user to `aos-review` first.
 
 **What did we get wrong? What's missing?**
