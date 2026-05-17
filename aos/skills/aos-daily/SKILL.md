@@ -7,13 +7,13 @@ class: reading
 domain: strategy
 layer: all
 client-scope: single-client
-version: 0.2.0
+version: 0.1.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write, Edit]
 args-hint: "--mode=<start|end> — operates on the granted folder"
 inputs:
   - client/CLIENT_CONFIG.md
-  - TASKS.md (open + done tasks — kept current by aos-todoist when Todoist is connected)
+  - TASKS.md (open + done tasks)
   - CAPTAINS_LOG.md (recent activity)
   - ontology/INDEX.md (unactioned findings — the loop's in-tray)
   - content/CATALOGUE.md (content in flight)
@@ -88,12 +88,6 @@ Assemble and present, concise:
 4. **Today's focus** — name the **one** highest-leverage thing to do today, with
    one sentence of why, drawn from the above. Offer one or two alternatives.
 
-**Todoist sync (if connected).** If the Todoist connector is present, run
-`aos-todoist --mode=pull` *before* assembling the brief — so `TASKS.md` reflects
-what the operator already checked off in Todoist. The briefing reads `TASKS.md`;
-`aos-todoist` is what keeps it current. If Todoist is not connected, skip this —
-`TASKS.md` is read as-is.
-
 ### Step 2 (mode=end) — The end-of-day wrap
 
 1. **What moved** — compare `TASKS.md` and `CAPTAINS_LOG.md` against the day:
@@ -104,10 +98,6 @@ what the operator already checked off in Todoist. The briefing reads `TASKS.md`;
    `start` briefing has a running start.
 4. Present the wrap + the proposed `CAPTAINS_LOG` entry — Accept / Revise —
    before writing.
-
-**Todoist sync (if connected).** Offer `aos-todoist --mode=sync` as part of the
-wrap — so the day's task changes (items closed in `TASKS.md`, new RECs emitted)
-round-trip to Todoist before tomorrow.
 
 ### Step 3 — Optional written brief
 
@@ -145,11 +135,9 @@ in place, not stamped.
 
 - **Upstream:** `aos-route-question` routes "start my day" / "wrap up" here. Reads the output of every loop skill — `TASKS.md`, `CAPTAINS_LOG.md`, `ontology/INDEX.md`, `content/CATALOGUE.md`.
 - **Downstream:** the morning briefing's "today's focus" points the user at the right next skill (`aos-plan`, `aos-write`, a diagnostic); the end-of-day `CAPTAINS_LOG.md` entry feeds tomorrow's `start`. Pairs with the cadence architecture in `docs/cadence.md`.
-- **Connector:** when the Todoist connector is present, `aos-daily` brackets the day with `aos-todoist` — `--mode=pull` before the morning brief so `TASKS.md` is current, `--mode=sync` at the end-of-day wrap so the day's changes round-trip. See `skills/aos-todoist`, `docs/connectors.md`.
 
 ## Versioning
 
-- **v0.2.0** — Todoist integration (AOS-820, Milestone 12). When the Todoist connector is present, the morning brief runs `aos-todoist --mode=pull` first so `TASKS.md` reflects overnight Todoist activity, and the end-of-day wrap offers `--mode=sync`. No dependency — skipped cleanly when Todoist is absent.
 - **v0.1.0** — initial Cowork-plugin authoring (AOS-794, Milestone 4 feature wave). The daily cadence routine — morning briefing + end-of-day wrap. Couples to the cadence architecture (`docs/cadence.md`).
 
 **What did we get wrong? What's missing?**

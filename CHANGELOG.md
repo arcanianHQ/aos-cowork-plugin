@@ -3,6 +3,22 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.26.0] — 2026-05-17
+
+**Todoist extracted to a paid-extra overlay — removed from core.**
+
+- `aos-todoist` and the AOS-820 connector wiring leave the open-source `aos`
+  plugin. Todoist task sync is now a **first-party product overlay** — a private,
+  paid plugin (`arcanianHQ/aos-todoist-overlay`), installed alongside core.
+- `docs/connectors.md` — Todoist row + paragraph removed (it is the overlay's
+  concern, not core's).
+- `aos-onboard` — the Todoist connector bullet removed from Step 5.
+- `aos-daily` reverted to v0.1.0 — the Todoist day-bracketing left with the
+  overlay.
+- `docs/overlay-skill-contract.md` — new section: **first-party product
+  overlays** (paid Arcanian extras) — `overlay-product:` identity, may keep the
+  `aos-*` namespace, vs per-customer overlays' mandatory `<customer>-` prefix.
+
 ## [0.25.2] — 2026-05-17
 
 **M12 dogfood finding — `aos-todoist` Todoist ID round-trip fixed.**

@@ -39,7 +39,6 @@ uses the tool**. Not bundled by default (minimal-connector principle).
 | Canva | `https://mcp.canva.com/mcp` | produces visual content assets |
 | Slack | `https://mcp.slack.com/mcp` | wants briefs / reports delivered to Slack |
 | Meta Ads | endpoint TBD | runs Meta advertising |
-| Todoist | added from Settings → Connectors | the operator runs the engagement's tasks in Todoist — pair with `aos-todoist` |
 
 **ActiveCampaign — per-account, never bundled.** ActiveCampaign's Remote MCP is
 **vendor-hosted per account** — each account is its own subdomain
@@ -52,16 +51,6 @@ ActiveCampaign, onboarding captures their account slug (e.g. `wellis14726` from
 `wellis14726.activehosted.com`) and the user adds a custom remote-MCP connector
 in Settings → Connectors with that account's URL. One AC account per install;
 multi-account management is Code-only (`COWORK_FEATURE_CATALOGUE.md` §6).
-
-**Todoist — paired with `aos-todoist`.** Todoist is the conditional connector
-behind the `aos-todoist` skill — the `TASKS.md` ⇄ Todoist sync bridge. Added per
-install: if the operator runs the engagement's tasks in Todoist, they enable the
-Todoist connector in Settings → Connectors and authorise it via OAuth — no
-custom URL to hand-craft. `aos-todoist` is **connector-gated with no degraded
-mode** — absent, it tells the user and stops; `TASKS.md` keeps working without
-it, so the plugin stays usable backend-free. One Todoist account per install;
-`aos-todoist` resolves (or creates) one Todoist project for the engagement, with
-a section per business unit. See `skills/aos-todoist`.
 
 ## Excluded — not used
 
@@ -94,10 +83,8 @@ same turn. See `aos-build-brand-system` Step 2b. Tracked: AOS-746.
   Core table note above); Databox covers the signal in the interim.
 - **Conditional, per-client:** **ActiveCampaign** — per-account, no universal
   endpoint, so not bundleable; `aos-onboard` adds it for a client that uses AC.
-  Canva and Slack have vendor-hosted endpoints; **Todoist** is added from the
-  connector directory (Settings → Connectors) and pairs with `aos-todoist`; Meta
-  Ads stays unconfirmed — all added per-client only if and when the client needs
-  them.
+  Canva and Slack have vendor-hosted endpoints; Meta Ads stays unconfirmed — all
+  added per-client only if and when the client needs them.
 - **Excluded by architecture:** Supabase and Google Drive are *not* connectors —
   the plugin has no control layer and storage is the granted folder
   (`DECISIONS_2026-05-15_aos-cowork-no-control-layer.md` §7). The original

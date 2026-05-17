@@ -75,11 +75,6 @@ Walk the user through first-run setup.
         Settings → Connectors → add a remote MCP connector — as the fallback for
         runtimes that do not auto-load the granted-folder `.mcp.json`.
      One AC account per install.
-   - **Todoist (per client)** — if the operator runs the engagement's tasks in
-     Todoist, enable the **Todoist** connector here (Settings → Connectors,
-     OAuth — no URL to hand-craft). The `aos-todoist` skill then syncs
-     `TASKS.md` ⇄ a Todoist project. If the operator does not use Todoist, skip
-     it — `TASKS.md` works without it.
    - **Other conditional connectors** (Canva, Slack, …) — add the same way,
      only if the client uses that tool. See `docs/connectors.md`.
 
