@@ -3,6 +3,22 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.31.0] — 2026-05-18
+
+**The calibration loop — `aos-review` becomes bidirectional (AOS-843).**
+
+- `aos-review` v0.2.0 — a verdict no longer just gates; it **writes back into the
+  foundations**. Two doors:
+  - **Reject door** (`REVISE`/`BLOCK`) — corrections are classified by a routing
+    table and proposed into `brand/` / `content-system/` / the post-type spec,
+    then the piece is re-drafted from the corrected foundation — never patched.
+  - **Accept door** (`status: client-accepted`) — the accepted piece's realised
+    voice flows back to `brand/VOICE.md`, its winning structure to the pattern
+    library; `validated-by:`-tagged, propose-don't-overwrite.
+- The compounding mechanism — every accepted piece improves the next client's
+  first draft. Learning from the 2026-05-14 DeluxeBuilding content session; spec
+  `COWORK_CALIBRATION_LOOP_SPEC.md`.
+
 ## [0.30.1] — 2026-05-17
 
 **Fix — the Zones manifest was behind the structure (Wellis dogfood finding).**
