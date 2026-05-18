@@ -7,7 +7,7 @@ class: intelligence
 domain: strategy
 layer: [L2, L3, L4]
 client-scope: single-client
-version: 0.1.0
+version: 0.1.1
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write]
 args-hint: "[--bu=<bu-slug>] [--horizon=<this-month|quarter>] — operates on the granted folder; no client argument"
@@ -82,7 +82,7 @@ finding must say why.
 
 This skill operates on the **granted folder** — which is the client's folder. There is no client-slug argument.
 
-- `--bu` (required if the client uses per-BU content-system) — BU slug, e.g. `kocsibeallo`. If `content-system/` contains subfolders with their own `messaging.md`, the skill refuses to run without this flag. Plan **per BU** — never collapse two BUs into one plan.
+- `--bu` (required if the client is multi-BU) — BU slug, e.g. `kocsibeallo`. The client is multi-BU when `AOS_CONFIG.md` declares a non-empty `business-units:` list (see Step 0); the skill refuses to run without this flag. Plan **per BU** — never collapse two BUs into one plan.
 - `--horizon` (optional) — `this-month` (default) or `quarter`. Sets how far the plan reaches and how many moves it shortlists.
 
 ## Process
@@ -92,7 +92,7 @@ This skill operates on the **granted folder** — which is the client's folder. 
 1. Confirm the working directory is the granted-folder root. Read `AOS_CONFIG.md` for the zone manifest and `client` identity.
 2. Verify `client/CLIENT_CONFIG.md` exists. If not, the folder hasn't been onboarded — suggest `aos-onboard`.
 3. **Brand gate.** Verify the `brand/` profile is complete (9/9 — check `brand/PROFILE_SCORECARD.md`, or survey the 9 files for substance). If the profile is incomplete, refuse and route to `aos-build-brand-system` — planning on a thin profile produces a thin plan.
-4. Detect per-BU layout — `ls content-system/*/messaging.md`. If any match, `--bu` is required; abort with the BU list if missing.
+4. **Detect multi-BU** from the declaration — `AOS_CONFIG.md`'s `business-units:`. Non-empty → multi-BU → `--bu` is required; abort with the BU list if missing. Do not infer this from `content-system/<bu>/` alone — a client is multi-BU before its content-system is split (`docs/data-folder-spec.md`, "Detecting multi-BU"). If multi-BU is declared but `content-system/<bu>/` is not populated, say so plainly rather than planning single-BU.
 5. If the client has 2+ domains, load `client/DOMAIN_CHANNEL_MAP.yaml`.
 
 ### Step 1 — Assemble the picture
@@ -165,6 +165,7 @@ hard-code `skill_version` or `aos_schema` — read them at write time.
 
 ## Versioning
 
+- **v0.1.1** — **multi-BU detection fix** (AOS-853 / F1-D1). Step 0.4 now detects multi-BU from `AOS_CONFIG.md`'s `business-units:` declaration, not from the `content-system/<bu>/` layout — a client is multi-BU before its content-system is split. See `docs/data-folder-spec.md`, "Detecting multi-BU".
 - **v0.1.0** — initial Cowork-plugin authoring. The planning stage of the AOS loop (architecture-gaps §1). Prioritisation rubric and candidate-generation lenses likely need refinement after first real runs.
 
 **What did we get wrong? What's missing?**

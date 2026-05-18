@@ -7,7 +7,7 @@ class: intelligence
 domain: orchestration
 layer: all
 client-scope: single-client
-version: 0.1.0
+version: 0.1.2
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write, Edit]
 args-hint: "[--bu=<bu-slug>] [--horizon=<this-month|quarter>] [--from=<stage>] [--to=<stage>] [--resume] — operates on the granted folder; no client argument"
@@ -114,9 +114,9 @@ user out of plumbing, not out of judgement.
 
 This skill operates on the **granted folder**. There is no client-slug argument.
 
-- `--bu` — required if the client uses a per-BU `content-system/`. Passed
-  through to every stage. The cycle runs **per BU** — never collapse two BUs
-  into one cycle run.
+- `--bu` — required if the client is multi-BU (`AOS_CONFIG.md` declares a
+  non-empty `business-units:` list — see Step 0). Passed through to every stage.
+  The cycle runs **per BU** — never collapse two BUs into one cycle run.
 - `--horizon` — `this-month` (default) or `quarter`. Passed to `aos-plan`.
 - `--from` / `--to` — run a slice of the loop, e.g. `--from=plan --to=review`.
   Stage names: `measure`, `index`, `plan`, `draft`, `review`, `distribute`.
@@ -132,8 +132,12 @@ This skill operates on the **granted folder**. There is no client-slug argument.
 3. **Schema gate.** Compare `AOS_CONFIG.md`'s `schema-version` to
    `docs/CURRENT_SCHEMA_VERSION`. If behind → route to `aos-migrate` first; never
    run a cycle on a stale folder.
-4. Detect per-BU layout (`ls content-system/*/messaging.md`). If per-BU and
-   `--bu` is absent → abort with the BU list.
+4. **Detect multi-BU** from the declaration — `AOS_CONFIG.md`'s `business-units:`.
+   Non-empty → multi-BU → `--bu` is required; abort with the BU list if it is
+   absent. Do not infer this from `content-system/<bu>/` alone — a client is
+   multi-BU before its content-system is split (`docs/data-folder-spec.md`,
+   "Detecting multi-BU"). If multi-BU is declared but `content-system/<bu>/` is
+   not populated, say so plainly — the cycle will reach the content-system gate.
 5. **Resume check.** Look for `deliverables/<YYYY-MM>/cycle-run.md` with an
    incomplete stage checklist. If found, offer to `--resume` from the first
    unfinished stage rather than starting fresh.
@@ -254,6 +258,11 @@ time, never hard-code them. The stage skills stamp their own artifacts.
 
 ## Versioning
 
+- **v0.1.2** — **multi-BU detection fix** (AOS-853 / F1-D1). Step 0.4 now detects
+  multi-BU from `AOS_CONFIG.md`'s `business-units:` declaration, not from the
+  `content-system/<bu>/` layout — a client is multi-BU before its content-system
+  is split. Also corrects the frontmatter `version:` (was left at `0.1.0` when
+  v0.1.1 shipped). See `docs/data-folder-spec.md`, "Detecting multi-BU".
 - **v0.1.1** — the review stage now defers to `aos-review` v0.3.0's autonomous
   revision micro-loop (F2 / AOS-848). Step 3 rewritten: a `REVISE` no longer
   gates here — `aos-review` self-iterates and the cycle receives the final

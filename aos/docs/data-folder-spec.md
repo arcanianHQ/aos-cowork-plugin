@@ -81,6 +81,28 @@ rule — so a 4-BU client (Wellis) and a single-BU client lay out consistently.
 | `ontology/` | **Per-client** — never nested. Each FND / REC / GOT carries a `business_unit` field instead. |
 | `deliverables/` | **Per-client**, dated (`<YYYY-MM>/`); a deliverable names its BU in frontmatter (`business_unit:`). |
 
+**Detecting multi-BU — the declaration is the source of truth.** A client is
+multi-BU **iff `AOS_CONFIG.md`'s `business-units:` is a non-empty list** (mirrored
+in `client/CLIENT_CONFIG.md`). That declaration — not the folder layout — is what
+a skill reads to decide whether `--bu` is required.
+
+A skill must **not** infer multi-BU from `content-system/<bu>/` alone. The
+`content-system/<bu>/` nesting is *where* per-BU content-system files live **once
+they are populated** — it is a layout, not the detector. A client can be
+genuinely multi-BU (`business-units` declared, `brand/` split) **before**
+`content-system/` has been split per BU — a normal mid-build state (the brand
+profile is built before the content-system is). A skill that keys detection on
+`ls content-system/*/messaging.md` mis-reads that client as single-BU.
+
+So the Step-0 rule for every BU-aware skill is:
+
+1. Read `business-units:` from `AOS_CONFIG.md`. Non-empty → multi-BU → `--bu` is
+   required (abort with the BU list if missing).
+2. Resolve the content-system path: `content-system/<bu>/` when it exists.
+3. If multi-BU is declared but `content-system/<bu>/` is **absent**, surface the
+   **incomplete-scaffold state** plainly — the per-BU content-system is not
+   populated yet — rather than silently proceeding single-BU.
+
 **`client/CLIENT_CONFIG.md` declares the BU model** — the `bu-model` field is
 `single-brand` (one `brand/`) or `distinct-brand` (`brand/<bu>/`). Skills read it
 to resolve the `brand/` path; `content-system/` and `content/` nest per-BU
