@@ -106,8 +106,10 @@ without it, an FND would sit in a folder unread.
 
 ## Running the loop
 
-The loop is not run end-to-end in one invocation — each stage is a routed skill,
-and `aos-route-question` is the front door. A typical turn through the loop:
+There are two ways to turn the loop.
+
+**Stage by stage.** Each stage is a routed skill, and `aos-route-question` is the
+front door. A typical turn, invoked one stage at a time:
 
 1. `aos-plan` — what should we do this month? → a prioritised plan + RECs.
 2. `aos-draft-content` — draft the content the plan calls for.
@@ -117,6 +119,17 @@ and `aos-route-question` is the front door. A typical turn through the loop:
 6. `aos-measure` — read the results; emit FNDs.
 7. `aos-index-ontology` — rebuild `INDEX.md`; see the new unactioned findings.
 8. back to `aos-plan` — now reading the findings from step 6.
+
+**End-to-end — `aos-run-cycle`.** The autonomous loop-runner turns the whole loop
+in a single session: `measure → index-ontology → plan → draft → review →
+distribute`. The user invokes once; the cycle chains the stage skills, carrying
+each stage's output into the next, and halts only at the human confirmation gates
+(every stage has one). It opens with `measure` — not `plan` — so the turn's plan
+already reads the prior turn's findings; on the first cycle, `measure` is dropped.
+Progress is tracked in `deliverables/<YYYY-MM>/cycle-run.md`, so a session that
+ends mid-cycle resumes with `aos-run-cycle --resume`. `aos-run-cycle` orchestrates
+only — every stage's work is still done by the owning stage skill, honouring its
+full `SKILL.md`. See `skills/aos-run-cycle/`.
 
 Each loop closes a little tighter than the last. That is the difference between a
 pipeline and an operating system.

@@ -7,7 +7,7 @@ class: system
 domain: onboarding
 layer: all
 client-scope: single-client
-version: 0.1.0
+version: 0.1.5
 owner: arcanian
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep", "Bash"]
 args-hint: "(no args — operates on the granted folder)"
@@ -30,20 +30,26 @@ version** has moved ahead of the folder's. Design: `docs/artifact-versioning.md`
 
 - **Folder schema version** — `schema-version` in `AOS_CONFIG.md` at the
   granted-folder root. The layout version *this folder* is at.
-- **Plugin current schema version** — the integer in the plugin's
-  `docs/CURRENT_SCHEMA_VERSION` (a one-line file). The layout version *this
-  build of the plugin* expects. This is the **single source of truth** for the
-  plugin's schema version.
+- **Plugin current schema version** — **this plugin build is schema version
+  `5`**, stated here and in the plugin's own `docs/CURRENT_SCHEMA_VERSION`. The
+  layout version *this build of the plugin* expects.
 
-A migration is due when **plugin current > folder**.
+> **Never read the plugin schema version from the granted folder** or from any
+> `aos/` directory inside or beside it — the granted folder holds *client data
+> only*, never plugin files. A stray `aos/` copy near the granted folder is not
+> "the plugin". The literal `5` in this skill is authoritative.
+
+A migration is due when **plugin current (`5`) > folder**.
 
 ## Steps
 
 1. **Read the folder version.** Resolve the granted-folder root, read
    `schema-version` from `AOS_CONFIG.md`.
 
-2. **Read the plugin target version.** `cat` the plugin's
-   `docs/CURRENT_SCHEMA_VERSION` — a single integer, no parsing.
+2. **The plugin target version is `5`** — this plugin build (see "The two
+   version numbers"). Do **not** read it from the granted folder or any `aos/`
+   directory in its tree; a stray `aos/` near the granted folder is not the
+   plugin.
 
 3. **Compare.**
    - folder **==** target → report *"folder is up to date (schema vN)"*; stop.
@@ -72,19 +78,26 @@ A migration is due when **plugin current > folder**.
    - On failure: stop. Do not advance `schema-version` past the failed step. Log
      the failure to `CAPTAINS_LOG.md` and report it to the user.
 
-6. **Confirm.** When the folder reaches the target version, summarise: versions
+6. **Refresh the plugin-version stamp.** After the folder reaches the target
+   schema version, set `AOS_CONFIG.md`'s `plugin-version` field to the **running
+   plugin's version** — read it from the *installed plugin's* own
+   `.claude-plugin/plugin.json` (`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`
+   when the runtime provides that variable). **Never read it from the granted
+   folder or any `aos/` directory in its tree.** If the plugin version cannot be
+   resolved, leave the existing stamp unchanged — never guess, never blank it.
+
+7. **Confirm.** When the folder reaches the target version, summarise: versions
    before/after, steps run, files touched, anything moved to
    `.aos/migration-backup/`. Suggest the user re-run their original workflow.
 
 ## Current state
 
-Schema version is **`1`**. `docs/CURRENT_SCHEMA_VERSION` is `1`. **There are no
-migration steps yet** — every freshly-onboarded folder is already at the current
-version, so today this skill only ever reports *"up to date"*.
-
-The skill exists now so the **mechanism** is in place. When the first
-schema-changing migration ships, it becomes a drop-in — see *Adding a migration
-step* below and §2 of `docs/artifact-versioning.md`.
+Schema version is **`5`** (`docs/CURRENT_SCHEMA_VERSION`). Four migration steps
+are defined — `1→2` (the `## Connectors` block), `2→3` (the `LEADS.md` /
+`content/SCHEDULE.md` / `metrics/` file-zones), `3→4` (the `campaigns/` zone),
+and `4→5` (the `campaigns/themes/` form + the `Campaign` columns) — registered
+in `reference/migration-steps.md`. A folder onboarded before schema 5 reports
+*behind* and this skill runs the steps in the gap.
 
 ## Adding a migration step (future work)
 
@@ -119,6 +132,24 @@ from `reference/migration-steps.md` and runs every one in the gap.
 
 ## Status
 
-v0.1.0 — migration **mechanism** + the version-comparison + per-step log/advance
-loop (AOS-755). Zero migration steps defined (schema is at `1`). The first real
-step lands as edits to `reference/migration-steps.md` + `CURRENT_SCHEMA_VERSION`.
+v0.1.5 — the `4→5` migration step (the campaign model refinements —
+`campaigns/themes/`, the `Campaign` column); schema literal moved 4 → 5.
+
+Prior: v0.1.4 — the `3→4` migration step (the `campaigns/` zone); schema literal
+moved 3 → 4 (AOS-834).
+
+Prior: v0.1.3 — the `2→3` migration step (the no-DAL file-zones `LEADS.md` /
+`content/SCHEDULE.md` / `metrics/`); schema literal moved 2 → 3 (AOS-832).
+
+Prior: v0.1.2 — a completed migration refreshes the `plugin-version` stamp in
+`AOS_CONFIG.md` (step 6), read from the installed plugin; the stale "## Current
+state" section is corrected to schema 2 + the `1→2` step.
+
+Prior: v0.1.1 — the plugin target schema version is pinned to the literal `2` in this
+skill, and the skill is barred from reading it out of the granted-folder tree
+(an M12 dogfood finding: a stray `aos/` copy beside the granted folder poisoned
+the comparison). The `1→2` migration step (the `CLIENT_CONFIG.md` `## Connectors`
+block) is registered in `reference/migration-steps.md`.
+
+Prior: v0.1.0 — migration **mechanism** + the version-comparison + per-step
+log/advance loop (AOS-755). Zero migration steps defined (schema at `1`).

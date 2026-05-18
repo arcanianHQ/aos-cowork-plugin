@@ -13,12 +13,12 @@ the public core plugin. It carries **every field a core AOS skill carries**
 
 | Field | Required | Value | Purpose |
 |---|---|---|---|
-| `name` | yes | `<customer-slug>-<skill>` | **Mandatory vendor namespacing** (Magento `Vendor_Module`). An overlay skill is never bare `aos-*`; collisions become structurally impossible. e.g. `vendilli-revamp-draft`. |
+| `name` | yes | `<customer-slug>-<skill>` (customer overlay) | **Mandatory vendor namespacing** (Magento `Vendor_Module`) for a per-customer overlay; never bare `aos-*`. A first-party product overlay may keep `aos-*` — see "First-party product overlays". |
 | `overlay` | yes | `true` | Marks the skill as an overlay (not core). |
-| `overlay-customer` | yes | `<customer-slug>` | Whose overlay this is — the one customer it deploys to. |
+| `overlay-customer` / `overlay-product` | yes | `<slug>` | Whose overlay this is — a customer (`overlay-customer`) or an Arcanian product (`overlay-product`). Exactly one. |
 | `overlay-mode` | yes | `add` \| `wrap` \| `replace` | How it relates to core. Default reasoning: `add`. |
 | `wraps` | if `wrap` | `<core-skill-name>` | The core skill this one composes around. |
-| `wrap-point` | if `wrap` | `before` \| `after` | Run before or after `wraps`. |
+| `wrap-point` | if `wrap` | `before` \| `after` \| `around` | Run before, after, or **bracketing** `wraps` — `around` runs both before and after the core skill (Magento `around` plugin). |
 | `replaces` | if `replace` | `<core-skill-name>` | The core skill this one supersedes. |
 | `requires-core` | yes | a semver range, e.g. `">=0.21.0"` | The core plugin version the overlay targets. If core moves past it, the overlay flags **incompatible** rather than breaking silently. |
 
@@ -27,12 +27,33 @@ the public core plugin. It carries **every field a core AOS skill carries**
 - **`add`** — a net-new skill. No `wraps` / `replaces`. The common case. The
   router discovers it and places it by `layer` like any skill.
 - **`wrap`** — runs before/after a named core skill. The core skill is untouched;
-  the overlay composes around it (Magento `before`/`after` plugin). The router
-  routes to the *core* skill; the wrap fires around it.
+  the overlay composes around it (Magento `before`/`after`/`around` plugin). The
+  router routes to the *core* skill; the wrap fires at its `wrap-point` —
+  `before`, `after`, or `around` (bracketing — runs before *and* after, e.g. a
+  Todoist sync that pulls before the morning brief and syncs after the wrap).
 - **`replace`** — supersedes a named core skill (Magento `di.xml` preference).
   When a `replace` overlay skill is present, the router routes to **it** instead
   of the core skill it `replaces:`. Use sparingly — always explicit, so an
   override is auditable.
+
+## First-party product overlays
+
+The fields above (`overlay-customer`, the mandatory `<customer-slug>-` namespace)
+model a **per-customer** overlay — one client's bespoke skills. AOS also ships
+**first-party product overlays** — paid extras Arcanian builds and sells to many
+clients (the Todoist task-sync overlay, the data-layer overlay). They differ in
+exactly two ways:
+
+| | Per-customer overlay | First-party product overlay |
+|---|---|---|
+| Identity field | `overlay-customer: <slug>` | `overlay-product: <slug>` |
+| `name:` namespace | `<customer-slug>-<skill>` — mandatory | **may keep the `aos-*` namespace** — Arcanian owns both core and the overlay, so an external collision is impossible; core simply never ships a skill the product overlay already owns |
+| `owner:` | the customer | `arcanian` |
+| `scope:` | `int-confidential` | `int-company` |
+
+Everything else — `overlay: true`, `overlay-mode`, `requires-core`, the three
+modes — is identical. A product overlay is still a **private** plugin, sold and
+licensed, never committed to the public repo.
 
 ## Example — an `add` overlay skill
 

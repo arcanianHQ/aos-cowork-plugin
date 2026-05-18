@@ -7,7 +7,7 @@ class: system
 domain: onboarding
 layer: all
 client-scope: single-client
-version: 0.6.0
+version: 0.7.6
 owner: arcanian
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Bash"]
 preflight: []
@@ -51,12 +51,19 @@ Walk the user through first-run setup.
 
 4. **Capture client context + languages.** Fill `client/CLIENT_CONFIG.md` and
    `client/DOMAIN_CHANNEL_MAP.yaml` — the client, its business units, domains
-   and channels. Then ask the user the **communication language** (how AOS
-   talks to them) and the **content language** (what created artifacts are
-   written in) — they may differ — and write both into `AOS_CONFIG.md`. See
-   `docs/language-context.md`.
+   and channels. **Capture the `## Connectors` block** — ask which connectors
+   this client *requires*, which are *optional*, and which paid *overlays* they
+   are entitled to; write `required` / `optional` / `overlays`. Then ask the
+   user the **communication language** (how AOS talks to them) and the
+   **content language** (what created artifacts are written in) — they may
+   differ — and write both into `AOS_CONFIG.md`. See `docs/language-context.md`.
 
-5. **Connect the connectors.** Guide the user through Settings → Connectors:
+5. **Connect the connectors.** Read the `## Connectors` block from
+   `client/CLIENT_CONFIG.md` (captured in Step 4) — it is the per-client
+   connector definition, and it tells you exactly what to wire: provision the
+   `required` set, offer each `optional` connector as "connect if the client
+   uses it", and tell the user which paid `overlays` to install (e.g.
+   `aos-todoist-overlay`). Then guide them through Settings → Connectors:
    - **Bundled** — Databox, HubSpot, Semrush ship in `.mcp.json`; the user
      authorises each via OAuth on first use. Confirm Databox with a `List
      Accounts` call; the client authorises *their own* Databox scope.
@@ -95,18 +102,39 @@ Walk the user through first-run setup.
 
 When this skill runs against a granted folder that **already has** an
 `AOS_CONFIG.md` (a re-run, or onboarding onto a previously-used folder), compare
-its `schema-version` to the plugin's current schema version in
-`docs/CURRENT_SCHEMA_VERSION`:
+its `schema-version` to **this plugin build's schema version, which is `5`**.
 
-- folder `schema-version` **<** plugin's → the folder is **behind**. Do not
+> **The plugin schema version is the literal `5`** — stated here and in the
+> plugin's own `docs/CURRENT_SCHEMA_VERSION`. **Never read it from the granted
+> folder or from any `aos/` directory inside or beside it.** The granted folder
+> holds *client data only* — it never contains plugin files. A stray `aos/`
+> copy near the granted folder is **not** "the plugin"; ignore it entirely. The
+> literal `5` in this skill is authoritative.
+
+- folder `schema-version` **<** `5` → the folder is **behind**. Do not
   re-scaffold; tell the user the data folder predates this plugin build and
   **suggest running `aos-migrate`** before any workflow.
-- folder `schema-version` **>** plugin's → the folder is newer than the plugin;
+- folder `schema-version` **>** `5` → the folder is newer than the plugin;
   advise updating the plugin (do not write to the folder).
-- equal → current; proceed normally.
+- folder `schema-version` **==** `5` → current; proceed normally.
 
-A fresh install seeds `schema-version` from `data-template/AOS_CONFIG.md`, so a
-brand-new folder is always current. See `docs/artifact-versioning.md` §2.
+A fresh install seeds `schema-version: 5` from `data-template/AOS_CONFIG.md`, so
+a brand-new folder is always current. See `docs/artifact-versioning.md` §2.
+
+**Refresh the `plugin-version` stamp.** Whenever this skill runs against an
+existing folder, set `AOS_CONFIG.md`'s `plugin-version` to the **running
+plugin's version** — read from the *installed plugin's* own
+`.claude-plugin/plugin.json` (`${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json`
+when the runtime provides that variable). **Never** read it from an `aos/`
+directory in the granted-folder tree. If it cannot be resolved, leave the
+existing stamp unchanged — never guess.
+
+**Ensure the session-start `CLAUDE.md`.** Whenever this skill runs against an
+existing folder, check the granted-folder root has a `CLAUDE.md`. If absent,
+copy it from the installed plugin's `data-template/CLAUDE.md` — it carries the
+session-start health check (the `schema-current` gate; see `docs/preflight.md`)
+that Cowork loads every session. A folder onboarded before this file existed has
+none; this back-fills it.
 
 ## Graduate-bundle import (Stage 1 → 3)
 
@@ -147,13 +175,49 @@ is **not** part of this plugin; it extends the operator's `finalize-engagement`
   empty one. Confirm with the user before writing.
 - Storage is plain file ops. Never create a database file on a granted / FUSE
   folder (FUSE mounts can't host a live SQLite DB).
+- **Plugin files never live in the granted folder.** `docs/`, `data-template/`,
+  `CURRENT_SCHEMA_VERSION`, `plugin.json` belong to the *installed plugin*, not
+  the client's data folder. If an `aos/` directory appears inside or beside the
+  granted folder, it is stale client-side cruft — **never** read schema,
+  version, or template data from it. Resolve the schema version from the literal
+  in "Existing-folder schema check"; resolve the template from the installed
+  plugin only.
 - **The manifest and the structure must match.** Every zone the Zones manifest
   declares must actually be scaffolded at that location — a manifest entry with
   no folder behind it is a broken install the data-access router will fail on.
 
 ## Status
 
-v0.6.0 — Step 5 broadened to **connect the connectors** (M9): bundled connectors
+v0.7.6 — back-fills the session-start `CLAUDE.md` (the `schema-current`
+health-check gate, AOS-844) into an existing folder that predates it; a fresh
+scaffold gets it from `data-template/`.
+
+Prior: v0.7.5 — schema version 5: the `campaigns/themes/` form is scaffolded on a
+fresh install; the schema literal moved 4 → 5 (AOS-834 campaign model).
+
+Prior: v0.7.4 — schema version 4: the `campaigns/` zone is scaffolded on a fresh
+install; the schema literal moved 3 → 4 (AOS-834).
+
+Prior: v0.7.3 — schema version 3: the no-DAL file-zones (`LEADS.md`,
+`content/SCHEDULE.md`, `metrics/`) are scaffolded on a fresh install; the schema
+literal moved 2 → 3 (AOS-832).
+
+Prior: v0.7.2 — a run against an existing folder refreshes the `plugin-version` stamp
+in `AOS_CONFIG.md` (M12 dogfood finding: the stamp went stale at `0.13.0`),
+read from the installed plugin, never the granted-folder tree.
+
+Prior: v0.7.1 — the schema check is pinned to the literal plugin schema version (`2`)
+and barred from reading schema/version/template files out of the granted-folder
+tree (M12 dogfood finding: a stray `aos/` plugin copy beside the granted folder
+was mistaken for "the plugin", so a behind folder read as current).
+
+Prior: v0.7.0 — the **per-client connectors definition** (AOS-831, schema v2): Step 4
+captures a `## Connectors` block in `CLIENT_CONFIG.md` (`required` / `optional` /
+`overlays`); Step 5 reads it and provisions exactly that set instead of asking
+generically. The block lives in the granted folder, so it is shared across every
+operator working the client. `aos-migrate` seeds it on a v1→v2 folder.
+
+Prior: v0.6.0 — Step 5 broadened to **connect the connectors** (M9): bundled connectors
 (Databox / HubSpot / Semrush) authorise on first use; **ActiveCampaign is added
 per client** — AC has no universal endpoint, so onboarding takes one input (the
 client's AC URL), derives the per-account connector, and writes it to the

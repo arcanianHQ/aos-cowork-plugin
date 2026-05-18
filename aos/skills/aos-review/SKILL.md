@@ -1,16 +1,16 @@
 ---
 name: aos-review
-description: "Review workflow — the quality gate before an artifact moves draft → in-review / published. Checks a content piece (or deliverable) against the brand profile (voice + positioning adherence), its BU's content-system contract, and completeness, then issues a PASS / REVISE / BLOCK verdict with a review report. The plugin analogue of the ADF verification gate. Trigger on 'review this', 'check this before publish', 'is this ready to ship', or before aos-distribute advances a piece."
+description: "Review workflow — the quality gate before an artifact moves draft → in-review / published. Checks a content piece (or deliverable) against the brand profile (voice + positioning adherence), its BU's content-system contract, and completeness, then issues a PASS / REVISE / BLOCK verdict with a review report. Also runs the calibration store-back: a REVISE/BLOCK routes corrections into the foundations, and a client-accepted piece flows its voice + winning structure back into brand/VOICE.md and the pattern library. The plugin analogue of the ADF verification gate. Trigger on 'review this', 'check this before publish', 'is this ready to ship', when a piece is marked client-accepted, or before aos-distribute advances a piece."
 scope: int-company
 flavor: [company, advanced, internal]
 class: intelligence
 domain: quality
 layer: [L6, L7]
 client-scope: single-client
-version: 0.1.1
+version: 0.2.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write, Edit]
-args-hint: "--piece=<path-or-slug under content/> [--bu=<bu-slug>] — operates on the granted folder; reviews one artifact"
+args-hint: "--piece=<path-or-slug under content/> [--bu=<bu-slug>] [--accepted] — operates on the granted folder; reviews one artifact, or runs the accept-door store-back"
 inputs:
   - client/CLIENT_CONFIG.md
   - content/ (the artifact under review — a single piece or a series piece)
@@ -25,6 +25,9 @@ outputs:
   - deliverables/<YYYY-MM>/review-<piece-slug>.md (the review report — verdict + checklist)
   - ontology/findings/FND-NNN-*.md (a recurring quality finding worth carrying forward — only when one is genuine)
   - ontology/gotchas/GOT-NNN-*.md (a recurring failure pattern worth recording — only when one is genuine)
+  - brand/VOICE.md · brand/POSITIONING.md · brand/ICP.md (calibration store-back — proposed, user-confirmed)
+  - content-system/[<bu>/]messaging.md · pillars.md (calibration store-back — proposed, user-confirmed)
+  - the pattern library maintained by aos-build-patterns (accept-door pattern store-back — proposed, user-confirmed)
 preflight:
   - client-config
 ontology:
@@ -39,7 +42,8 @@ safety:
 depends_on:
   - aos-draft-content
   - aos-build-brand-system
-tags: [review, quality, qa, verification, gate, content, loop]
+  - aos-build-patterns
+tags: [review, quality, qa, verification, gate, content, loop, calibration]
 ---
 
 ## Data access
@@ -109,6 +113,53 @@ Every review ends in exactly one verdict:
 A verdict is never softened: a piece with one banned-word hit is `REVISE`, not
 `PASS with a note`. The gate is the gate.
 
+## The calibration loop — bidirectional store-back
+
+A verdict is not the end. Every review **writes back into the foundations** — a
+draft is disposable; the foundation (`brand/`, `content-system/`, the pattern
+library) is the asset. One loop, two doors:
+
+- **The reject door** (`REVISE` / `BLOCK`) — the corrections are diagnosed to the
+  *foundation* that was wrong, proposed **into that foundation**, and the piece
+  is re-drafted from the corrected foundation — never patched in place.
+- **The accept door** (`status: client-accepted`) — the accepted artifact is a
+  **gold reference**: its realised voice and winning structure are stored back
+  into `brand/VOICE.md` and the pattern library. A client-accepted piece
+  **outranks** the originally-drafted `VOICE.md`.
+
+This is what makes the system **compound** — every accepted piece leaves the
+next client's first draft measurably better. Mechanically realised in Step 5.
+
+### Foundation routing table
+
+| A correction about… | Routes to… |
+|---|---|
+| voice, tone, register, archetype, banned phrasings | `brand/VOICE.md` |
+| post structure, length, section order, opening style | the post-type spec — a client-level override if the structure fix is client-specific |
+| messaging, pillars, claims, what to say | `content-system/[<bu>/]messaging.md` · `pillars.md` |
+| who it's for / segments | `brand/ICP.md` |
+| positioning | `brand/POSITIONING.md` |
+| language nativeness (AI-Hungarian etc.) | `aos-localize-hu` handles it; if systemic, note it in `brand/VOICE.md` |
+
+### Provenance
+
+Every stored-back rule or pattern carries a `validated-by:` line naming the
+artifact it came from — e.g. `validated-by: content/<bu>/<accepted-piece>.md`.
+`VOICE.md` and the pattern library become **evidence-backed**: a later accepted
+piece that contradicts a rule supersedes it cleanly — newest accepted wins, keep
+the lineage. Ties to the `aos-back-statements` provenance discipline.
+
+### Guardrails
+
+- **Propose, never silently overwrite** — the same confirmation gate as
+  `aos-build-brand-system`. Every foundation edit is shown and Accepted first.
+- **Write to foundations, never patch the draft in place.**
+- **Refine, don't replace** — one accepted artifact *refines* `VOICE.md`; it
+  does not rewrite it wholesale.
+- **Don't over-fit** — one accepted piece is one data point. Tag it; let rules
+  accumulate evidence. Conflicting accepts trigger a human reconciliation, not an
+  auto-merge.
+
 ## Arguments
 
 This skill operates on the **granted folder** — which is the client's folder.
@@ -120,6 +171,9 @@ This skill operates on the **granted folder** — which is the client's folder.
   `content-system/` contains subfolders with their own `messaging.md`, the skill
   refuses to run without this flag — it cannot check the contract without knowing
   which BU's contract applies.
+- `--accepted` (optional) — force the **accept-door** store-back (Step 5) on the
+  piece even if its frontmatter `status:` is not yet `client-accepted`. Normally
+  the door is chosen automatically from `status:` — see Step 0.
 
 ## Process
 
@@ -130,6 +184,11 @@ This skill operates on the **granted folder** — which is the client's folder.
 3. Detect per-BU layout — `ls content-system/*/messaging.md`. If any match, `--bu` is required; abort with the BU list if missing.
 4. Resolve and **Read** the `--piece` file. Verify it exists and has content-piece (or deliverable) frontmatter. If it is a stub, empty, or missing — abort with a clear message; there is nothing to review.
 5. **Pre-read the contract files** — `brand/VOICE.md`, `brand/POSITIONING.md`, `brand/ICP.md`, and the BU's `content-system/[<bu>/]messaging.md` · `pillars.md` · `products.md`. If `brand/VOICE.md` or `brand/POSITIONING.md` is a stub or missing, the review cannot be run to standard — state this and recommend `aos-build-brand-system` first; offer a **degraded completeness-only review** the user can accept explicitly.
+6. **Determine the door.** Read the piece's frontmatter `status:`. If it is
+   `client-accepted` (or `--accepted` was passed), this is an **accept-door**
+   run — skip the verdict (Steps 1–4) and go straight to Step 5's accept door.
+   Otherwise, run the verdict review (Steps 1–4); Step 5's reject door fires if
+   the verdict is `REVISE` / `BLOCK`.
 
 ### Step 1 — Brand adherence check
 
@@ -185,6 +244,40 @@ Check the piece is *finished*. Procedure in `reference/review-checklist.md` §3.
    the verdict / Regenerate. Never advance `content/CATALOGUE.md` status — that is
    `aos-distribute`'s job; this skill clears or holds the piece, it does not ship.
 
+### Step 5 — Calibration store-back
+
+The verdict is not the end — every review writes back into the foundations (see
+"The calibration loop"). Which door runs is set in Step 0.
+
+**Reject door** — runs when the verdict is `REVISE` or `BLOCK`:
+
+1. Take the human's reasons for the reject — a free-text reaction, or a
+   structured set of decisions. The skill accepts **free-text and structures it
+   itself** — the operator does not have to fill a form.
+2. **Classify** each correction by the foundation it belongs to — the routing
+   table above.
+3. **Propose** the edit to that foundation file — shown to the user and
+   **Accepted before writing**; never silent, and never applied to the draft.
+4. Hand the piece back to `aos-draft-content` to **re-draft from the corrected
+   foundation** — then re-review. The correction lives in the foundation; the
+   improvement is re-derived, not patched.
+
+**Accept door** — runs when the piece is `status: client-accepted` (or
+`--accepted`):
+
+1. **Voice store-back** — diff the accepted artifact's *realised* voice against
+   `brand/VOICE.md`; propose confirmations / refinements: the proven register,
+   the AI-tells that were removed as explicit banned-list entries, naming
+   conventions. The accepted artifact outranks the drafted `VOICE.md`.
+2. **Pattern store-back** — extract the winning structure (opening style,
+   section order, length band, the content-type slots) as a reusable content
+   pattern; propose it into the pattern library `aos-build-patterns` maintains,
+   tagged *validated*.
+3. Every proposed edit carries a `validated-by:` provenance line naming the
+   accepted piece, is **proposed + user-confirmed** (the guardrails), and
+   **refines** rather than replaces. The accepted draft itself is never modified
+   — it is the evidence, not the target.
+
 ## Output Sections
 
 The review report's minimum content (template: `reference/review-report-template.md`):
@@ -224,14 +317,18 @@ Never hard-code `skill_version` or `aos_schema` — read them at write time.
 6. **One-off ≠ finding.** Emit an FND/GOT only for a *recurring* problem. A single-piece issue lives in the review report, not the ontology.
 7. **Single client.** Operate only within the granted folder; never reach outside it.
 8. **Discovery, not pronouncement.** Present the verdict + report for confirmation before writing; end the report with *"What did this review get wrong?"*
+9. **Calibration writes to the foundations, never the draft.** The reject door routes corrections into `brand/` / `content-system/` / the post-type spec and re-drafts from there; the accept door stores voice + structure back to `brand/VOICE.md` + the pattern library. The draft is disposable — never patched in place.
+10. **Store-back is proposed, never silent.** Every foundation edit — reject-door or accept-door — is shown and Accepted first; it *refines*, never rewrites wholesale; one accepted piece is one data point — tag it `validated-by:` and let rules accumulate evidence, never over-fit on a single blog.
 
 ## Integration
 
-- **Upstream:** `aos-draft-content` (produces the draft this reviews); `aos-build-brand-system` (produces the brand contract this checks against); `aos-route-question` routes "review this" / "is this ready" / "check before publish" requests here.
+- **Upstream:** `aos-draft-content` (produces the draft this reviews); `aos-build-brand-system` (produces the brand contract this checks against); `aos-route-question` routes "review this" / "is this ready" / "check before publish" / "this piece is accepted" requests here.
 - **Downstream:** on `PASS`, `aos-distribute` ships the cleared piece — `aos-distribute` Step 0 checks for a `PASS` review and routes back here if none exists. On `REVISE` / `BLOCK`, the piece goes back to `aos-draft-content`; re-review after the fix. A recurring FND feeds the next `aos-plan` cycle; a GOT warns future `aos-draft-content` runs.
+- **Calibration (Step 5):** the reject door writes corrections into `brand/` / `content-system/` (consumed by the next `aos-draft-content` re-draft); the accept door stores voice back to `brand/VOICE.md` (the contract `aos-build-brand-system` owns) and patterns into the library `aos-build-patterns` maintains — so every accepted piece improves the next client's first draft.
 
 ## Versioning
 
+- **v0.2.0** — the **calibration loop** (AOS-843; spec: `COWORK_CALIBRATION_LOOP_SPEC.md`; learning from the 2026-05-14 DeluxeBuilding content session). `aos-review` is now bidirectional — a verdict writes back into the *foundations*, never just the draft. **Reject door:** `REVISE`/`BLOCK` corrections are classified (the routing table) and proposed into `brand/` / `content-system/` / the post-type spec, then re-drafted from there. **Accept door:** a `client-accepted` piece flows its realised voice → `brand/VOICE.md` and winning structure → the pattern library, `validated-by:`-tagged. Step 5 + `--accepted`. This is the system's compounding mechanism.
 - **v0.1.0** — initial Cowork-plugin authoring (AOS-738, architecture-gaps §7 / Milestone 1). The quality gate of the AOS loop — the plugin analogue of the ADF verification gate. The checklist thresholds and the `REVISE` / `BLOCK` boundary likely need refinement after first real runs.
 - **v0.1.1** — first-run refinements (Milestone 2 / v0.15.0 loop re-test). §2c no longer checks temporal availability ("in stock") against `products.md` — `products.md` is a product-spec contract, not live inventory; availability is operator-confirmed via a Hand-back note, verdict unaffected. §1b assertion test is now series-beat-aware — an identity-withholding beat (BAB "Before", Hero's-Journey early arc) is checked for brand *worldview*, not brand *identity*.
 

@@ -39,7 +39,6 @@ uses the tool**. Not bundled by default (minimal-connector principle).
 | Canva | `https://mcp.canva.com/mcp` | produces visual content assets |
 | Slack | `https://mcp.slack.com/mcp` | wants briefs / reports delivered to Slack |
 | Meta Ads | endpoint TBD | runs Meta advertising |
-| Todoist | endpoint TBD | manages tasks in Todoist (sync with `TASKS.md`) |
 
 **ActiveCampaign — per-account, never bundled.** ActiveCampaign's Remote MCP is
 **vendor-hosted per account** — each account is its own subdomain
@@ -84,8 +83,8 @@ same turn. See `aos-build-brand-system` Step 2b. Tracked: AOS-746.
   Core table note above); Databox covers the signal in the interim.
 - **Conditional, per-client:** **ActiveCampaign** — per-account, no universal
   endpoint, so not bundleable; `aos-onboard` adds it for a client that uses AC.
-  Canva and Slack have vendor-hosted endpoints; Meta Ads and Todoist endpoints
-  stay unconfirmed — all added per-client only if and when the client needs them.
+  Canva and Slack have vendor-hosted endpoints; Meta Ads stays unconfirmed — all
+  added per-client only if and when the client needs them.
 - **Excluded by architecture:** Supabase and Google Drive are *not* connectors —
   the plugin has no control layer and storage is the granted folder
   (`DECISIONS_2026-05-15_aos-cowork-no-control-layer.md` §7). The original

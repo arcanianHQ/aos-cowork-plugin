@@ -10,7 +10,7 @@ every skill to resolve where data lives — see `docs/data-access-router.md`.
 - **communication-language**: <lang>  # how skills talk to the user (see docs/language-context.md)
 - **content-language**: <lang>         # language of created / delivered artifacts
 - **plugin-version**: <plugin-version>
-- **schema-version**: 1               # data-folder layout version (migration — AOS-755)
+- **schema-version**: 5               # data-folder layout version (migration — AOS-755)
 - **created**: <date>
 
 ## Schedules — recurring workflows
@@ -50,6 +50,8 @@ elsewhere (then give an absolute path + the matching adapter).
 | brand | granted | fs |
 | content | granted | fs |
 | content-system | granted | fs |
+| campaigns | granted | fs |
 | dictionaries | granted | fs |
 | ontology | granted | fs |
+| metrics | granted | fs |
 | deliverables | granted | fs |
