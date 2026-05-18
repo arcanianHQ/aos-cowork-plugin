@@ -76,7 +76,7 @@ aos-draft-content. BLOCK: structural fault — fix upstream, must not ship.>
 
 <Present only when the autonomous revision micro-loop ran. One row per
 iteration; the issue list above reflects the FINAL iteration. See
-`reference/revision-microloop.md`.>
+`revision-microloop.md`.>
 
 | Iter | Verdict | Issues | Re-draft change | Outcome |
 |------|---------|--------|-----------------|---------|
