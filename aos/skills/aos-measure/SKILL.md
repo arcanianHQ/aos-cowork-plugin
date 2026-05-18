@@ -7,7 +7,7 @@ class: intelligence
 domain: diagnostic
 layer: [L4, L5, L6, L7]
 client-scope: single-client
-version: 0.2.0
+version: 0.2.1
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write]
 args-hint: "[--period=<YYYY-MM>] [--bu=<bu-slug>] — operates on the granted folder; uses the Databox connector when present"
@@ -127,8 +127,9 @@ This skill operates on the **granted folder** — which is the client's folder.
 
 - `--period` (optional) — the measurement window, `YYYY-MM`; defaults to the
   current month. Sets which `deliverables/<YYYY-MM>/` the results doc lands in.
-- `--bu` (required if the client uses per-BU content) — BU slug. Measure **per
-  BU** — never flatten two BUs' results into one read.
+- `--bu` (required if the client is multi-BU) — BU slug. The client is multi-BU
+  when `AOS_CONFIG.md` declares a non-empty `business-units:` list (see Step 0).
+  Measure **per BU** — never flatten two BUs' results into one read.
 
 ## Process
 
@@ -137,7 +138,7 @@ This skill operates on the **granted folder** — which is the client's folder.
 1. Confirm the working directory is the granted-folder root. Read `AOS_CONFIG.md` for the zone manifest and `client` identity.
 2. Verify `client/CLIENT_CONFIG.md` exists. If not — suggest `aos-onboard`.
 3. **Connector check** — determine whether the Databox MCP tools are present in the session. Record the result; it sets the measurement mode (metrics-grounded vs degraded) and is stated in the deliverable.
-4. Detect per-BU layout; if multi-BU, `--bu` is required. If the client has 2+ domains, load `client/DOMAIN_CHANNEL_MAP.yaml`.
+4. **Detect multi-BU** from `AOS_CONFIG.md`'s `business-units:` declaration — non-empty → multi-BU → `--bu` is required. Do not infer this from the `content-system/<bu>/` layout (`docs/data-folder-spec.md`, "Detecting multi-BU"). If the client has 2+ domains, load `client/DOMAIN_CHANNEL_MAP.yaml`.
 
 ### Step 1 — Establish what shipped
 
@@ -213,6 +214,7 @@ hard-code `skill_version` or `aos_schema` — read them at write time.
 
 ## Versioning
 
+- **v0.2.1** — **multi-BU detection fix** (AOS-853 / F1-D1). Step 0.4 now detects multi-BU from `AOS_CONFIG.md`'s `business-units:` declaration, not the `content-system/<bu>/` layout. See `docs/data-folder-spec.md`, "Detecting multi-BU".
 - **v0.2.0** — **proactive finding nudge** (AOS-851, milestone *13. Agentic behaviour* — F5). After emitting FNDs, `aos-measure` surfaces a one-line nudge — the unactioned findings + the next skill (`aos-index-ontology` → `aos-plan`) — instead of stopping silently. Surfaced, never auto-actioned. The after-measure moment of the three-moment nudge contract in `docs/proactive-nudges.md`.
 - **v0.1.0** — initial Cowork-plugin authoring. The measurement stage of the AOS loop (architecture-gaps §1). Result→finding lenses and benchmark handling likely need refinement after first real runs.
 

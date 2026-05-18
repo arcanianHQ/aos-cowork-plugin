@@ -7,7 +7,7 @@ class: content
 domain: content
 layer: [L6, L7]
 client-scope: single-client
-version: 0.2.1
+version: 0.2.2
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write, Edit]
 args-hint: "single-piece: --type=<reference|blog|linkbait> --topic=\"<phrase>\" [--bu=<bu-slug>] [--pillar=<slug>]  ·  series: --framework=<slug> --topic=\"<phrase>\" [--bu=<bu-slug>] [--series=<slug>]"
@@ -116,7 +116,7 @@ Discovery, not pronouncement. Every draft ends with *"What did we get wrong? Wha
 
 **Both modes**
 
-- `--bu` (required if client uses per-BU content-system) — BU slug, e.g., `kocsibeallo` or `deluxebuilding`. If the client's `content-system/` contains subfolders with their own `messaging.md`, the skill refuses to run without this flag.
+- `--bu` (required if the client is multi-BU) — BU slug, e.g., `kocsibeallo` or `deluxebuilding`. The client is multi-BU when `AOS_CONFIG.md` declares a non-empty `business-units:` list (see Step 0); the skill refuses to run without this flag.
 
 There is no `--client` argument: the granted folder *is* the client folder, and client identity is read from `client/CLIENT_CONFIG.md` / `AOS_CONFIG.md`.
 
@@ -144,7 +144,7 @@ content-system/
 
 **Strict separation rule** (from `client/DOMAIN_CHANNEL_MAP.yaml` when applicable): a draft for BU A NEVER references BU B's products, messaging, or audience. The skill enforces this by loading only the requested BU's content-system files.
 
-Per-BU layout is detected by checking whether any subdirectory of `content-system/` contains a `messaging.md`; if so, `--bu` is required. (The optional `load-system.mjs` accelerator does this same detection.)
+A client is multi-BU when `AOS_CONFIG.md` declares a non-empty `business-units:` list — that declaration is what makes `--bu` required (`docs/data-folder-spec.md`, "Detecting multi-BU"). The `content-system/<bu>/` subfolders are only *where* the per-BU content-system files live once populated; checking them tells the skill where to load from, not whether the client is multi-BU. A client can be multi-BU before its `content-system/` is split — then the content-system gate (Step 0 / Hard Rule 2) reports the per-BU content-system is not populated yet.
 
 ## Process
 
@@ -186,11 +186,11 @@ the `INDEX.md` template, resumable runs — is in `reference/series-mode.md`.
 3. Verify the `content-system/` zone exists, then validate the content-system contract.
 
    **Baseline (bash + filesystem — the contract):**
-   - Detect per-BU layout — `ls content-system/*/messaging.md`; if any match, BU mode is on and `--bu` is required (abort with the list of BU folders if it's missing).
-   - Resolve the content-system dir: `content-system/<bu>/` in BU mode, else `content-system/`.
+   - Detect multi-BU from the declaration — read `AOS_CONFIG.md`'s `business-units:`. Non-empty → multi-BU → `--bu` is required (abort with the BU list if missing). Do not infer this from `content-system/<bu>/` alone (`docs/data-folder-spec.md`, "Detecting multi-BU").
+   - Resolve the content-system dir: `content-system/<bu>/` in BU mode, else `content-system/`. If multi-BU is declared but `content-system/<bu>/` does not exist, abort with a clear message — the per-BU content-system is not populated yet (an incomplete-scaffold state, not a single-BU client).
    - Confirm `messaging.md` is non-stub, and `products.md` is non-stub for `--type=reference`. Confirm `brand/VOICE.md` + `brand/ICP.md` are non-stub. Abort with a clear fix message if any check fails.
 
-   **Optional accelerator:** `node scripts/load-system.mjs <type> [<bu>]` runs exactly these checks in one call and exits non-zero with the fix message. Use it if Node is available; the bash baseline is equivalent.
+   **Optional accelerator:** `node scripts/load-system.mjs <type> [<bu>]` runs the content-system path resolution + substance checks in one call and exits non-zero with the fix message. Use it if Node is available; the bash baseline is equivalent. (Multi-BU detection itself is the `AOS_CONFIG.md` check above.)
 4. Validate `--type` against allowed values.
 5. Load `reference/post-type-<type>.md` from this skill's reference directory.
 
@@ -332,6 +332,7 @@ User-facing summary at end of run:
 - **v0.1.0** — initial dogfood version. Reference / blog / linkbait types defined. Multi-surface output for reference type only.
 - **v0.2.0** — **series mode** added (AOS-752 / AOS-753): walks the 3-level content framework library (`content-system/frameworks/`); one storytelling-framework run produces one multi-piece, multi-platform content series. Single-piece mode unchanged.
 - **v0.2.1** — **parallel fan-out** in series mode (AOS-850, milestone *13. Agentic behaviour* — F4). Once each beat's type + structure is resolved, the per-piece drafts are documented as independent units that fan out to parallel sub-agents when the runtime exposes them and run sequentially otherwise — same series, lower latency. The brand gate, beat resolution, the `INDEX.md` synthesis, and the user-review gate stay parent-level. See `docs/parallel-fanout.md`.
+- **v0.2.2** — **multi-BU detection fix** (AOS-853 / F1-D1). Step 0 detects multi-BU from `AOS_CONFIG.md`'s `business-units:` declaration, not the `content-system/<bu>/` layout; a multi-BU client whose `content-system/` is not yet split aborts with an incomplete-scaffold message instead of running single-BU. See `docs/data-folder-spec.md`, "Detecting multi-BU".
 - **v0.3.0 planned** — add `--variants=N` for A/B title generation; add image-prompt sub-pass; multilingual cross-pollination (one topic, two languages).
 - **v1.0.0** — promotion criterion: 30+ pieces shipped through this skill across 3+ clients with positive feedback.
 
