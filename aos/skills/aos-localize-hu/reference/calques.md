@@ -173,9 +173,11 @@ Grammatically perfect Hungarian, every word correct — but the *idiom* is Engli
 |---|---|---|
 | Ez a ti hívásotok | your call | Ezt ti döntitek el / Rátok bízom / A ti döntésetek |
 | (A legnagyobb) különbséget hozni | (to) make a difference | Itt javít a legtöbbet / Itt látszik a legtöbb / Itt számít a legtöbbet |
-| A nap végén | at the end of the day | Végső soron / Lényegében |
-| Kirakni az asztalra | put it on the table | Szóba hozni / Kimondani |
+| Megnyomni / meghúzni a ravaszt (döntésnél) | pull the trigger | Belevágni / Meghozni a döntést / Rászánni magunkat |
+| Egy lépést hátra lépni | take a step back | Álljunk meg egy pillanatra / Nézzük kicsit távolabbról |
 | A labda a ti térfeleteken van | the ball is in your court | Rajtatok a sor / Tőletek függ |
+
+> "A nap végén" (*at the end of the day*) and "kirakni az asztalra" (*put on the table*) are calqued idioms too — already catalogued in `anti-patterns.md` §6 and §6b above, respectively.
 
 **Test:** back-translate the phrase into English word by word. If you get a fluent English idiom — it was a calque. A genuine Hungarian thought rarely back-translates into a clean English idiom.
 
