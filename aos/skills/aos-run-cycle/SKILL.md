@@ -107,7 +107,7 @@ user out of plumbing, not out of judgement.
 | 2 | index | `aos-index-ontology` | none (read+write, deterministic) | Rebuilds `ontology/INDEX.md` so stage 3 sees the new FNDs. |
 | 3 | plan | `aos-plan` | confirm | Hard-gates on a 9/9 `brand/` profile. Reads the FNDs from stage 1. |
 | 4 | draft | `aos-draft-content` | confirm | Drafts the content the plan's RECs call for. |
-| 5 | review | `aos-review` | confirm | `PASS` → stage 6. `REVISE` → see "Handling a REVISE". `BLOCK` → stage halts, cycle pauses. |
+| 5 | review | `aos-review` | confirm | Runs its own autonomous revision micro-loop. `PASS` → stage 6. Escalation (cap / no-progress / foundation gate) or `BLOCK` → see "Handling the review stage". |
 | 6 | distribute | `aos-distribute` | confirm | Ships only `PASS`-cleared pieces; advances `content/CATALOGUE.md`. |
 
 ## Arguments
@@ -173,18 +173,23 @@ For each stage in order:
 5. Update `cycle-run.md`: stage `done` / `skipped`, end timestamp, a one-line
    result (artifact path, verdict, count).
 
-### Step 3 — Handling a REVISE at the review stage
+### Step 3 — Handling the review stage
 
-`aos-review` can return `PASS` / `REVISE` / `BLOCK`:
+`aos-review` (v0.3.0+) runs its **own autonomous revision micro-loop** — on a
+`REVISE` it re-drafts and re-reviews the piece itself, iterating to a final
+outcome (F2 / AOS-848). `aos-run-cycle` does **not** re-implement that loop; it
+invokes `aos-review` and receives the final outcome:
 
-- **PASS** — proceed to `distribute`.
-- **REVISE** — for **v0.1.0**, surface the review report and the REVISE notes,
-  and **gate**: the user chooses to send it back through `aos-draft-content`
-  (the cycle re-runs stages 4–5 for that piece) or to halt. A *fully autonomous*
-  re-draft → re-review micro-loop is **F2 / AOS-848** — out of scope here; do
-  not auto-iterate yet.
-- **BLOCK** — the piece does not ship. Record it, drop it from the
-  `distribute` set, and continue the cycle with the remaining `PASS` pieces.
+- **PASS** — the micro-loop cleared the piece (possibly after iterations).
+  Proceed to `distribute`.
+- **Escalation** — the micro-loop hit its cap, made no progress, or surfaced a
+  repeated issue that needs a user-confirmed foundation edit. `aos-review`
+  presents that to the user itself; the cycle **waits at the stage gate** for
+  the resolution, then continues (`PASS` → distribute; otherwise the piece is
+  dropped from the `distribute` set).
+- **BLOCK** — the piece has a structural fault and does not ship. Record it,
+  drop it from the `distribute` set, and continue the cycle with the remaining
+  `PASS` pieces.
 
 ### Step 4 — Close the cycle
 
@@ -224,8 +229,9 @@ time, never hard-code them. The stage skills stamp their own artifacts.
    is dropped.
 4. **One BU per cycle.** For multi-BU clients, run the cycle per BU — never
    collapse BUs.
-5. **No autonomous re-draft on REVISE** (v0.1.0). A REVISE gates to the user;
-   the autonomous micro-loop is F2 / AOS-848.
+5. **The review micro-loop belongs to `aos-review`.** `aos-run-cycle` invokes
+   `aos-review` and receives its final outcome — it never re-implements the
+   autonomous revision loop (that is `aos-review` v0.3.0+, F2 / AOS-848).
 6. **Single client.** Operate only within the granted folder; never reach
    outside it.
 7. **`cycle-run.md` is the source of truth for cycle progress.** Update it at
@@ -248,8 +254,11 @@ time, never hard-code them. The stage skills stamp their own artifacts.
 
 ## Versioning
 
+- **v0.1.1** — the review stage now defers to `aos-review` v0.3.0's autonomous
+  revision micro-loop (F2 / AOS-848). Step 3 rewritten: a `REVISE` no longer
+  gates here — `aos-review` self-iterates and the cycle receives the final
+  outcome. Hard Rule 5 updated accordingly.
 - **v0.1.0** — initial authoring. The autonomous loop-runner (AOS-847, milestone
-  *13. Agentic behaviour*). REVISE gates to the user; the autonomous re-draft
-  micro-loop is deliberately deferred to F2.
+  *13. Agentic behaviour*).
 
 **What did we get wrong? What's missing?**
