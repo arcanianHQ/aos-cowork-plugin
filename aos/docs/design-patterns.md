@@ -66,6 +66,18 @@ Every skill declares `name`, `description`, `owner`, `scope`, `class`, `domain`,
 `flavor`, `layer`). The official Anthropic loader reads what it needs and ignores
 the rest — one skill file, valid on every surface.
 
+## 10. Parallel fan-out for independent work
+
+A skill whose work splits into **independent units** — units that share no
+ordering dependency and write disjoint paths — fans those units out to parallel
+sub-agents, then the parent synthesises the merged result. The diagnostic's
+layer passes, a per-BU run, a content series' per-piece drafts are the fan-out
+sites. Fan-out changes **latency, not output**: a parallel and a sequential run
+produce identical artifacts. It **degrades gracefully** — sub-agents are used
+when the runtime exposes them, else the same units run sequentially; no skill
+hard-depends on a sub-agent capability or declares a `Task` tool. Synthesis and
+the human gates always stay with the parent. Full pattern: `docs/parallel-fanout.md`.
+
 ---
 
 Upstream reference: the cluster lives at `~/Sites/knowledge-work-plugins/`;
