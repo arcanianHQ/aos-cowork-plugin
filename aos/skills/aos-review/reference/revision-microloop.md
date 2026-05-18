@@ -100,7 +100,7 @@ The micro-loop is autonomous *between* turns, not *through* the gates:
 
 ## The iteration log
 
-Appended to the review report (`reference/review-report-template.md` carries the
+Appended to the review report (`review-report-template.md` carries the
 section). One row per iteration:
 
 | Iter | Verdict | Issues | Re-draft change | Outcome |
