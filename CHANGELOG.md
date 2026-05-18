@@ -3,6 +3,96 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.39.0] — 2026-05-18
+
+**Multi-BU detection reads `AOS_CONFIG` business-units (AOS-853).**
+
+- Surfaced by the milestone-13 dogfood against the live Wellis folder: Wellis is
+  declared 4-BU with a `brand/` split, but its `content-system/` is not yet
+  split per BU — so the inherited `ls content-system/*/messaging.md` heuristic
+  mis-read it as single-BU.
+- `docs/data-folder-spec.md` — new "Detecting multi-BU" rule: `AOS_CONFIG`
+  `business-units` is the source of truth; `content-system/<bu>/` is layout, not
+  the detector. A multi-BU client can predate its `content-system` split.
+- `aos-run-cycle` v0.1.2, `aos-plan` v0.1.1, `aos-measure` v0.2.1,
+  `aos-draft-content` v0.2.2 — Step 0 detects multi-BU from the declaration; a
+  multi-BU-declared-but-`content-system`-not-split folder surfaces as an
+  incomplete-scaffold state, not silent single-BU.
+
+## [0.38.0] — 2026-05-18
+
+**`aos-daily` working-memory continuity (AOS-852)** — milestone 13, F6.
+
+- The Cowork VM is ephemeral — every session starts cold; the granted folder
+  persists and carries the working memory.
+- `aos-daily` v0.3.0: end mode writes a structured `## Session summary` block to
+  `CAPTAINS_LOG.md` (fixed fields, incl. a concrete open / mid-flight resume
+  point); start mode opens with a continuity hand-off — reads the most recent
+  summary so a cold session picks up the thread, reconciled against live state.
+- New `reference/session-continuity.md` — the block format + read/write
+  discipline.
+
+## [0.37.0] — 2026-05-18
+
+**Proactive finding-driven nudges (AOS-851)** — milestone 13, F5.
+
+- The loop is structurally closed, but a finding can still sit unread — nudges
+  surface unactioned findings unprompted, at the moments where acting on them is
+  the natural next step.
+- `docs/proactive-nudges.md` — the three nudge moments (session start / after
+  measure / before plan) + the rule: surfaced never auto-actioned, one line,
+  highest-signal first, no nagging.
+- `aos-measure` v0.2.0 — after emitting FNDs, surfaces a one-line nudge
+  (unactioned findings + next skill) instead of stopping silently.
+
+## [0.36.0] — 2026-05-18
+
+**Parallel sub-agent fan-out pattern (AOS-850)** — milestone 13, F4.
+
+- Independent work units fan out to parallel sub-agents; the parent synthesises.
+- `docs/parallel-fanout.md` — the pattern, the independence test, the
+  graceful-degradation contract (sub-agents when the runtime exposes them, else
+  sequential — identical artifacts, only latency differs); no skill
+  hard-depends on sub-agents.
+- `aos-diagnose-7layer` v0.2.0 and `aos-draft-content` v0.2.1 — their
+  independent passes documented as fan-out units; synthesis stays parent-level.
+
+## [0.35.0] — 2026-05-18
+
+**`aos-daily` session-start brief + cadence catch-up (AOS-849)** — milestone 13, F3.
+
+- `aos-daily` v0.2.0: `--mode=start` reframed as the session-start standing
+  brief, and gains cadence catch-up — reads the `schedules:` block, determines
+  what scheduled work was missed while the Cowork app was closed, and offers to
+  run it (offered, never auto-run).
+- The mitigation for `/schedule`'s no-catch-up gap; optional `last-run:`
+  annotation on schedules rows.
+- New `reference/cadence-catchup.md`.
+
+## [0.34.0] — 2026-05-18
+
+**`aos-review` autonomous revision micro-loop (AOS-848)** — milestone 13, F2.
+
+- A `REVISE` verdict no longer bounces the piece back to the human each turn —
+  `aos-review` re-drafts and re-reviews the piece itself, iterating to a final
+  outcome.
+- `aos-review` v0.3.0: the micro-loop runs inside Step 5's reject door; a repeat
+  detector promotes an issue that survives a re-draft to foundation-level.
+  Bounded by `--max-iterations` (default 3); `BLOCK` is never auto-fixed;
+  `--no-auto-revise` restores the v0.2.0 hand-back behaviour.
+- New `reference/revision-microloop.md`.
+
+## [0.33.0] — 2026-05-18
+
+**`aos-run-cycle` — the autonomous loop-runner (AOS-847)** — milestone 13, F1.
+
+- A new orchestrator skill that turns the whole AOS loop in one session —
+  measure → index-ontology → plan → draft → review → distribute — chaining the
+  stage skills and halting only at the human confirmation gates.
+- Measure-first ordering so the turn's plan reads the prior turn's FNDs;
+  resumable via `deliverables/<YYYY-MM>/cycle-run.md` (ephemeral-VM safe).
+- `docs/the-loop.md` "Running the loop" documents the end-to-end path.
+
 ## [0.32.0] — 2026-05-18
 
 **Folder-currency guard — no more silent degradation (AOS-844).**
