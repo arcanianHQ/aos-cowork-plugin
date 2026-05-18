@@ -7,7 +7,7 @@ class: content
 domain: content
 layer: [L6, L7]
 client-scope: single-client
-version: 0.2.0
+version: 0.2.1
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write, Edit]
 args-hint: "single-piece: --type=<reference|blog|linkbait> --topic=\"<phrase>\" [--bu=<bu-slug>] [--pillar=<slug>]  ·  series: --framework=<slug> --topic=\"<phrase>\" [--bu=<bu-slug>] [--series=<slug>]"
@@ -163,11 +163,20 @@ the content framework hierarchy — see the dedicated procedure in
    type's `default-structure` or the structure whose **Fit** matches the beat.
 5. **Draft each piece** — same composition + voice enforcement as Step 1 / Step 3
    below, with the Level-2 platform constraints and the Level-3 section skeleton.
+   Once every beat's type + structure is resolved (steps 3–4), the per-piece
+   drafts are **independent units** — each writes its own `NN-<beat>.md` and
+   reads no other piece — so they **fan out to parallel sub-agents when the
+   runtime exposes them, and run sequentially otherwise** (`docs/parallel-fanout.md`;
+   design-patterns §10). Same series either way — only the latency differs.
 6. **Write the series** — each piece to `content/[<bu>/]<series-slug>/`, plus a
-   series `INDEX.md`. The content `CATALOGUE.md` indexes by series.
+   series `INDEX.md`. The content `CATALOGUE.md` indexes by series. The `INDEX.md`
+   is **synthesis** — it must see every piece, so it stays with the parent and
+   never fans out.
 
 Series mode still runs the brand gate and content-system contract from Step 0, and
-the voice rules from Step 3. The depth — beat→type→structure resolution, frontmatter,
+the voice rules from Step 3. The brand gate, the beat→type→structure resolution,
+and the user-review gate are **parent-level steps** — a fanned-out per-piece draft
+never runs them on its own. The depth — beat→type→structure resolution, frontmatter,
 the `INDEX.md` template, resumable runs — is in `reference/series-mode.md`.
 
 ### Step 0 — Preflight (single-piece)
@@ -322,6 +331,7 @@ User-facing summary at end of run:
 
 - **v0.1.0** — initial dogfood version. Reference / blog / linkbait types defined. Multi-surface output for reference type only.
 - **v0.2.0** — **series mode** added (AOS-752 / AOS-753): walks the 3-level content framework library (`content-system/frameworks/`); one storytelling-framework run produces one multi-piece, multi-platform content series. Single-piece mode unchanged.
+- **v0.2.1** — **parallel fan-out** in series mode (AOS-850, milestone *13. Agentic behaviour* — F4). Once each beat's type + structure is resolved, the per-piece drafts are documented as independent units that fan out to parallel sub-agents when the runtime exposes them and run sequentially otherwise — same series, lower latency. The brand gate, beat resolution, the `INDEX.md` synthesis, and the user-review gate stay parent-level. See `docs/parallel-fanout.md`.
 - **v0.3.0 planned** — add `--variants=N` for A/B title generation; add image-prompt sub-pass; multilingual cross-pollination (one topic, two languages).
 - **v1.0.0** — promotion criterion: 30+ pieces shipped through this skill across 3+ clients with positive feedback.
 

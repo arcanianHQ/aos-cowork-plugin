@@ -7,7 +7,7 @@ class: intelligence
 domain: diagnostic
 layer: [L0, L1, L2, L3, L4, L5, L6, L7]
 client-scope: single-client
-version: 0.1.0
+version: 0.2.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write]
 args-hint: "[--mode=1|2|3] [--peer-review] — operates on the granted folder"
@@ -87,7 +87,7 @@ Diagnose in four layer-grouped passes, then synthesize. Each pass weights into t
 | Market | L6 + L7 | 20% | Customer journey, market forces, competition |
 | Synthesis | All | — | Primary constraint + cascade |
 
-Run the four passes (in parallel sub-agents if available, otherwise sequentially), then synthesize. **Layer reference, symptom maps, per-layer questions, and pattern tables** live in `reference/diagnostic-rules.md`.
+Run the four passes, then synthesize. The four passes are **independent units** — each examines its own layer group and writes no shared file — so they **fan out to parallel sub-agents when the runtime exposes them, and run sequentially otherwise** (`docs/parallel-fanout.md`; design-patterns §10). Parallel or sequential, the diagnosis is identical — only the latency differs. **Synthesis never fans out**: the constraint judgement must see all four passes at once, so it stays with the parent. **Layer reference, symptom maps, per-layer questions, and pattern tables** live in `reference/diagnostic-rules.md`.
 
 ### Modes
 
@@ -127,7 +127,7 @@ Run the four passes (in parallel sub-agents if available, otherwise sequentially
 
 ### Peer review (`--peer-review`)
 
-When enabled: after the standard run, spawn three subagents with distinct diagnostic lenses, anonymize their findings, synthesize, then reveal. Convergent findings → higher confidence; divergent → competing-hypotheses analysis.
+When enabled: after the standard run, run three independent diagnostic perspectives with distinct lenses, anonymize their findings, synthesize, then reveal. Convergent findings → higher confidence; divergent → competing-hypotheses analysis. The three perspectives are independent units — they **fan out to parallel sub-agents when the runtime exposes them, sequentially otherwise** (`docs/parallel-fanout.md`); the anonymise + synthesise + reveal steps stay with the parent.
 
 ## Output Sections
 
@@ -177,5 +177,10 @@ what lets a granted folder be migrated when the plugin or schema changes.
 ## If no business context
 
 Ask for: what they sell, who they sell to, challenges/symptoms, data points, what they already tried — or a website URL to start.
+
+## Versioning
+
+- **v0.2.0** — **parallel fan-out** (AOS-850, milestone *13. Agentic behaviour* — F4). The four layer-grouped passes, and the three `--peer-review` perspectives, are documented as independent units that fan out to parallel sub-agents when the runtime exposes them and run sequentially otherwise — same diagnosis, lower latency. Synthesis stays with the parent. See `docs/parallel-fanout.md`.
+- **v0.1.0** — initial Cowork-plugin authoring. The seven-layer diagnostic — modes 1–3, the four-pass architecture, peer review.
 
 **What did we get wrong? What's missing?**
