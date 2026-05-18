@@ -74,6 +74,26 @@ A single English word (see above) is easy to control. Multi-word English phrases
 
 **Test:** if a Hungarian reader could underline the phrase ("explain this") and it is not clear on first sight → quote + parenthetical Hungarian explanation, or translate.
 
+### 8e. PPC / ads domain — the recurring stuck English words
+
+This skill polishes a lot of PPC / paid-media client correspondence. These domain words leak in most often — all have settled Hungarian equivalents:
+
+| ❌ English left in | ✅ Hungarian |
+|---|---|
+| ad copy | hirdetésszöveg |
+| landing page (copy) | céloldal (-szöveg) |
+| read-only | csak olvasási jog / olvasási hozzáférés |
+| trial | próbaidőszak |
+| review (havi ~) | áttekintő / értékelő |
+| account (Google Ads / Meta ~) | fiók |
+| margin / marginok | árrés / fedezet |
+| measurement-audit | mérési audit |
+| performance | teljesítmény |
+| scope of work | feladatkör / a munka tartalma |
+| output / outputs | eredmény / amit a rendszer ad |
+
+**Exception — established technical terms stay, inflected:** ROAS, CPC, CTR, CAC, ICP, PPC, GA4, GSC ("a ROAS-on", "a CAC-ot").
+
 ---
 
 ## 6a-bis. Deployment / web-context calques ("kint van" anti-pattern)
@@ -121,8 +141,12 @@ One of the most dangerous errors — grammatically correct, but the image does n
 | A/B slash enumeration ("Hungary/Wellis történet") | EN-style per-slash enumeration | "a Wellis-Magyarország-történet" / "Te és Gábor szempontja" (in HU "/" marks only an alternative, not a connector) |
 | Next pass / "a következő pass-on" | EN consulting slang | "A következő körben" / "Legközelebb" (often unnecessary — cut if it carries nothing) |
 | Revenue-impact alapján priorizálni | EN biz-slang stacked | "Valódi mérőszámok alapján rangsorolni" / "a tényleges hatás alapján sorrendet állítani" |
+| Szivárog a teljesítmény (performance leaks) | Performance is not a fluid in Hungarian — it does not "leak" | Hol **folyik el** az eredmény / hol **veszít** a kampány |
+| A feladatkört a részletekig visz (carry the scope to the details) | Abstract noun + motion verb — a "feladatkör" cannot be carried anywhere | Drop the bridge and just start; or name a concrete action |
 
 **Rule:** if the metaphor is visual in English and not in Hungarian — find a Hungarian image, or write without a metaphor.
+
+**Abstract noun + motion verb is its own trap.** "feladatkört visz", "a beszélgetést előre visz", "a kérdést az asztalra teszi", "a fókuszt egy szintre hozza" — an abstract noun (scope, conversation, question, focus) does not physically move. Watch this **especially in your own rewrites**: a nativeness pass often swaps the English word for a Hungarian one but keeps the English motion-metaphor underneath.
 
 ---
 
@@ -135,5 +159,40 @@ English prepositions ("in", "on", "at") do NOT map one-to-one to Hungarian case 
 | Csatornákban költeni (spend in channels) | Spend *on* something, not *in* something | Csatornák**ra** költeni |
 | Rétegen élni (live on a layer) | A problem *is* somewhere, it does not "live" | Réteg**ben** lenni |
 | Pozicionáláson dolgozni (work on positioning) | Work *on* OR *in* something — context-dependent | Pozicionálás**ban** / pozicionálás**on** |
+| 14 napban (within 14 days) | "in 14 days" → "-ban" mirrored; a duration window takes "alatt" | 14 nap **alatt** |
 
 **Rule:** after a fix, ALWAYS scan the whole text for the same structure. If government is wrong once, it is probably wrong elsewhere. If a native reader would feel "this comes from English" — rewrite it.
+
+---
+
+## 6d. Calqued English idioms — whole-phrase calques
+
+Grammatically perfect Hungarian, every word correct — but the *idiom* is English. The most invisible calque class, because nothing is misspelled.
+
+| ❌ Calqued idiom | From | ✅ Hungarian |
+|---|---|---|
+| Ez a ti hívásotok | your call | Ezt ti döntitek el / Rátok bízom / A ti döntésetek |
+| (A legnagyobb) különbséget hozni | (to) make a difference | Itt javít a legtöbbet / Itt látszik a legtöbb / Itt számít a legtöbbet |
+| Megnyomni / meghúzni a ravaszt (döntésnél) | pull the trigger | Belevágni / Meghozni a döntést / Rászánni magunkat |
+| Egy lépést hátra lépni | take a step back | Álljunk meg egy pillanatra / Nézzük kicsit távolabbról |
+| A labda a ti térfeleteken van | the ball is in your court | Rajtatok a sor / Tőletek függ |
+
+> "A nap végén" (*at the end of the day*) and "kirakni az asztalra" (*put on the table*) are calqued idioms too — already catalogued in `anti-patterns.md` §6 and §6b above, respectively.
+
+**Test:** back-translate the phrase into English word by word. If you get a fluent English idiom — it was a calque. A genuine Hungarian thought rarely back-translates into a clean English idiom.
+
+## 6e. Calqued word-senses — the right word, the wrong meaning
+
+The Hungarian word exists and is common — but here it carries an English sense it does not have in Hungarian.
+
+| ❌ Word in an EN sense | From | ✅ Hungarian |
+|---|---|---|
+| a jogi **oldalon** | the legal *side* | a jogi **kérdésekben** / **téren** / jogilag |
+| **élő** hozzáférés | *live* access | (csak) hozzáférés — az "élő" itt fölösleges calque |
+| az adat **olvasása** / teljesítmény-**olvasás** | *reading* the data | az adat **elemzése** / **kiértékelése** / **kiolvassuk** az adatból |
+| **kimenet / kimenetek** (amit a rendszer ad) | *output(s)* | az **eredmény(ek)** / amit a rendszer **ad** |
+
+- **"olvasás"** stays correct for actual text — "elolvastam a leveled". It is a calque only for *data / metrics / performance*: those you analyse, you do not "read".
+- **"élő"** stays correct for deployment — "az élő verzió" (see 6a-bis). It is a calque in "élő hozzáférés / élő adat", where it only mirrors English "live".
+
+**Test:** would a Hungarian who never spoke a word of English use this word here? If the sense only lands once you know the English word behind it — calque.

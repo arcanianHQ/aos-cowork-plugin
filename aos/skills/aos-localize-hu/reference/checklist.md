@@ -10,6 +10,7 @@ scope: int-company
 
 - [ ] **Composed in Hungarian, not translated from English?** (read-aloud test, idiom check, clause-structure check)
 - [ ] If a passage stumbled on the read-aloud test, was it rewritten **from a Hungarian thought** — not patched word by word?
+- [ ] **After rewriting, was the read-aloud test re-run on your OWN rewrite?** A nativeness pass can introduce a fresh calque (abstract noun + motion verb, a forced purpose-clause).
 
 ## Language quality
 
@@ -26,6 +27,10 @@ scope: int-company
 - [ ] **"agent" in writing (not "ágens")?** (`calques.md` §8b)
 - [ ] **"ülés" → "egyeztetés" (except institutional)?** (`calques.md` §8c)
 - [ ] **Web/server context: "kint van" → "fent van" / "szerepel" / "élesben van"?** ("kint" only for physical outdoor space — `calques.md` §6a-bis)
+- [ ] **No calqued English idiom ("ez a ti hívásotok", "különbséget hozni", "a nap végén")?** (`calques.md` §6d)
+- [ ] **No calqued word-sense ("oldal" = side, "élő" = live access, "olvasás" = reading data)?** (`calques.md` §6e)
+- [ ] **No PPC-domain stuck word (ad copy, landing page, read-only, trial, review, account, margin)?** (`calques.md` §8e)
+- [ ] **a/az article correct before vowel-initial words — especially around English words and acronyms ("az ICP", "az üzleti…")?**
 - [ ] **No written-out "BLUF" label?** (the conclusion-first principle stays — as sentence content, not as a label — §13b)
 - [ ] **Max 1 negation-affirmation ("nem X, hanem Y") — and only for a real contrast?** (§11)
 - [ ] **No AI-marketing opener? (A mai gyors tempójú világban, Nem véletlen hogy, Képzeld el, Fontos megjegyezni, Valódi áttörés, rhetorical-question-then-answer, synonym triplet)?** (§14)
@@ -41,6 +46,8 @@ scope: int-company
 - [ ] **No meta-pitch about the document itself ("csak a fő pontok — ha mélyebbre mennél, szólj")?**
 - [ ] **Category headers in prose, not deck-style (no "+" or "/" construction)?**
 - [ ] **No "+" as a connector inside a sentence either? (only stays for a mathematical context)**
+- [ ] **No "×" as a connector either (matrix/spreadsheet tell — even stronger than "+")?**
+- [ ] **No forced `Hogy …, …` purpose-clause bridge (meta-pitch in disguise)?** (`letter-register.md` Rule 3)
 - [ ] **Closing formula with a comma ("Üdv,"), not a colon?**
 - [ ] **No reference to an internal draft iteration ("a tegnap körvonalazott", "a v3-at átdolgoztam")?**
 - [ ] **No internal disambiguation / internal reasoning leaked into the body?**

@@ -20,6 +20,8 @@ A native reader feels a translated text even when every word is correct. The tel
 
 **How to compose in HU instead:** start in Hungarian (no internal EN draft); pick up a real voice's sentence rhythm, not the logical skeleton; read aloud (translated stumbles, native flows); confirm at least one native idiom or particle is present; vary sentence-openings. If after 2 attempts a passage is still translation-flavoured, use the escape hatch.
 
+**Watch your own rewrites.** A nativeness pass can introduce a *fresh* calque while fixing an old one — most often an abstract noun + motion verb ("feladatkört visz") or a forced `Hogy …, …` purpose-clause. After every rewrite, read your *own* version aloud too, and run the propagation check (§7) on it.
+
 ---
 
 ## 1. "Meg lehet + főnévi igenév" (impersonal, robotic)

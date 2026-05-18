@@ -7,7 +7,7 @@ class: content
 domain: content
 layer: [L6, L7]
 client-scope: single-client
-version: 0.1.0
+version: 0.2.0
 owner: arcanian
 allowed-tools: [Read, Edit, Write, Glob, Grep]
 args-hint: "[<path-to-HU-artifact>] — the Hungarian file to polish; default = the artifact just produced this session"
@@ -57,7 +57,7 @@ The single most important rule, from which everything else follows:
 2. **Read aloud (mentally).** A translated text stumbles when read aloud; a native one flows. This is the primary detector. If a passage stumbles, it is a rewrite candidate.
 3. **Run the anti-pattern scan.** Walk the text against the catalogues in `reference/anti-patterns.md` (the 14 AI-magyar error classes) and `reference/calques.md` (calqued metaphors, stuck English words, business-deck phrases). Mark every hit.
 4. **Idiom check.** Does the text contain at least one HU-native idiom or particle ("na", "hát", "pont az van, hogy…", "szóval")? Zero idioms + only logical connectives ("tehát", "viszont") = translated. Reach for `reference/idioms-and-voice.md`.
-5. **Rewrite from a Hungarian thought.** For each marked passage, do not patch — re-compose the sentence as a Hungarian speaker would. Apply the prose-rhythm rules (short-long-short, one thought = one sentence) from `reference/idioms-and-voice.md`.
+5. **Rewrite from a Hungarian thought.** For each marked passage, do not patch — re-compose the sentence as a Hungarian speaker would. Apply the prose-rhythm rules (short-long-short, one thought = one sentence) from `reference/idioms-and-voice.md`. **Then read your own rewrite aloud** — a nativeness pass can introduce a fresh calque (abstract noun + motion verb, a forced `Hogy …, …` purpose-clause). If your own rewrite stumbles, rewrite it again.
 6. **Letter register** — if the artifact is a letter / email between colleagues, apply the letter-register rules in `reference/letter-register.md` (definite articles before time spans, an opening anchor phrase, no meta-pitch, no `+`/`/` deck headers, comma sign-off, no internal-draft references).
 7. **Propagation check.** When you fix a calqued case-ending or construction once, scan the *whole* text for the same structure — if it was wrong once it is usually wrong elsewhere.
 8. **Run the publish checklist** in `reference/checklist.md` end to end.
@@ -74,7 +74,7 @@ These are the rules to hold in working memory; the depth — full catalogues, ta
 5. **No HU suffix on an English noun** (`compoundolódnak`, `frictionök`, `deploy-olom`) — the single most instantly-revealing AI-HU tell. Replace the *whole* word, not just the suffix.
 6. **Max one negation-affirmation** ("nem X, hanem Y") per deliverable, and only for a real, sharp contrast — the clearest LLM tell when over-used.
 7. **No AI-marketing openers / connectors** ("A mai gyors tempójú világban…", "Nem véletlen, hogy…", "Fontos megjegyezni, hogy…", rhetorical-question-then-answer, synonym triplets).
-8. **No calqued metaphors.** If the image is visual in English but not in Hungarian, find a Hungarian image or drop the metaphor.
+8. **No calqued metaphors, idioms or word-senses.** If the image is visual in English but not in Hungarian, find a Hungarian image or drop it. Also catch calqued *idioms* ("ez a ti hívásotok" = "your call") and calqued *word-senses* ("oldal" = "side", "élő" = "live access", "olvasás" = "reading data") — see `reference/calques.md` §6d–6e.
 9. **"agent" in writing — never "ágens".** Web/server context: "kint van" → "fent van" / "élesben van" / "szerepel". "ülés" → "egyeztetés" (except institutional).
 10. **Conditional mood:** intransitive verb → `-na/-ne`; transitive → `-ná/-né`.
 11. **Hungarian prose rhythm** — short-long-short; one thought = one sentence; break thought-units onto their own lines for LinkedIn/Substack.
@@ -109,6 +109,7 @@ End the run with a user-facing summary in `communication-language`:
 ## Versioning
 
 - **v0.1.0** — first language pack. Full port of the Arcanian Hungarian style guide via progressive disclosure.
+- **v0.2.0** — calibration from a live client letter: added calqued idioms (`calques.md` §6d), calqued word-senses (§6e), the PPC-domain stuck-word table (§8e); extended letter-register with the forced-purpose-clause rule (Rule 3) and the "×" connector (Rule 4); added the self-introduced-calque guard (re-run read-aloud on your own rewrite).
 - **v1.0.0** — promotion criterion: 30+ HU artifacts shipped through this pass across 3+ clients with positive native-speaker feedback.
 
 **What did we get wrong? What's missing?**

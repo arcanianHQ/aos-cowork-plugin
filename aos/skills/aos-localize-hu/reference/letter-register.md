@@ -47,6 +47,16 @@ The letter delivers the content, it does not advertise its structure.
 
 **Rule:** if you tell the recipient WHAT THEY WOULD GET IF THEY ASKED, you are writing a deck-pitch, not a letter.
 
+**Extension — forced `Hogy …, …` purpose-clause bridges.** A clause that explains *why you are about to say the next thing* is meta-pitch in disguise — it narrates your own message-structure instead of just delivering it. English throat-clearing; Hungarian just starts.
+
+| ❌ Forced purpose-bridge | ✅ Just start |
+|---|---|
+| Hogy gyorsabban a részletekig jussunk, kezdem azzal, mit csinál a rendszer. | Pár szó arról, mit csinál a rendszer. |
+| Hogy a képet teljessé tegyem, hozzáteszem, hogy… | (just add the fact) |
+| Hogy a feladatkört pontosan fókuszáljuk, egy kérdés: … | Egy kérdés, mielőtt összeállítom a csomagot: … (a real temporal anchor is fine; a justification is not) |
+
+**Test:** if a sentence's only job is to justify the *next* sentence's existence → cut it, keep the next sentence. A genuine temporal/logical anchor ("mielőtt elküldöm", "ahogy beszéltük") is fine — a justification of why you are speaking is not.
+
 ## Rule 4 — Category headers in prose, not deck-style
 
 | ❌ Deck-style header | ✅ Letter header |
@@ -66,8 +76,9 @@ The letter delivers the content, it does not advertise its structure.
 | GA4 + GSC + Shopify dashboard read access | GA4-, GSC- **és** Shopify-dashboard read access |
 | Mérés + tracking + email-flow | Mérés, tracking **és** email-flow |
 | Wellis-naming + MSRP-stratégia | A Wellis-naming **és** az MSRP-stratégia |
+| 3 ügyfél × több ország × több termékfókusz | A három ügyfél, a több ország **és** a több termékfókusz |
 
-**Test:** a "+" sign in a sentence → 95% a deck construction. Swap for "és", a comma, or a separate sentence. "+" only stays for a genuinely mathematical/calculation context ("$5,997 + szállítás").
+**Test:** a "+" **or "×"** sign in a sentence → 95% a deck/spreadsheet construction. Swap for "és", a comma, or a separate sentence. The signs only stay for a genuinely mathematical/calculation context ("$5,997 + szállítás"). The "×" cross is the strongest tell — it comes straight from a planning matrix and never belongs in a letter.
 
 ## Rule 5 — Closing formula with a comma
 
