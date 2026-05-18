@@ -3,6 +3,23 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.40.0] — 2026-05-18
+
+**`aos-close-session` — the end-of-session housekeeping orchestrator (AOS-902).**
+
+- New skill `aos-close-session` — the single "close session" / "exit" command.
+  Before a Cowork task ends it refreshes the indexes that went stale during the
+  session (`aos-catalogue` for `inbox/` + `content/`, `aos-index-ontology` for
+  the ontology graph — each **only when its inputs changed**, by an mtime check),
+  runs the `aos-daily --mode=end` wrap so the next cold session has a continuity
+  hand-off, and reports a clean, resumable state.
+- The housekeeping analogue of `aos-run-cycle` — it orchestrates, never
+  re-implements; honours each chained skill's full `SKILL.md`; preserves
+  `aos-daily`'s session-summary confirm gate; never blocks the close.
+- A **spoken command** by necessity — Cowork has no shutdown hook, so the user
+  invokes it deliberately ("close session" / "exit" / "I'm done"). Discovered by
+  the router via its `description`; no router edit (v0.5.0 routing is table-free).
+
 ## [0.39.0] — 2026-05-18
 
 **Multi-BU detection reads `AOS_CONFIG` business-units (AOS-853).**
