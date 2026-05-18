@@ -7,7 +7,7 @@ class: intelligence
 domain: diagnostic
 layer: [L4, L5, L6, L7]
 client-scope: single-client
-version: 0.1.0
+version: 0.2.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write]
 args-hint: "[--period=<YYYY-MM>] [--bu=<bu-slug>] — operates on the granted folder; uses the Databox connector when present"
@@ -161,6 +161,7 @@ Interpret the results — the result→finding lenses (against-plan, against-ben
 1. Write the results read to `deliverables/<YYYY-MM>/results.md` using `reference/results-template.md`. Resolve the `deliverables` zone via `AOS_CONFIG.md`.
 2. **Emit ontology artifacts.** For each substantive finding, write an `FND` to `ontology/findings/` — frontmatter per `ontology/README.md` (`source: aos-measure`, `consumes:` the REC / Content the result measured, `emits: []` left open as a leaf for the next plan). **Dedup first** — scan existing `ontology/findings/`; supersede or reference rather than duplicate. The FND emission format is in `reference/results-template.md`.
 3. Present the results read + the FND shortlist to the user before writing — Accept / Revise / Regenerate.
+4. **Proactive nudge.** Once the FNDs are written, do not stop silently — a finding is most actionable the moment it is emitted. Surface a **one-line nudge** (`docs/proactive-nudges.md`): the count of new + open unactioned findings, the single highest-signal one named with its forward signal, and the next step — `aos-index-ontology` to rebuild `ontology/INDEX.md`, then `aos-plan` to plan against them. The nudge is **surfaced, never auto-actioned** — name what is waiting and ask; the user decides. If there are no findings to action, no nudge.
 
 ## Output Sections
 
@@ -203,6 +204,7 @@ hard-code `skill_version` or `aos_schema` — read them at write time.
 8. **Single client.** Operate only within the granted folder; never reach outside it.
 9. **Write deliverables to `deliverables/<YYYY-MM>/` and FNDs to `ontology/findings/`** — never to `brand/` or `content/`.
 10. **Discovery, not pronouncement.** The results read ends with *"What did we get wrong? What's missing?"* before the user accepts.
+11. **Nudge, don't act.** The post-emit nudge (Step 4.4) surfaces unactioned findings and names the next skill — it never runs `aos-index-ontology` or `aos-plan` itself. One nudge, not a nag. See `docs/proactive-nudges.md`.
 
 ## Integration
 
@@ -211,6 +213,7 @@ hard-code `skill_version` or `aos_schema` — read them at write time.
 
 ## Versioning
 
+- **v0.2.0** — **proactive finding nudge** (AOS-851, milestone *13. Agentic behaviour* — F5). After emitting FNDs, `aos-measure` surfaces a one-line nudge — the unactioned findings + the next skill (`aos-index-ontology` → `aos-plan`) — instead of stopping silently. Surfaced, never auto-actioned. The after-measure moment of the three-moment nudge contract in `docs/proactive-nudges.md`.
 - **v0.1.0** — initial Cowork-plugin authoring. The measurement stage of the AOS loop (architecture-gaps §1). Result→finding lenses and benchmark handling likely need refinement after first real runs.
 
 **What did we get wrong? What's missing?**
