@@ -70,8 +70,9 @@ reinvent a scheduler it cannot host.
 
 **Cowork's `/schedule` runs a job only while the desktop application is open.**
 It is not a server-side cron. If the app is closed at the scheduled time, the job
-does not fire — and there is no catch-up run when the app next opens. A `weekly`
-job on a laptop that was shut over the weekend simply skips that week.
+does not fire — and `/schedule` itself has no catch-up run when the app next
+opens. A `weekly` job on a laptop that was shut over the weekend simply skips
+that week.
 
 For most AOS recurring work this is acceptable:
 
@@ -80,6 +81,29 @@ For most AOS recurring work this is acceptable:
   freshness.
 - `monday-brief`, `discover-refresh` — a missed run is a missed *read-out*, not
   lost data. The user runs it manually when they next open the app.
+
+### The catch-up — `aos-daily` makes a missed run visible
+
+A skipped run is acceptable; a *silently* skipped run is not. So `aos-daily`'s
+session-start brief (`--mode=start`) runs a **cadence catch-up**: it reads this
+`schedules:` block, determines when each declared workflow actually last ran,
+and surfaces the overdue ones — then offers to run them (offered, never
+auto-run). It does not replace `/schedule`; it ensures a missed run is *seen* at
+the next session instead of disappearing. Procedure:
+`skills/aos-daily/reference/cadence-catchup.md`.
+
+"Last run" is read from an optional **`last-run:` annotation** on the schedule
+row, which `aos-daily` writes after a confirmed catch-up run:
+
+```yaml
+schedules:
+  catalogue:        weekly   last-run: 2026-05-16
+  index-ontology:   weekly
+```
+
+When a row carries no `last-run:`, the catch-up falls back to run-evidence (the
+artifact the workflow regenerates). The annotation is plain data like the rest
+of the block — inspectable, editable, version-controlled.
 
 But some work is **unattended-critical** — it must run on time whether or not a
 human is at the desktop (a client-facing scheduled send, a billing-window
@@ -138,6 +162,7 @@ doc, so a new named run is a documentation change, not a code change.
 | Where cadence is declared | `schedules:` block in `AOS_CONFIG.md` |
 | Cadence vocabulary | `daily` · `weekly` · `monthly` · `quarterly` |
 | What fires it | Cowork's built-in `/schedule` command |
-| Reliability | Runs **only while the desktop app is open**; no catch-up |
+| Reliability | Runs **only while the desktop app is open**; `/schedule` has no catch-up |
+| Missed-run recovery | `aos-daily --mode=start` flags overdue work and offers a catch-up run (§3) |
 | Unattended-critical work | Flag `runner: server`; the plugin cannot guarantee it — escalate |
 | New recurring sequence | Add a named run to §4 — no code change |

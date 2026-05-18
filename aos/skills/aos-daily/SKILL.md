@@ -1,26 +1,28 @@
 ---
 name: aos-daily
-description: "The daily routines — a morning briefing and an end-of-day wrap. Start of day: what is open, where the loop stands, what to focus on. End of day: what moved, logged to CAPTAINS_LOG.md, tomorrow set up. Trigger on 'start my day', 'morning briefing', 'wrap up the day', 'end of day'."
+description: "The daily routines — a session-start standing brief and an end-of-day wrap. Start: what is open, where the loop stands, which findings wait, what to focus on — plus the cadence catch-up, which flags scheduled work missed while the Cowork app was closed and offers to run it. End: what moved, logged to CAPTAINS_LOG.md, tomorrow set up. Trigger on 'start my day', 'morning briefing', 'where do things stand', 'catch me up', 'wrap up the day', 'end of day', or at the start of a working session on a granted folder."
 scope: int-company
 flavor: [shared, company, advanced, internal]
 class: reading
 domain: strategy
 layer: all
 client-scope: single-client
-version: 0.1.0
+version: 0.2.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write, Edit]
 args-hint: "--mode=<start|end> — operates on the granted folder"
 inputs:
   - client/CLIENT_CONFIG.md
+  - AOS_CONFIG.md (the schedules: block — the declared cadence)
   - TASKS.md (open + done tasks)
   - CAPTAINS_LOG.md (recent activity)
   - ontology/INDEX.md (unactioned findings — the loop's in-tray)
   - content/CATALOGUE.md (content in flight)
-  - deliverables/<YYYY-MM>/ (recent deliverables)
+  - deliverables/<YYYY-MM>/ (recent deliverables — also cadence run-evidence)
 outputs:
   - deliverables/<YYYY-MM>/daily/<YYYY-MM-DD>-<mode>.md (the briefing / wrap — optional, on request)
   - CAPTAINS_LOG.md (end mode — the day logged)
+  - AOS_CONFIG.md (the schedules: block — a last-run: annotation, after a confirmed catch-up run)
 preflight:
   - client-config-soft
 ontology:
@@ -50,9 +52,14 @@ Resolve `communication-language` from `AOS_CONFIG.md` (per `docs/language-contex
 engagement moving day to day. It pairs with the AOS cadence architecture
 (`docs/cadence.md`): the loop has a rhythm, and `aos-daily` is its daily beat.
 
-- **`--mode=start`** — the **morning briefing**: read the granted folder's state
-  and tell the user, in one tight brief, what is open, where the AOS loop stands,
-  which findings are waiting, and what the highest-leverage focus for today is.
+- **`--mode=start`** — the **session-start standing brief**: read the granted
+  folder's state and tell the user, in one tight brief, what is open, where the
+  AOS loop stands, which findings are waiting, and what the highest-leverage
+  focus is. It also runs the **cadence catch-up** — because Cowork's `/schedule`
+  fires only while the app is open (`docs/cadence.md` §3), scheduled work is
+  silently skipped whenever the app was closed at its time. The brief reads the
+  `schedules:` block, works out what was missed, and offers to run it now. This
+  is the start-of-any-working-session orientation, not only a literal "morning".
 - **`--mode=end`** — the **end-of-day wrap**: review what moved, log the day to
   `CAPTAINS_LOG.md`, and set up tomorrow — the one or two things to pick up first.
 
@@ -75,7 +82,7 @@ Discovery, not pronouncement. The briefing names a recommended focus and the
 Confirm the working directory; read `AOS_CONFIG.md` if present. Validate `--mode`
 is `start` or `end`; if omitted, infer from the time of day or ask.
 
-### Step 1 (mode=start) — The morning briefing
+### Step 1 (mode=start) — The session-start standing brief
 
 Assemble and present, concise:
 
@@ -85,8 +92,15 @@ Assemble and present, concise:
    draft / scheduled.
 3. **The loop's in-tray** — unactioned findings from `ontology/INDEX.md` (open
    FNDs no REC consumes) — the learnings waiting on a plan.
-4. **Today's focus** — name the **one** highest-leverage thing to do today, with
-   one sentence of why, drawn from the above. Offer one or two alternatives.
+4. **Cadence catch-up** — read the `schedules:` block from `AOS_CONFIG.md`, work
+   out which declared workflows are overdue (missed while the Cowork app was
+   closed), and surface them. If anything is overdue, **offer to run the
+   catch-up now** — offered, never auto-run. Full procedure, including how
+   "last run" is determined and the `last-run:` write-back, in
+   `reference/cadence-catchup.md`. If there is no `schedules:` block, skip this
+   line silently.
+5. **Today's focus** — name the **one** highest-leverage thing to do, with one
+   sentence of why, drawn from the above. Offer one or two alternatives.
 
 ### Step 2 (mode=end) — The end-of-day wrap
 
@@ -122,22 +136,28 @@ in place, not stamped.
    a day where little moved is logged as such, not dressed up.
 4. **Confirm the log entry.** The `CAPTAINS_LOG.md` append (end mode) is shown to
    the user before it is written.
-5. **Single client.** Operate only within the granted folder.
-6. **Discovery, not pronouncement.** Recommend a focus; the user decides.
+5. **Catch-up is offered, never auto-run.** Overdue scheduled work is surfaced
+   and offered; the user chooses what to run. A `runner: server` row is never
+   offered — it is out of scope for the plugin (`docs/cadence.md` §3). The
+   `last-run:` write-back happens only after the user confirms the run.
+6. **Single client.** Operate only within the granted folder.
+7. **Discovery, not pronouncement.** Recommend a focus; the user decides.
 
 ## Output Sections
 
-- **start:** open-work count · loop state · unactioned findings · today's focus
+- **start:** open-work count · loop state · unactioned findings · cadence
+  catch-up · today's focus
 - **end:** what moved · the CAPTAINS_LOG entry · tomorrow's first pick-up
 - **What did we get wrong? What's missing?**
 
 ## Integration
 
-- **Upstream:** `aos-route-question` routes "start my day" / "wrap up" here. Reads the output of every loop skill — `TASKS.md`, `CAPTAINS_LOG.md`, `ontology/INDEX.md`, `content/CATALOGUE.md`.
-- **Downstream:** the morning briefing's "today's focus" points the user at the right next skill (`aos-plan`, `aos-write`, a diagnostic); the end-of-day `CAPTAINS_LOG.md` entry feeds tomorrow's `start`. Pairs with the cadence architecture in `docs/cadence.md`.
+- **Upstream:** `aos-route-question` routes "start my day" / "where do things stand" / "catch me up" / "wrap up" here. Reads the output of every loop skill — `TASKS.md`, `CAPTAINS_LOG.md`, `ontology/INDEX.md`, `content/CATALOGUE.md` — and the `schedules:` block in `AOS_CONFIG.md`.
+- **Downstream:** the session-start brief's "today's focus" points the user at the right next skill (`aos-plan`, `aos-write`, a diagnostic); a cadence catch-up runs the overdue workflow / named run (`docs/cadence.md` §4); the end-of-day `CAPTAINS_LOG.md` entry feeds the next `start`. Pairs with the cadence architecture in `docs/cadence.md` — `aos-daily` is the catch-up mechanism §3 names.
 
 ## Versioning
 
+- **v0.2.0** — the **session-start standing brief + cadence catch-up** (AOS-849, milestone *13. Agentic behaviour* — F3). `--mode=start` is reframed as the start-of-session orientation (not only a literal morning), and gains the cadence catch-up: it reads the `schedules:` block, determines what scheduled work was missed while the Cowork app was closed, and offers to run it — the mitigation for `/schedule`'s no-catch-up gap (`docs/cadence.md` §3). New: `reference/cadence-catchup.md`; the optional `last-run:` annotation on `schedules:` rows.
 - **v0.1.0** — initial Cowork-plugin authoring (AOS-794, Milestone 4 feature wave). The daily cadence routine — morning briefing + end-of-day wrap. Couples to the cadence architecture (`docs/cadence.md`).
 
 **What did we get wrong? What's missing?**
