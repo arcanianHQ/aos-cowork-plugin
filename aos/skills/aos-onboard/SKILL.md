@@ -7,7 +7,7 @@ class: system
 domain: onboarding
 layer: all
 client-scope: single-client
-version: 0.7.5
+version: 0.7.6
 owner: arcanian
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Bash"]
 preflight: []
@@ -129,6 +129,13 @@ when the runtime provides that variable). **Never** read it from an `aos/`
 directory in the granted-folder tree. If it cannot be resolved, leave the
 existing stamp unchanged — never guess.
 
+**Ensure the session-start `CLAUDE.md`.** Whenever this skill runs against an
+existing folder, check the granted-folder root has a `CLAUDE.md`. If absent,
+copy it from the installed plugin's `data-template/CLAUDE.md` — it carries the
+session-start health check (the `schema-current` gate; see `docs/preflight.md`)
+that Cowork loads every session. A folder onboarded before this file existed has
+none; this back-fills it.
+
 ## Graduate-bundle import (Stage 1 → 3)
 
 A client's engagement can move **operator-run → client-run** — Stage 1/2 to
@@ -181,7 +188,11 @@ is **not** part of this plugin; it extends the operator's `finalize-engagement`
 
 ## Status
 
-v0.7.5 — schema version 5: the `campaigns/themes/` form is scaffolded on a
+v0.7.6 — back-fills the session-start `CLAUDE.md` (the `schema-current`
+health-check gate, AOS-844) into an existing folder that predates it; a fresh
+scaffold gets it from `data-template/`.
+
+Prior: v0.7.5 — schema version 5: the `campaigns/themes/` form is scaffolded on a
 fresh install; the schema literal moved 4 → 5 (AOS-834 campaign model).
 
 Prior: v0.7.4 — schema version 4: the `campaigns/` zone is scaffolded on a fresh

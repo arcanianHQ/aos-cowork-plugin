@@ -3,6 +3,22 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.32.0] — 2026-05-18
+
+**Folder-currency guard — no more silent degradation (AOS-844).**
+
+- A session opened on a *behind* folder (folder `schema-version` < plugin) used
+  to run loop skills anyway and degrade silently — missing zones, stale config,
+  no loud error. Now guarded:
+- **`data-template/CLAUDE.md`** — every scaffolded client folder gets a
+  session-start health check. Cowork loads the granted folder's `CLAUDE.md`
+  every session (hooks don't fire — `CLAUDE.md` is the only session-start
+  surface); it runs the **`schema-current` gate** first — a behind folder HALTS
+  with "run `aos-migrate`" before any loop skill touches it.
+- **`docs/preflight.md`** — formalises the preflight checks; `schema-current` +
+  `client-config` are base checks (every skill, every run).
+- `aos-onboard` v0.7.6 — back-fills `CLAUDE.md` into folders that predate it.
+
 ## [0.31.0] — 2026-05-18
 
 **The calibration loop — `aos-review` becomes bidirectional (AOS-843).**
