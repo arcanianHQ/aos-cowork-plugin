@@ -21,7 +21,8 @@ business_unit: <bu-slug or blank>
 artifact: review
 reviewed_piece: content/<...>/<piece>.md
 reviewed_piece_status: <draft | in-review — the status at review time>
-verdict: <PASS | REVISE | BLOCK>
+verdict: <PASS | REVISE | BLOCK — the FINAL verdict after the micro-loop>
+micro_loop_iterations: <n — 0 if the micro-loop did not run>
 generated_by: aos-review
 skill_version: <aos-review version: frontmatter value>
 generated_date: <YYYY-MM-DD>
@@ -71,11 +72,29 @@ aos-draft-content. BLOCK: structural fault — fix upstream, must not ship.>
 
 <If zero issues: "No issues — the piece holds to all three contracts.">
 
+## Iteration log
+
+<Present only when the autonomous revision micro-loop ran. One row per
+iteration; the issue list above reflects the FINAL iteration. See
+`reference/revision-microloop.md`.>
+
+| Iter | Verdict | Issues | Re-draft change | Outcome |
+|------|---------|--------|-----------------|---------|
+| 1 | REVISE | <n> (<summary>) | <what the re-draft changed> | → iter 2 |
+| 2 | PASS | 0 | <…> | cleared |
+
+<If the loop did not run: "Micro-loop did not run — single-pass review."
+If escalated: name why — cap reached / no-progress / BLOCK / foundation gate.>
+
 ## Hand-back
 
 - **PASS** → `aos-distribute` ships the cleared piece.
-- **REVISE** → `aos-draft-content` revises against the issue list; re-run `aos-review` after.
-- **BLOCK** → fix upstream (re-draft, or correct the content-system); re-run `aos-review` after.
+- **REVISE escalated** (cap reached / no-progress) → the user decides:
+  accept-with-note, manual edit, or the reject-door foundation flow.
+- **Foundation gate** → a repeated issue routed into the user-confirmed
+  foundation flow; the loop resumes after the edit is confirmed.
+- **BLOCK** → fix upstream (re-draft, or correct the content-system); the piece
+  must not ship.
 
 ## What did this review get wrong? What did it miss?
 

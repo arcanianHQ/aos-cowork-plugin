@@ -1,16 +1,16 @@
 ---
 name: aos-review
-description: "Review workflow — the quality gate before an artifact moves draft → in-review / published. Checks a content piece (or deliverable) against the brand profile (voice + positioning adherence), its BU's content-system contract, and completeness, then issues a PASS / REVISE / BLOCK verdict with a review report. Also runs the calibration store-back: a REVISE/BLOCK routes corrections into the foundations, and a client-accepted piece flows its voice + winning structure back into brand/VOICE.md and the pattern library. The plugin analogue of the ADF verification gate. Trigger on 'review this', 'check this before publish', 'is this ready to ship', when a piece is marked client-accepted, or before aos-distribute advances a piece."
+description: "Review workflow — the quality gate before an artifact moves draft → in-review / published. Checks a content piece (or deliverable) against the brand profile (voice + positioning adherence), its BU's content-system contract, and completeness, then issues a PASS / REVISE / BLOCK verdict with a review report. On a REVISE it runs the autonomous revision micro-loop — re-drafts and re-reviews itself to PASS, a structural BLOCK, or an iteration cap, rather than bouncing each turn back to the human. Also runs the calibration store-back: a REVISE/BLOCK routes corrections into the foundations, and a client-accepted piece flows its voice + winning structure back into brand/VOICE.md and the pattern library. The plugin analogue of the ADF verification gate. Trigger on 'review this', 'check this before publish', 'is this ready to ship', when a piece is marked client-accepted, or before aos-distribute advances a piece."
 scope: int-company
 flavor: [company, advanced, internal]
 class: intelligence
 domain: quality
 layer: [L6, L7]
 client-scope: single-client
-version: 0.2.0
+version: 0.3.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write, Edit]
-args-hint: "--piece=<path-or-slug under content/> [--bu=<bu-slug>] [--accepted] — operates on the granted folder; reviews one artifact, or runs the accept-door store-back"
+args-hint: "--piece=<path-or-slug under content/> [--bu=<bu-slug>] [--accepted] [--max-iterations=<n>] [--no-auto-revise] — operates on the granted folder; reviews one artifact, or runs the accept-door store-back"
 inputs:
   - client/CLIENT_CONFIG.md
   - content/ (the artifact under review — a single piece or a series piece)
@@ -104,7 +104,10 @@ Every review ends in exactly one verdict:
   it clears the piece and hands back to `aos-distribute`.
 - **REVISE** — the piece has fixable issues (a voice slip, an off-register line,
   a missing section). The report lists each issue with the contract line it
-  fails. Hand back to `aos-draft-content` for revision; re-review after.
+  fails. This triggers the **autonomous revision micro-loop** — `aos-review`
+  re-drafts and re-reviews the piece itself until `PASS`, a `BLOCK`, the
+  iteration cap, or a no-progress break (see "The autonomous revision
+  micro-loop"). It does not bounce each turn back to the human.
 - **BLOCK** — the piece has a structural fault that revision cannot fix in place:
   it is off-positioning, makes a `products.md`-inaccurate claim, sits on no real
   pillar, or is materially incomplete. It must not ship. The report says what is
@@ -160,6 +163,38 @@ the lineage. Ties to the `aos-back-statements` provenance discipline.
   accumulate evidence. Conflicting accepts trigger a human reconciliation, not an
   auto-merge.
 
+## The autonomous revision micro-loop
+
+A `REVISE` verdict is not a hand-off to the human. `aos-review` **closes the
+draft↔review loop itself**: it re-drafts the piece and re-reviews it, iterating
+to `PASS`, a structural `BLOCK`, the iteration cap, or a no-progress break — and
+presents the *final* outcome with the full iteration log, not each intermediate
+turn. This is the F2 agentic behaviour (AOS-848). Full procedure:
+`reference/revision-microloop.md`.
+
+The loop is autonomous **between** turns, never **through** the gates:
+
+- **Piece-local issues** — where the foundation is correct and this draft simply
+  failed to honour it — are re-drafted from the *unchanged* foundation and
+  re-reviewed, autonomously, with no per-turn human gate.
+- **Foundation-level issues** — detected when an issue *survives a re-draft*
+  (the **repeat detector**: the same contract line fails again) — stop the
+  autonomous loop and run the reject door's classify → propose → **user-confirm**
+  foundation flow. Hard Rule 10 is not weakened: every foundation edit still
+  gates. The micro-loop only detects *when* a foundation edit is needed.
+- **`BLOCK`** is never auto-fixed — a structural fault escalates to the user the
+  moment it appears.
+- **The cap** — `--max-iterations` (default 3) bounds the autonomous turns; at
+  the cap with a `REVISE` still standing, the loop escalates with the best draft
+  and the persistent issues.
+- **`--no-auto-revise`** disables the loop — a `REVISE` then behaves as in
+  v0.2.0 (hand back, stop).
+
+The micro-loop runs **inside Step 5's reject door** — it does not replace the
+calibration store-back, it sequences it: piece-local turns iterate; a repeated
+issue routes into the foundation store-back; a re-draft is always from the
+current (or just-corrected) foundation, never a patch of the draft in place.
+
 ## Arguments
 
 This skill operates on the **granted folder** — which is the client's folder.
@@ -174,6 +209,12 @@ This skill operates on the **granted folder** — which is the client's folder.
 - `--accepted` (optional) — force the **accept-door** store-back (Step 5) on the
   piece even if its frontmatter `status:` is not yet `client-accepted`. Normally
   the door is chosen automatically from `status:` — see Step 0.
+- `--max-iterations` (optional, default `3`) — the cap on the autonomous
+  revision micro-loop's turns. At the cap with a `REVISE` still standing, the
+  loop escalates to the user.
+- `--no-auto-revise` (optional) — disable the micro-loop. A `REVISE` then hands
+  the piece back and stops (the v0.2.0 behaviour) — use it to drive each
+  revision by hand.
 
 ## Process
 
@@ -249,18 +290,44 @@ Check the piece is *finished*. Procedure in `reference/review-checklist.md` §3.
 The verdict is not the end — every review writes back into the foundations (see
 "The calibration loop"). Which door runs is set in Step 0.
 
-**Reject door** — runs when the verdict is `REVISE` or `BLOCK`:
+**Reject door** — runs when the verdict is `REVISE` or `BLOCK`. It has three
+modes, set by the verdict and `--no-auto-revise`:
 
-1. Take the human's reasons for the reject — a free-text reaction, or a
-   structured set of decisions. The skill accepts **free-text and structures it
-   itself** — the operator does not have to fill a form.
-2. **Classify** each correction by the foundation it belongs to — the routing
-   table above.
-3. **Propose** the edit to that foundation file — shown to the user and
-   **Accepted before writing**; never silent, and never applied to the draft.
-4. Hand the piece back to `aos-draft-content` to **re-draft from the corrected
-   foundation** — then re-review. The correction lives in the foundation; the
-   improvement is re-derived, not patched.
+***`BLOCK` — escalate, no micro-loop.*** A structural fault is never auto-fixed.
+Present the fault to the user. Take their reasons (free-text or structured —
+the skill structures free-text itself), **classify** each correction by the
+foundation routing table, **propose** the foundation edit (shown, Accepted
+before writing — never silent, never patched into the draft). The fix is
+upstream; the piece does not re-enter the loop here.
+
+***`REVISE` with `--no-auto-revise` — hand back, stop (the v0.2.0 behaviour).***
+Classify the corrections, propose the foundation edits with the same gate, hand
+the piece back to `aos-draft-content`, and stop. The operator drives the
+re-draft and the re-review by hand.
+
+***`REVISE` (default) — the autonomous revision micro-loop.*** `aos-review`
+closes the draft↔review loop itself. Full procedure:
+`reference/revision-microloop.md`. In outline:
+
+1. **Iteration 1.** Treat the issues as piece-local: invoke `aos-draft-content`
+   to **re-draft from the current foundation**, passing the issue list as the
+   revision brief. Re-review the re-draft (Steps 1–4).
+2. **Iteration 2+.** Diff this turn's issues against the previous turn's:
+   - **A repeated issue** (the same contract line fails again) is foundation-level
+     by evidence — stop the autonomous loop and run the classify → propose →
+     **user-confirm** foundation flow for it (the `BLOCK`-mode mechanism above,
+     for a `REVISE`-class correction). Resume the loop with a re-draft from the
+     *corrected* foundation.
+   - **Only fresh issues** — still piece-local; re-draft and re-review again.
+3. **Stop** on `PASS` (exit, the piece is cleared), `BLOCK` (escalate
+   immediately), the `--max-iterations` cap (escalate with the best draft +
+   persistent issues), or a no-progress break (escalate — a loop that is not
+   converging is a foundation problem).
+4. **Log every iteration** in the review report's iteration-log section
+   (`reference/review-report-template.md`) — per turn: the verdict, the issues,
+   what the re-draft changed. Intermediate iterations are logged, not gated.
+5. **Present the final outcome** — `PASS`, cap-reached, no-progress, or `BLOCK`
+   — with the full iteration log. This is the one human gate on the loop.
 
 **Accept door** — runs when the piece is `status: client-accepted` (or
 `--accepted`):
@@ -288,7 +355,10 @@ The review report's minimum content (template: `reference/review-report-template
 - Content-system contract — on-pillar / in-register / claim-accurate results
 - Completeness — markers, structure coverage, provenance
 - Issue list — every issue, its class (`REVISE` / `BLOCK`), the contract line it fails
-- Hand-back — where the piece goes next (`aos-draft-content` to revise, `aos-distribute` if PASS)
+- **Iteration log** — when the autonomous revision micro-loop ran: one row per
+  iteration (verdict, issues, what the re-draft changed, outcome)
+- Hand-back — where the piece goes next (`aos-distribute` if PASS; the user, on a
+  cap / no-progress / `BLOCK` escalation)
 - **What did this review get wrong? What did it miss?**
 
 ## Provenance
@@ -319,6 +389,7 @@ Never hard-code `skill_version` or `aos_schema` — read them at write time.
 8. **Discovery, not pronouncement.** Present the verdict + report for confirmation before writing; end the report with *"What did this review get wrong?"*
 9. **Calibration writes to the foundations, never the draft.** The reject door routes corrections into `brand/` / `content-system/` / the post-type spec and re-drafts from there; the accept door stores voice + structure back to `brand/VOICE.md` + the pattern library. The draft is disposable — never patched in place.
 10. **Store-back is proposed, never silent.** Every foundation edit — reject-door or accept-door — is shown and Accepted first; it *refines*, never rewrites wholesale; one accepted piece is one data point — tag it `validated-by:` and let rules accumulate evidence, never over-fit on a single blog.
+11. **The micro-loop is bounded and gate-preserving.** The autonomous revision loop never exceeds `--max-iterations`, never auto-fixes a `BLOCK`, and never applies a foundation edit without the user-confirm gate. The repeat detector decides *when* a foundation edit is needed; the user decides whether to *apply* it. Intermediate iterations are logged, not gated; the final outcome is always presented.
 
 ## Integration
 
@@ -328,6 +399,15 @@ Never hard-code `skill_version` or `aos_schema` — read them at write time.
 
 ## Versioning
 
+- **v0.3.0** — the **autonomous revision micro-loop** (AOS-848, milestone
+  *13. Agentic behaviour* — F2). A `REVISE` no longer bounces the piece back to
+  the human each turn: `aos-review` re-drafts and re-reviews the piece itself,
+  iterating to `PASS` / `BLOCK` / the `--max-iterations` cap / a no-progress
+  break, and presents the final outcome with a full iteration log. Piece-local
+  issues iterate autonomously; a **repeat detector** promotes an issue that
+  survives a re-draft to foundation-level and routes it into the reject door's
+  user-confirmed foundation flow — so Hard Rule 10 is preserved. `--no-auto-revise`
+  restores the v0.2.0 hand-back behaviour. New: `reference/revision-microloop.md`.
 - **v0.2.0** — the **calibration loop** (AOS-843; spec: `COWORK_CALIBRATION_LOOP_SPEC.md`; learning from the 2026-05-14 DeluxeBuilding content session). `aos-review` is now bidirectional — a verdict writes back into the *foundations*, never just the draft. **Reject door:** `REVISE`/`BLOCK` corrections are classified (the routing table) and proposed into `brand/` / `content-system/` / the post-type spec, then re-drafted from there. **Accept door:** a `client-accepted` piece flows its realised voice → `brand/VOICE.md` and winning structure → the pattern library, `validated-by:`-tagged. Step 5 + `--accepted`. This is the system's compounding mechanism.
 - **v0.1.0** — initial Cowork-plugin authoring (AOS-738, architecture-gaps §7 / Milestone 1). The quality gate of the AOS loop — the plugin analogue of the ADF verification gate. The checklist thresholds and the `REVISE` / `BLOCK` boundary likely need refinement after first real runs.
 - **v0.1.1** — first-run refinements (Milestone 2 / v0.15.0 loop re-test). §2c no longer checks temporal availability ("in stock") against `products.md` — `products.md` is a product-spec contract, not live inventory; availability is operator-confirmed via a Hand-back note, verdict unaffected. §1b assertion test is now series-beat-aware — an identity-withholding beat (BAB "Before", Hero's-Journey early arc) is checked for brand *worldview*, not brand *identity*.
