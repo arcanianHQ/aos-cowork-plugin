@@ -108,8 +108,8 @@ The artifact pass ends with a user-facing summary in `communication-language` �
 1. **Never translate.** Input is Hungarian; output is Hungarian. An English draft is never produced.
 2. **Faithful meaning.** A nativeness pass changes *form*, never *facts* — never add, drop, or alter a claim.
 3. **`VOICE.md` wins.** Where `brand/VOICE.md` sets register, banned words, or address form, it overrides this skill's defaults.
-4. **Confirm before write.** Present diffs; write only on accept.
-5. **Language gate.** Run only when `content-language: hu`. Otherwise stop and tell the user.
+4. **Confirm before write (artifact pass).** Present diffs; write only on accept. The conversational pass has no file and no write — nothing to confirm.
+5. **Language gate.** The artifact pass applies when `content-language: hu`; the conversational pass when `communication-language: hu`, or the user writes / expects / asks for Hungarian. If neither applies, the skill does not apply — say so and stop.
 
 ## The language-pack pattern
 
