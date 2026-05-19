@@ -7,7 +7,7 @@ class: reading
 domain: routing
 layer: all
 client-scope: single-client
-version: 0.5.0
+version: 0.6.0
 owner: arcanian
 allowed-tools: ["Read", "Glob", "Grep"]
 ontology:
@@ -53,6 +53,35 @@ the right workflow. **You route — you do not do the work yourself.**
 - Confirm any connector a workflow needs is connected. If missing, say so
   *before* routing — never route into a half-broken workflow; offer a degraded
   fallback if one exists.
+
+## Pre-route overlay hook
+
+The router itself can be wrapped. Before you commit to a routing decision,
+discover any **overlay skill** that declares it wraps *this* skill:
+
+```
+overlay-mode: wrap
+wraps: aos-route-question
+wrap-point: before
+```
+
+Run each such overlay **first**, before routing — `Glob` the skill files and
+`Grep` their frontmatter for the three fields above, exactly as the discovery
+compile already does. A pre-route overlay may:
+
+- **inject context** the routed-to skill should honour (e.g. an engagement
+  frame), or
+- **hold the request** — ask for a confirmation, or require another skill run
+  first — and hand the request back to you to resume once its condition is met.
+
+Honour the overlay's outcome before continuing: if it injects context, carry
+that context into the routing hand-off; if it holds the request, do not route
+until it releases. A `wrap-point: after` overlay on `aos-route-question`
+runs symmetrically — after the routing decision, before hand-off.
+
+This is the generic extension point for router-level overlays — core names no
+specific overlay; it only honours the `wraps: aos-route-question` declaration.
+See `docs/overlay-architecture.md`.
 
 ## Guardrails
 
@@ -125,11 +154,17 @@ to connect it. Never route into a connector-gated workflow on faith.
 
 ## Status
 
-v0.5.0 — **discovery-based routing** (AOS-809, M11). The hand-maintained routing
-table is gone: the router compiles the routing picture each turn from the skills
-actually available — core **and** any private overlay plugin — so overlay skills
-route with zero edits to this skill, and the core table no longer rots. Overlay
-`overlay-mode` (`add` / `wrap` / `replace`) is honoured. See
+v0.6.0 — **pre-route overlay hook**. The router can now be wrapped by an overlay
+(`wrap: before aos-route-question`): such overlays are discovered and run before
+routing, so a router-level gate or context-injector composes onto the front door
+with zero edits to a specific overlay baked into core. This closes the gap where
+the router fired `wrap` overlays on routed-to skills but never on itself.
+
+Prior: v0.5.0 — **discovery-based routing** (AOS-809, M11). The hand-maintained
+routing table is gone: the router compiles the routing picture each turn from the
+skills actually available — core **and** any private overlay plugin — so overlay
+skills route with zero edits to this skill, and the core table no longer rots.
+Overlay `overlay-mode` (`add` / `wrap` / `replace`) is honoured. See
 `docs/overlay-architecture.md`.
 
 Prior: v0.4.0 — layer-indexed routing + connector gating + language context.

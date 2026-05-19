@@ -3,6 +3,25 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.43.0] — 2026-05-19
+
+**`aos-route-question` — pre-route overlay hook (skill v0.5.0 → v0.6.0).**
+
+- The router can now be **wrapped by an overlay**. An overlay skill declaring
+  `overlay-mode: wrap` + `wraps: aos-route-question` + `wrap-point: before` is
+  discovered and run *before* the router commits to a routing decision; a
+  `wrap-point: after` overlay runs after it. Until now the router fired `wrap`
+  overlays on the skills it *routed to*, but never on itself — so a
+  router-level gate or context-injector had no way to compose onto the front
+  door. This adds that generic extension point.
+- A pre-route overlay may inject context the routed-to skill must honour (e.g.
+  an engagement frame) or hold the request until a condition is met; the
+  router honours the outcome before continuing. Core names **no** specific
+  overlay — it only honours the `wraps: aos-route-question` declaration, so the
+  hook stays generic.
+- Enables first-party and customer overlays that gate or frame *every* request
+  — the first consumer is the private `aos-painpoint` overlay.
+
 ## [0.42.0] — 2026-05-19
 
 **`aos-localize-hu` — conversational mode + a calibration round (skill v0.1.0 → v0.3.0).**
