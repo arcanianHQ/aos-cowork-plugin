@@ -3,6 +3,22 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.41.0] — 2026-05-19
+
+**`aos-plan-databoards` — the Databox databoard planner (AOS-910).**
+
+- New skill `aos-plan-databoards` — plans a client's Databox databoard suite
+  from their AOS brand intelligence: harvests business needs, designs the
+  dashboards from an 8-archetype library, checks data-source readiness against
+  the live Databox account (`list_data_sources`), and emits ready-to-paste
+  Databox Genie prompts. Output: `metrics/DATABOARD_PLAN.md`.
+- Fills the gap in the Databox lifecycle — `aos-onboard` connects Databox,
+  `aos-measure` reads results, but nothing *designed* the boards. Connector-gated
+  on Databox; degrades to an unverified plan when Databox is absent. Read-only
+  against Databox (the MCP has no create-databoard tool) — it plans, the user
+  runs the Genie prompts in Databox. Discovered by the router via its
+  `description`; no router edit (v0.5.0 routing is table-free).
+
 ## [0.40.0] — 2026-05-18
 
 **`aos-close-session` — the end-of-session housekeeping orchestrator (AOS-902).**
