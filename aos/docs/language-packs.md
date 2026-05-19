@@ -17,8 +17,10 @@ the pattern so adding the next language is a mechanical, self-contained job.
   Output = the same artifact, in better target-language prose.
 - It **is not** a translator. The base system already produced the target
   language. A language pack never sees, produces, or routes through English.
-- It runs as the **final** step over a content artifact, after the producing
-  skill (typically `aos-draft-content`) has finished — never in the middle.
+- It runs in **two modes**: as the **final** step over a content artifact (the
+  *artifact pass*, when the pack's language is `content-language`), and as a
+  **standing conversational pass** over every reply (the *conversational pass*,
+  when the pack's language is `communication-language`). See `docs/language-context.md`.
 
 ## The pattern — adding a language pack
 
@@ -62,6 +64,6 @@ pass — the base system output stands (correct, not polished).
 
 | Language | Skill | Status | Source guide ported |
 |---|---|---|---|
-| Hungarian (`hu`) | `aos-localize-hu` | v0.1.0 | Arcanian Stílusútmutató (714-line HU writing style guide) |
+| Hungarian (`hu`) | `aos-localize-hu` | v0.3.0 | Arcanian Stílusútmutató (714-line HU writing style guide) |
 
 Add a row when a pack lands.
