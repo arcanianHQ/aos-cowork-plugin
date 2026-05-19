@@ -29,6 +29,27 @@ router); never hard-code a language:
 - **Talk to the user** in `communication-language`.
 - **Write client-facing artifacts** in `content-language`.
 - Internal / working notes follow `communication-language`.
+- **Apply the language pack to whichever language it covers** — see below.
+
+## Nativeness applies to BOTH languages
+
+A language pack (`docs/language-packs.md`) is not only for delivered artifacts.
+When a pack exists for a language, its rules apply to **every output in that
+language** — whichever of the two settings selected it:
+
+- `content-language: <lang>` → the pack runs as the **artifact pass** over each
+  deliverable (read → scan → diff → confirm → write).
+- `communication-language: <lang>` → the pack's **Core rules** apply to every
+  **chat reply, summary, recommendation and working note** sent to the user.
+  This is the **conversational pass** — self-apply the Core rules to your own
+  draft before sending: no file, no diff, no confirmation.
+
+**Standing rule.** When `communication-language: hu` — or the user simply writes
+to you in Hungarian, expects a Hungarian answer, or asks for Hungarian output —
+every Hungarian reply for the rest of the session passes the `aos-localize-hu`
+Core rules before it leaves. It is **on by default** the moment the conversation
+turns Hungarian; the user does not have to ask for it. The base system reaches
+*correct* Hungarian on its own — the pack is what makes it *native*.
 
 ## Changeable mid-session
 
@@ -41,8 +62,10 @@ skill output immediately**. `AOS_CONFIG.md` is the durable source of truth.
 ## Relation
 
 - `aos-onboard` captures both (AOS-750).
-- `aos-localize-hu` (AOS-749) is a content-language *quality* pass — it polishes
-  AI-Hungarian into native Hungarian; the language context tells it when to run
-  (`content-language: hu`).
+- `aos-localize-hu` (AOS-749) is the Hungarian nativeness pass — it polishes
+  AI-Hungarian into native Hungarian, in two modes: the **artifact pass**
+  (`content-language: hu`) and the **conversational pass**
+  (`communication-language: hu`, or any Hungarian conversation). See "Nativeness
+  applies to BOTH languages" above.
 - Pluggable — the language framework (AOS-749) adds languages; this context just
   carries the chosen pair.

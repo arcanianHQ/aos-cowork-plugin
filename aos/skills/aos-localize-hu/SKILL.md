@@ -1,13 +1,13 @@
 ---
 name: aos-localize-hu
-description: "Hungarian nativeness pass — rewrites AI-Hungarian client artifacts into natural, native Hungarian. NOT a translator: input is already Hungarian, output is better Hungarian. Runs as the final quality pass over HU deliverables when content-language is hu. Trigger on 'make the Hungarian sound native', 'fix the AI-magyar', 'nativeness pass', or automatically before delivering any Hungarian artifact."
+description: "Hungarian nativeness pass — rewrites AI-Hungarian into natural, native Hungarian. NOT a translator: input is already Hungarian, output is better Hungarian. Two modes — (1) artifact pass: the final quality pass over HU deliverables when content-language is hu; (2) conversational pass: the core rules self-applied to your own Hungarian chat reply before sending. Trigger on 'make the Hungarian sound native', 'fix the AI-magyar', 'nativeness pass', automatically before delivering any Hungarian artifact, AND whenever you reply in Hungarian — the user writes in Hungarian, expects a Hungarian answer, asks for Hungarian output, or communication-language is hu."
 scope: int-company
 flavor: [company, advanced, internal]
 class: content
 domain: content
 layer: [L6, L7]
 client-scope: single-client
-version: 0.2.0
+version: 0.3.0
 owner: arcanian
 allowed-tools: [Read, Edit, Write, Glob, Grep]
 args-hint: "[<path-to-HU-artifact>] — the Hungarian file to polish; default = the artifact just produced this session"
@@ -45,13 +45,22 @@ The single most important rule, from which everything else follows:
 > **Compose in Hungarian — do not translate from English.**
 > The cognitive path is `HU thought → HU sentence → HU text`, never `EN thought → HU translation`. A native reader *feels* a translated text even when every word is correct — the sentence rhythm, the clause structure, the missing idioms give it away. When a sentence reads as translated, **rewrite it from a Hungarian thought**, do not patch it word by word.
 
-## When this runs
+## When this runs — two modes
 
+**Mode 1 — artifact pass** (the full Process below: read file → scan → diff → confirm → write):
 - **Automatically** as the **final quality pass** over any Hungarian artifact, when `content-language: hu` is resolved from `AOS_CONFIG.md` (see `docs/language-context.md`). Every HU deliverable passes through here before it is declared done.
 - **On request** — "make the Hungarian native", "fix the AI-magyar", "nézd át magyarul", "magyarul hangozzon természetesen".
-- Resolve `content-language` from `AOS_CONFIG.md` during context assembly — never assume language. If it is not `hu`, this skill does not apply; tell the user and stop.
 
-## Process
+**Mode 2 — conversational pass** (lightweight: no file, no diff, no confirmation):
+- Whenever **you reply to the user in Hungarian** — chat replies, summaries, recommendations, working notes. This fires when the user **writes to you in Hungarian**, **expects a Hungarian answer**, **asks for Hungarian output**, or `communication-language: hu` is resolved from `AOS_CONFIG.md`.
+- You do **not** invoke the full Process or present diffs for a chat reply. You **self-apply the Core rules** (below) to your own draft *before sending it*: compose the reply, run it against the Core rules, fix it in place, send. The `reference/` catalogues are the depth for the artifact pass; the Core rules are the conversational layer — light enough to hold in working memory every turn.
+- This is a **standing rule**, not a one-off — every Hungarian turn, for the whole session, not only when explicitly asked. See `docs/language-context.md`.
+
+Resolve both language values from `AOS_CONFIG.md` during context assembly — never assume. If neither `content-language` nor `communication-language` is `hu` and the user is not writing Hungarian, this skill does not apply.
+
+## Process — the artifact pass (Mode 1)
+
+> For the **conversational pass (Mode 2)** skip this Process entirely: compose your Hungarian reply, run it against the **Core rules** below, fix it in place, send it. No file, no diff, no confirmation.
 
 1. **Read the artifact.** Default target = the file just produced this session; otherwise the path argument. Read `brand/VOICE.md` if present — register (tegező/magázó), banned words, and sentence rhythm override anything here.
 2. **Read aloud (mentally).** A translated text stumbles when read aloud; a native one flows. This is the primary detector. If a passage stumbles, it is a rewrite candidate.
@@ -84,9 +93,9 @@ These are the rules to hold in working memory; the depth — full catalogues, ta
 
 If a passage still reads as translated after two rewrite attempts, **stop**. Ask the user (in `communication-language`) for 2–3 opening sentences in their own Hungarian voice, and continue from those. Do not ship a passage you could not make native.
 
-## Output
+## Output (artifact pass)
 
-End the run with a user-facing summary in `communication-language`:
+The artifact pass ends with a user-facing summary in `communication-language` — the conversational pass produces no summary, it just sends the polished reply:
 
 - File polished + whether it was confirmed and written.
 - Count of rewrites by anti-pattern class (which `reference/` catalogue entry each hit).
@@ -110,6 +119,7 @@ End the run with a user-facing summary in `communication-language`:
 
 - **v0.1.0** — first language pack. Full port of the Arcanian Hungarian style guide via progressive disclosure.
 - **v0.2.0** — calibration from a live client letter: added calqued idioms (`calques.md` §6d), calqued word-senses (§6e), the PPC-domain stuck-word table (§8e); extended letter-register with the forced-purpose-clause rule (Rule 3) and the "×" connector (Rule 4); added the self-introduced-calque guard (re-run read-aloud on your own rewrite).
+- **v0.3.0** — conversational mode. The pack is no longer artifact-only: added Mode 2, the conversational pass — the Core rules self-applied to every Hungarian chat reply (no file, no diff, no confirmation). Broadened the trigger to "you reply in Hungarian / `communication-language: hu`". The standing rule lives in `docs/language-context.md`.
 - **v1.0.0** — promotion criterion: 30+ HU artifacts shipped through this pass across 3+ clients with positive native-speaker feedback.
 
 **What did we get wrong? What's missing?**
