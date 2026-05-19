@@ -3,6 +3,29 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.42.0] — 2026-05-19
+
+**`aos-localize-hu` — conversational mode + a calibration round (skill v0.1.0 → v0.3.0).**
+
+- **Conversational pass (Mode 2).** The Hungarian nativeness pack was
+  artifact-only — bound to `content-language` and run over files. It now also
+  runs as a standing conversational pass: its Core rules self-apply to every
+  Hungarian chat reply (no file, no diff, no confirmation). Trigger broadened to
+  "you reply in Hungarian / the user writes or expects Hungarian /
+  `communication-language: hu`". The standing rule is documented in
+  `docs/language-context.md` ("Nativeness applies to BOTH languages"). This
+  closes the gap where AI-Hungarian leaked into conversation because the pack
+  only ever saw delivered artifacts.
+- **Calibration from a live client letter.** 12 new patterns added to the
+  reference catalogues: calqued English idioms (`calques.md` §6d), calqued
+  word-senses (§6e), a PPC/ads-domain stuck-word table (§8e), the
+  "performance leaks" + abstract-noun-plus-motion-verb traps (§6b); the letter
+  register extended with the forced-`Hogy …`-purpose-clause rule and the "×"
+  connector; a self-introduced-calque guard.
+- **Docs.** `docs/install.md` troubleshooting corrected — a Cowork marketplace
+  caches by URL, so a same-URL re-add does not refresh; each update needs a new
+  marketplace URL (use the per-version GitHub Release).
+
 ## [0.41.0] — 2026-05-19
 
 **`aos-plan-databoards` — the Databox databoard planner (AOS-910).**

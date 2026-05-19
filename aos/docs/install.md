@@ -63,9 +63,15 @@ in the session — skills degrade gracefully when one is absent. Full model:
 
 **The plugin won't update after a push.** A plugin installed from a *personal*
 marketplace in Cowork (Pro / individual) does **not** auto-update — the "Update"
-button stays inactive. Reliable auto-update needs an **org marketplace**
-(Team/Enterprise) or the Anthropic directory. Workaround: remove and re-add the
-marketplace, or bump + reinstall.
+button stays inactive. And re-adding the **same** marketplace URL does not help:
+Cowork caches a marketplace by its URL, so a same-URL re-add is a no-op.
+**Every update needs a new, distinct URL.** Practical path: ship each version as
+a **GitHub Release** — `github.com/arcanianHQ/aos-cowork-plugin/releases/tag/vX.Y.Z`
+is a fresh URL per version and carries a source ZIP Cowork can take directly.
+After updating, **start a new Cowork session** — skills are indexed at session
+start, so a changed skill surfaces only in a fresh session. Reliable
+*auto*-update (no URL change at all) needs an **org marketplace**
+(Team/Enterprise) or the Anthropic directory.
 
 **A skill says "URL not in provenance set."** Cowork's `web_fetch` only retrieves
 URLs that appeared in a **user message**. A skill that harvests a live page
