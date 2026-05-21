@@ -12,7 +12,9 @@ Each archetype is described by seven fields:
   (the person running the channel), or *client* (a board shared with the client).
 - **Layers** — 7+1 Layer Framework coverage (L0 Source … L7 Market).
 - **Metrics** — the metric set. Concrete; the planner trims to what the client
-  actually has data for (Step 3–4).
+  actually has data for (Step 3–4). Calculated metrics in a set (rates, ratios —
+  conversion rate, ROAS, AOV…) become manual Databox custom-metric steps; Genie
+  cannot build them — see `metric-source-map.md` and `genie-prompt-template.md`.
 - **Visualisations** — recommended Databox block types.
 - **Sources** — the data-source connectors the board depends on (see
   `metric-source-map.md`).
@@ -42,6 +44,11 @@ a board per metric. Selection rules:
 7. **Match audience to delivery stage.** AOS Stage 1 (consultant-run) → operator
    boards. Stage 2–3 (co-run / client-run) → add a clean *client*-audience
    Executive Overview.
+8. **Default to 2-widget boards.** The archetypes' *Metrics* fields can imply
+   5–10 widgets per board; Genie's auto-layout is only reliable at 2 widgets
+   (Hard Rule 13). Treat each archetype as the *menu*: split into multiple
+   2-widget boards, or accept the Designer-polish step
+   (`genie-build-recipe.md`). The board count cap (rule 6) still applies.
 
 ---
 

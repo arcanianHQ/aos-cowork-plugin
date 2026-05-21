@@ -3,6 +3,38 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.44.0] — 2026-05-21
+
+**`aos-plan-databoards` — empirical Genie calibration (skill v0.1.0 → v0.2.0, AOS-916).**
+
+Recalibrated against a real six-iteration Databox Genie dashboard build (Wellis
+Export Lead Routing, 2026-05-20/21). The dashboard succeeded; each iteration
+mapped a Genie limit.
+
+- **2-widget pattern (Hard Rule 13).** Genie's auto-layout is reliable at 2
+  widgets and ugly above. The plan now defaults to multiple 2-widget boards over
+  one many-widget board; boards that need more call out the Layout-Designer
+  polish step.
+- **Exclude flag + dedup (Hard Rule 14).** Every Genie prompt names the
+  dataset's exclude column (e.g. `test_mode != TRUE`) and the aggregation /
+  dedup. Missing them is a silent data-quality bug.
+- **Verify after build (Hard Rule 15).** Genie's "✅ confirmed" claims are
+  unreliable — every plan ends with a verification checklist (date-range badge,
+  filter applied, visualisation type matches request).
+- **Calculated metrics — manual setup (Hard Rule 12).** Calculated / derived
+  metrics (rates, ratios, cross-source gaps) leave the Genie prompts and live
+  in a separate manual custom-metric setup list. Native ratios from a connector
+  (Google Ads' own ROAS column) remain direct.
+- **Currency + timezone inherit from the data source** (Hard Rule 7, corrected).
+- **Two Genie surfaces documented** — MCP `ask_genie` (dataset analysis only)
+  vs the app Genie (builds Databoards). The skill emits instructions for the
+  app Genie; its own MCP use stays the read-only `list_data_sources` check.
+- New `reference/genie-build-recipe.md` — the 8-step operational playbook +
+  default-layout table + pitfalls + Layout-Designer notes + alternative-tool
+  recommendations (Looker Studio for layout precision; Google Sheets pivot for
+  ad-hoc). `genie-prompt-template.md` rewritten around the empirical capability
+  matrix and the canonical 2-widget pattern.
+
 ## [0.43.0] — 2026-05-19
 
 **`aos-route-question` — pre-route overlay hook (skill v0.5.0 → v0.6.0).**

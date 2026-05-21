@@ -7,7 +7,7 @@ class: intelligence
 domain: strategy
 layer: [L4, L5, L6, L7]
 client-scope: single-client
-version: 0.1.0
+version: 0.2.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write, Edit]
 args-hint: "[--bu=<bu-slug>] — operates on the granted folder; uses the Databox connector when present"
@@ -121,6 +121,16 @@ data sources. It never creates data sources, never ingests data, and **never
 builds a databoard** — the Databox MCP has no create-databoard tool, so the
 deliverable is a *prompt* the user runs in Databox Genie. See Hard Rule 1.
 
+**Two Genie surfaces — do not confuse.** The MCP `ask_genie` tool analyses a
+*dataset* only; it does not build Databoards. Board-building Genie is the
+Databox **app** Genie (the nav-bar chat) or the higher-level Databox API the
+app Genie wraps. The skill emits instructions for the board-building Genie.
+Empirical limits the plan must respect (Wellis Export build, 6 iterations,
+2026-05-20/21 — `reference/genie-build-recipe.md`): Genie *does* metrics,
+breakdowns, filters, viz types, date ranges and comparisons; it does **not** do
+layout, sizing, custom colours, or calculated metrics. See
+`reference/genie-prompt-template.md` for the full matrix.
+
 ## Arguments
 
 This skill operates on the **granted folder** — which is the client's folder.
@@ -188,11 +198,16 @@ depends on.
 
 ### Step 5 — Craft Genie prompts and write the plan
 
-1. For each databoard, fill `reference/genie-prompt-template.md` into a
-   ready-to-paste **Databox Genie prompt**: databoard title, metric blocks,
-   visualisation types, default date range + period comparison, filters, and
-   layout / grouping. **Pin timezone and currency explicitly in every prompt** —
-   never let Genie infer them (the AOS currency-guard rule).
+1. For each databoard, build **Databox Genie instructions** using
+   `reference/genie-prompt-template.md` (prompt format) and
+   `reference/genie-build-recipe.md` (the operational recipe). Three parts per
+   board: (a) a **primary prompt** following the canonical 2-widget pattern
+   when possible — Genie's default layout is reliable at 2 widgets and ugly
+   above; (b) **follow-up prompts** for refinements, paste-one-at-a-time after
+   the board exists; (c) a **manual-setup list** for calculated metrics,
+   Designer-polish notes, and the verification checklist (Hard Rule 15).
+   Currency + timezone inherit from the data source — record them in the plan
+   frontmatter, not in the prompt.
 2. Write the full plan to `metrics/DATABOARD_PLAN.md` using
    `reference/plan-template.md`. Resolve the `metrics` zone via `AOS_CONFIG.md`.
 3. Present the suite + the readiness check + the Genie prompts to the user
@@ -211,7 +226,7 @@ Minimum content for `metrics/DATABOARD_PLAN.md`:
 - Business needs harvested — goals, target KPIs, active channels, **the binding constraint**
 - The databoard suite — each board's full spec (purpose, audience, layers, metrics, visuals, cadence)
 - Data-source readiness — the `✓ / ✗ / ⚠` table + action items (or the unverified requirement list when degraded)
-- Genie prompts — one ready-to-paste block per databoard
+- Genie instructions — per databoard: a primary 2-widget prompt + follow-ups (direct metrics), a manual-setup list (calculated metrics + Designer polish), and a verification checklist
 - **What did we get wrong? What's missing?**
 
 The deliverable shell, the archetype library, the metric→source map, and the
@@ -240,11 +255,15 @@ Never hard-code `skill_version` or `aos_schema` — read them at write time.
 4. **Plan from real business needs.** Every databoard traces to a goal / KPI in `brand/`. No generic dashboard dump. If brand intelligence is thin, say so and recommend `aos-build-brand-system`.
 5. **Make the constraint visible.** The binding constraint from `brand/7LAYER_DIAGNOSTIC.md` must be measurable somewhere in the suite.
 6. **Per BU / per domain.** Multi-BU / multi-domain clients get a per-BU / per-domain plan — never one flattened suite.
-7. **Pin timezone + currency in every Genie prompt** — never let Genie infer them (the AOS currency-guard rule).
+7. **Currency + timezone live in the data source, not the prompt.** Genie inherits them from the data-source / account settings — it has no prompt slot for them. Record the intended currency + timezone in the plan frontmatter (the AOS currency-guard rule) and flag any source whose setting is wrong; never claim a Genie prompt sets them.
 8. **Single client.** Operate only within the granted folder; never reach outside it.
 9. **Write to `metrics/DATABOARD_PLAN.md`** — never to `brand/` or `content/`.
 10. **Discovery, not pronouncement.** The plan ends with *"What did we get wrong? What's missing?"* before the user accepts.
 11. **Nudge, don't act.** The missing-connector nudge (Step 5.4) names the gap and the next skill — it never runs `aos-onboard` itself. One nudge, not a nag.
+12. **Calculated metrics are not for Genie.** Databox marks Genie-creates-calculated-metrics as "coming soon" and the empirical build did not exercise it — treat as unsupported until proven. Every calculated / derived metric (rates, ratios, share-of-X, cross-source gaps) goes in the plan's manual-setup list as a Databox custom-metric step. A connector that *reports a ratio natively* (Google Ads' own ROAS) is a direct metric — fine.
+13. **Default to 2-widget boards.** Genie's auto-layout is reliable at 2 widgets and ugly above. Prefer multiple 2-widget boards over one many-widget board; a board that genuinely needs more than 2 widgets must call out the Designer-polish step in its manual-setup list (`genie-build-recipe.md`).
+14. **Always include the exclude flag + dedup.** Every Genie prompt names the dataset's exclude column (e.g. `test_mode != TRUE`) and the dedup / aggregation (e.g. `distinct count of lead_email`). Missing these is a silent data-quality bug.
+15. **Verify after build — Genie's confirmations are unreliable.** Genie sometimes claims "✅ Filter applied" / "✅ Inherits board date range" when the underlying call did not propagate. The plan's manual-setup list ends in a verification checklist: date-range badge matches the board, filter actually applied (sanity-check the numbers), visualisation type matches what was asked for.
 
 ## Integration
 
@@ -253,6 +272,7 @@ Never hard-code `skill_version` or `aos_schema` — read them at write time.
 
 ## Versioning
 
+- **v0.2.0** — **Empirical Genie calibration** (AOS-916). Recalibrated against a real 6-iteration Databox Genie dashboard build (Wellis Export Lead Routing, 2026-05-20/21). The shifts: (1) the **canonical 2-widget pattern** + explicit visualisation-type rule — Genie's auto-layout is reliable at 2 widgets, ugly above, and BAR can default to time-series (Hard Rule 13). (2) **Always include the dataset's exclude flag + dedup** in every Genie prompt — missing them is a silent data-quality bug (Hard Rule 14). (3) **Verify-after-build** discipline — Genie's "✅ confirmed" claims are unreliable (Hard Rule 15). (4) The **manual-setup list** is now where calculated metrics, Designer polish, and verification live, separate from Genie prompts (Hard Rule 12). (5) **Currency + timezone inherit from the data source**, not the prompt (Hard Rule 7 corrected). New `reference/genie-build-recipe.md` — the 8-step build playbook + pitfalls + Layout Designer notes + alternative-tool recommendations (Looker Studio for layout precision; Google Sheets pivot for ad-hoc).
 - **v0.1.0** — initial Cowork-plugin authoring (AOS-910 epic). The skill scaffold + process spec (AOS-911) and the full `reference/` method library: `databoard-archetypes.md` — the 8-archetype board library (AOS-912); `metric-source-map.md` + `layer-kpi-map.md` — the metric→source and layer→KPI maps (AOS-913); `readiness-check.md` — the data-source readiness method (AOS-914); `genie-prompt-template.md` + `plan-template.md` — the Genie-prompt and deliverable templates (AOS-915). Calibration on a real client follows in AOS-916 — archetypes, mappings, and the prompt format will need refinement after the first real runs.
 
 **What did we get wrong? What's missing?**

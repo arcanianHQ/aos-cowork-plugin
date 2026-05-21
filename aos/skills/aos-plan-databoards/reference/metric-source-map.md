@@ -102,3 +102,37 @@ the Step 4 readiness check.
 - **No source → `✗`.** If a wanted metric maps to a connector that the readiness
   check finds unconnected, the metric cannot ship on the board — surface it as a
   gap with the connect-it action item, do not silently drop it.
+- **Data-quality contract per dataset.** For every dataset on a board, name two
+  things in the Genie prompt: the **exclude flag** (e.g. `test_mode != TRUE`)
+  and the **dedup / aggregation** (e.g. `distinct count of lead_email`).
+  Missing either is a silent data-quality bug (Hard Rule 14).
+
+## Calculated metrics — Genie cannot build these (yet)
+
+Databox Genie builds *direct* metrics (a value that exists in a source) but
+treats **calculated / derived metrics** as "coming soon"; the empirical Wellis
+build did not exercise it. The planner treats these as **unsupported until
+proven** — when one appears on a board it goes in the plan's **manual-setup
+list** as a Databox custom-metric step (`genie-prompt-template.md`,
+Hard Rule 12), not in a Genie prompt.
+
+| Calculated metric | Formula | Note |
+|---|---|---|
+| Conversion rate | conversions / sessions × 100 | single-source if both in GA4 |
+| Average order value (AOV) | revenue / orders | single-source if both in the store data |
+| ROAS | conversion value / spend | native in Google / Meta Ads — use the reported column if present |
+| CPA / CAC | spend / conversions | |
+| Blended CAC | total spend / new customers | cross-source |
+| Revenue per session | revenue / sessions | cross-source (store ÷ GA4) |
+| Share of channel | channel value / total | |
+| Tracking gap | (source A − source B) / source A × 100 | cross-source |
+| LTV · LTV:CAC | derived | cross-source |
+| Retention / churn rate | derived from cohort data | |
+
+**Cross-source calculations** (a formula spanning two data sources) are harder
+still — they need a Databox **merged dataset**, not just a custom metric. Flag
+those explicitly in the manual-setup list.
+
+A connector that *reports a ratio natively* (Google Ads' own ROAS / CTR / CPC
+columns) is a **direct** metric — Genie can place it. The rule is about figures
+Databox would have to *calculate*, not ones a source already delivers.
