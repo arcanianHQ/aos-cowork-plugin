@@ -3,6 +3,33 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.45.0] — 2026-05-25
+
+**`@Name` colleague invocation — Atlas routes the team (skill `aos-route-question` v0.6.0 → v0.7.0).**
+
+- **`aos-route-question` is now Atlas** — the Marketing Ops / Coordinator
+  colleague. The router self-identifies in Atlas's voice (organized,
+  deadline-aware, "what's blocking this?") and recognises a leading
+  `@<Name>` as a direct colleague invocation.
+- **`@Name` resolution** — `Read team.md` at the granted-folder root, apply
+  the per-client `overrides:` YAML (alias → canonical), resolve to the
+  anchor skill via the embedded canonical routing table, hand off with
+  active client context loaded. `@marcus`, `@Marcus`, `@MARCUS` all match.
+- **Edge cases handled** — unknown name (graceful "did you mean @X?"
+  suggestion), bare `@Name` (introduce + ask task, don't invoke), multiple
+  `@Names` (dispatch the first, defer the rest to AOS-1227), `@team` (defer
+  to AOS-1227).
+- **`@Hunter` boundary** — account-discovery only; prospecting prompts get a
+  graceful `@Anna` / `@Quinn` redirect instead of running discovery on the
+  wrong intent.
+- **`@Atlas` framing** — surfaces ops state (`TASKS.md`, calibration log,
+  schedule rows) before routing, then frames the task through "what's
+  blocking?". Without `@Atlas`, the router keeps its lean default posture.
+- Builds on v0.44.0's `team.md` scaffolding (AOS-1222) — `team.md` is the
+  single source-of-truth the router reads. If `team.md` is absent (older
+  client folder pre-AOS-1222), the embedded canonical roster in this
+  prompt is the fallback. Land AOS-1223.
+
 ## [0.44.0] — 2026-05-25
 
 **Vera onboards + AOS team roster lands in every client folder (skill `aos-onboard` v0.7.6 → v0.7.7).**
