@@ -3,6 +3,26 @@
 All notable changes to the `aos` plugin. Newest first. The plugin version is
 `aos/.claude-plugin/plugin.json`.
 
+## [0.44.0] — 2026-05-25
+
+**AOS team roster — `team.md` in every client folder (skill `aos-onboard` v0.7.6 → v0.7.7).**
+
+- `aos-onboard` now writes `team.md` at the granted-folder root: the
+  10-colleague AOS team roster (Marcus / Iris / Quinn / Doc / Anna / Hunter /
+  Sage / Echo / Atlas / Vera) and a per-client `overrides:` block where the
+  operator can rename any colleague to match their existing org's mental model.
+  Shipped as `data-template/team.md` — a fresh `aos-onboard` scaffolds it
+  automatically; the skill substitutes the `<client-name>` placeholder.
+- Existing folders are **back-filled** when `aos-onboard` runs against them
+  (same mechanic as the v0.7.6 `CLAUDE.md` back-fill). An already-present
+  `team.md` is never overwritten — operator `overrides:` edits are preserved.
+- The next skill in the chain (AOS-1223, `aos-route-question` v0.7.0) reads
+  this file at routing time to resolve `@Marcus` / `@Iris` / etc. — and any
+  per-client aliases under `overrides:`.
+- Canonical roster lives in
+  [`arcanian-aos/docs/aos-colleagues-v1.md`](https://github.com/arcanianHQ/arcanian-aos/blob/main/docs/aos-colleagues-v1.md)
+  (AOS-1220). This release lands AOS-1222.
+
 ## [0.43.0] — 2026-05-19
 
 **`aos-route-question` — pre-route overlay hook (skill v0.5.0 → v0.6.0).**

@@ -7,7 +7,7 @@ class: system
 domain: onboarding
 layer: all
 client-scope: single-client
-version: 0.7.6
+version: 0.7.7
 owner: arcanian
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Bash"]
 preflight: []
@@ -48,6 +48,15 @@ Walk the user through first-run setup.
      `docs/data-access-router.md`.
    - Fill `granted-folder`, `client`, `schema-version`, `plugin-version`,
      `created`. Layout reference: `docs/data-folder-spec.md`.
+   - **Personalise `team.md`** at the granted-folder root: substitute
+     `<client-name>` with the captured client slug. `team.md` is the AOS
+     team roster (the 10 colleagues — Marcus / Iris / Quinn / Doc / Anna /
+     Hunter / Sage / Echo / Atlas / Vera) and the per-client `overrides:`
+     block the router reads to resolve `@Name` aliases. The canonical
+     roster lives in
+     [`arcanian-aos/docs/aos-colleagues-v1.md`](https://github.com/arcanianHQ/arcanian-aos/blob/main/docs/aos-colleagues-v1.md);
+     `team.md` itself is shipped as a `data-template/` file, so a fresh
+     scaffold gets it automatically — this step only fills the header.
 
 4. **Capture client context + languages.** Fill `client/CLIENT_CONFIG.md` and
    `client/DOMAIN_CHANNEL_MAP.yaml` — the client, its business units, domains
@@ -136,6 +145,16 @@ session-start health check (the `schema-current` gate; see `docs/preflight.md`)
 that Cowork loads every session. A folder onboarded before this file existed has
 none; this back-fills it.
 
+**Ensure the team roster (`team.md`).** Whenever this skill runs against an
+existing folder, check the granted-folder root has a `team.md`. If absent,
+copy it from the installed plugin's `data-template/team.md` and substitute the
+`<client-name>` placeholder with `AOS_CONFIG.md`'s `client` field. The router
+(`aos-route-question`) reads this file to resolve `@Name` invocations and any
+per-client aliases the operator has added under `overrides:`. A folder
+onboarded before this file existed has no roster; this back-fills it. If
+`team.md` is already present, **never** overwrite it — it may carry the
+operator's `overrides:` edits.
+
 ## Graduate-bundle import (Stage 1 → 3)
 
 A client's engagement can move **operator-run → client-run** — Stage 1/2 to
@@ -188,7 +207,16 @@ is **not** part of this plugin; it extends the operator's `finalize-engagement`
 
 ## Status
 
-v0.7.6 — back-fills the session-start `CLAUDE.md` (the `schema-current`
+v0.7.7 — writes the **AOS team roster** (`team.md`) on a fresh install
+(`data-template/team.md` + `<client-name>` substitution in Step 3), and
+back-fills it into existing folders (mirrors the v0.7.6 `CLAUDE.md`
+back-fill). The router (`aos-route-question`) reads this file at routing
+time to resolve `@Name` invocations and any per-client `overrides:` the
+operator adds. Canonical roster:
+[`arcanian-aos/docs/aos-colleagues-v1.md`](https://github.com/arcanianHQ/arcanian-aos/blob/main/docs/aos-colleagues-v1.md)
+(AOS-1220 / AOS-1222).
+
+Prior: v0.7.6 — back-fills the session-start `CLAUDE.md` (the `schema-current`
 health-check gate, AOS-844) into an existing folder that predates it; a fresh
 scaffold gets it from `data-template/`.
 
