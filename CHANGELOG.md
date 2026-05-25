@@ -5,8 +5,15 @@ All notable changes to the `aos` plugin. Newest first. The plugin version is
 
 ## [0.44.0] — 2026-05-25
 
-**AOS team roster — `team.md` in every client folder (skill `aos-onboard` v0.7.6 → v0.7.7).**
+**Vera onboards + AOS team roster lands in every client folder (skill `aos-onboard` v0.7.6 → v0.7.7).**
 
+- **Vera is now the onboarder.** `aos-onboard` self-identifies as Vera —
+  the Customer Success / Account Manager colleague on the AOS team
+  (`aos-colleagues-v1.md`). The skill speaks in her voice (warm,
+  client-empathic, surfaces softer signals) and hands the operator off to
+  the other 9 colleagues when onboarding completes. This closes the
+  persona loop opened by AOS-1220 — onboarding stops being a faceless
+  system step.
 - `aos-onboard` now writes `team.md` at the granted-folder root: the
   10-colleague AOS team roster (Marcus / Iris / Quinn / Doc / Anna / Hunter /
   Sage / Echo / Atlas / Vera) and a per-client `overrides:` block where the
