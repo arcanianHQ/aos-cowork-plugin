@@ -45,6 +45,11 @@ When the check (or a session-start brief) lists connections to the user:
   `api_key=****`. Name the header, mask the value.
 - **Account ids / subdomains** — show only enough to tell two apart
   (`acct-****42`).
+- **MCP server configs** (`.mcp.json`, `~/.claude.json`, a desktop-app config) —
+  print the server name, its command or URL host, and the *names* of its `env`
+  and `headers` keys; mask every value. A literal token found there is a finding
+  in its own right: say so — it belongs in an environment variable
+  (`"${TOKEN_NAME}"` in the config) or the OS keychain, and it should be rotated.
 
 Never paste a raw token, header or full address into a deliverable, the
 captain's log, or a feedback record.
