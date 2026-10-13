@@ -64,11 +64,19 @@ aos-draft-content. BLOCK: structural fault — fix upstream, must not ship.>
 
 <Per issue — or "No issues.">
 
+## 4 — Deliverable writing
+
+<Deliverables only — "n/a, content piece" otherwise. Rules: `docs/deliverable-writing.md`.>
+
+**Writing rules (§1):** <pass / N issues> · **Goal and context (§2):** <pass / N issues / n-a> · **Evidence + source of record (§3–§4):** <pass / N issues>
+
+<Per issue — the quoted sentence and the rule number — or "No issues.">
+
 ## Issue list
 
 | # | Class | Check | Location | Fails contract line |
 |---|-------|-------|----------|---------------------|
-| 1 | REVISE / BLOCK | voice / positioning / pillar / register / claim / completeness | piece:Lnn | "<quoted contract line>" |
+| 1 | REVISE / BLOCK | voice / positioning / pillar / register / claim / completeness / writing | piece:Lnn | "<quoted contract line>" |
 
 <If zero issues: "No issues — the piece holds to all three contracts.">
 

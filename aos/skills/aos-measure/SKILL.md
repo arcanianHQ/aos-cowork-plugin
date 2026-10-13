@@ -7,7 +7,7 @@ class: intelligence
 domain: diagnostic
 layer: [L4, L5, L6, L7]
 client-scope: single-client
-version: 0.2.1
+version: 0.3.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write]
 args-hint: "[--period=<YYYY-MM>] [--bu=<bu-slug>] — operates on the granted folder; uses the Databox connector when present"
@@ -153,13 +153,15 @@ For each shipped piece / campaign, gather results — the measurement method is 
 
 Tag every result item with its evidence class — `[DATA]`, `[OBSERVED]`, `[STATED]`, `[INFERRED]`. Only `[DATA]` and `[OBSERVED]` carry a causal claim.
 
+**Purchases and revenue come from the shop's order export** — the source of record (`docs/deliverable-writing.md` §4). GA4 is reconciled against it, never the only source for a count or a revenue figure. If the order export is missing, say so in the deliverable and draw no count / revenue conclusions.
+
 ### Step 3 — Read the results into findings
 
-Interpret the results — the result→finding lenses (against-plan, against-benchmark, against-prior, channel-comparison) are in `reference/measurement-method.md`. For each substantive result, decide: is this a **finding** — something the engagement learned that should change what it does next? A piece that performed as expected may not be a finding; a piece that beat or missed expectation is. Run the **cross-layer check**: if a result points at a structural problem (a funnel leak, a positioning gap), name the suspicion and recommend the relevant `aos-diagnose-*` skill — do not diagnose it here.
+Interpret the results — the result→finding lenses (against-plan, against-benchmark, against-prior, channel-comparison) are in `reference/measurement-method.md`. For each substantive result, decide: is this a **finding** — something the engagement learned that should change what it does next? A piece that performed as expected may not be a finding; a piece that beat or missed expectation is. Grade evidence per `docs/deliverable-writing.md` §3 — one day or a single-digit sample is never strong; an unknown deciding fact makes the finding *"open — decided by …"*; a conversion-rate order between channels is attribution, not a lever. Run the **cross-layer check**: if a result points at a structural problem (a funnel leak, a positioning gap), name the suspicion and recommend the relevant `aos-diagnose-*` skill — do not diagnose it here.
 
 ### Step 4 — Synthesise and emit
 
-1. Write the results read to `deliverables/<YYYY-MM>/results.md` using `reference/results-template.md`. Resolve the `deliverables` zone via `AOS_CONFIG.md`.
+1. Write the results read to `deliverables/<YYYY-MM>/results.md` using `reference/results-template.md`. Resolve the `deliverables` zone via `AOS_CONFIG.md`. Write it to the seven rules in `docs/deliverable-writing.md` §1 — above all, every comparison names its base (*"than the same 60 days of last year"*), and a change we made on purpose sits under *"to check"* with the deciding check named, not under what went wrong.
 2. **Emit ontology artifacts.** For each substantive finding, write an `FND` to `ontology/findings/` — frontmatter per `ontology/README.md` (`source: aos-measure`, `consumes:` the REC / Content the result measured, `emits: []` left open as a leaf for the next plan). **Dedup first** — scan existing `ontology/findings/`; supersede or reference rather than duplicate. The FND emission format is in `reference/results-template.md`.
 3. Present the results read + the FND shortlist to the user before writing — Accept / Revise / Regenerate.
 4. **Proactive nudge.** Once the FNDs are written, do not stop silently — a finding is most actionable the moment it is emitted. Surface a **one-line nudge** (`docs/proactive-nudges.md`): the count of new + open unactioned findings, the single highest-signal one named with its forward signal, and the next step — `aos-index-ontology` to rebuild `ontology/INDEX.md`, then `aos-plan` to plan against them. The nudge is **surfaced, never auto-actioned** — name what is waiting and ask; the user decides. If there are no findings to action, no nudge.
@@ -206,6 +208,7 @@ hard-code `skill_version` or `aos_schema` — read them at write time.
 9. **Write deliverables to `deliverables/<YYYY-MM>/` and FNDs to `ontology/findings/`** — never to `brand/` or `content/`.
 10. **Discovery, not pronouncement.** The results read ends with *"What did we get wrong? What's missing?"* before the user accepts.
 11. **Nudge, don't act.** The post-emit nudge (Step 4.4) surfaces unactioned findings and names the next skill — it never runs `aos-index-ontology` or `aos-plan` itself. One nudge, not a nag. See `docs/proactive-nudges.md`.
+12. **Write to the deliverable rules.** The results read follows `docs/deliverable-writing.md` — the seven writing rules (§1), the evidence grading (§3), and the order export as the source of record for purchases and revenue (§4).
 
 ## Integration
 
@@ -214,6 +217,7 @@ hard-code `skill_version` or `aos_schema` — read them at write time.
 
 ## Versioning
 
+- **v0.3.0** — **deliverable writing rules** (external review of real deliverables). The results read now follows `docs/deliverable-writing.md`: the seven writing rules for summaries / reports (§1), evidence grading — no "strong" from one day or a single-digit sample, unknown deciding facts left open, channel conversion-rate order read as attribution (§3) — and the shop's order export as the source of record for purchases and revenue, GA4 reconciled against it (§4).
 - **v0.2.1** — **multi-BU detection fix** (AOS-853 / F1-D1). Step 0.4 now detects multi-BU from `AOS_CONFIG.md`'s `business-units:` declaration, not the `content-system/<bu>/` layout. See `docs/data-folder-spec.md`, "Detecting multi-BU".
 - **v0.2.0** — **proactive finding nudge** (AOS-851, milestone *13. Agentic behaviour* — F5). After emitting FNDs, `aos-measure` surfaces a one-line nudge — the unactioned findings + the next skill (`aos-index-ontology` → `aos-plan`) — instead of stopping silently. Surfaced, never auto-actioned. The after-measure moment of the three-moment nudge contract in `docs/proactive-nudges.md`.
 - **v0.1.0** — initial Cowork-plugin authoring. The measurement stage of the AOS loop (architecture-gaps §1). Result→finding lenses and benchmark handling likely need refinement after first real runs.

@@ -30,6 +30,13 @@ serves_rec: <REC-id this campaign executes — or blank>
 > for, the offer, where and when it runs, what it needs built, and how it will be
 > measured. A draft for you to correct before any content is drafted.
 
+## Goal and situation
+
+<Two or three sentences: what the client is trying to achieve with this campaign,
+and where it stands now. Each recommendation below names the goal it serves and
+the evidence it rests on; a label (a budget level, a tier) is defined where it
+first appears. (`docs/deliverable-writing.md` §1–§2)>
+
 ## Frame
 
 - **Occasion / trigger:** <why now>
@@ -81,7 +88,10 @@ The concrete pieces this campaign needs built. Each is a job for `aos-write` /
 ## Measurement plan
 
 <What `aos-measure` reads at the end of the window to judge the KPI — the
-metric source, the comparison (against-plan / against-benchmark / against-prior).>
+metric source, the comparison (against-plan / against-benchmark / against-prior).
+Name the comparison's base ("than the same weeks of last year") and the metric's
+platform (Google Ads or GA4 conversions); purchases and revenue are read from the
+shop's order export, with GA4 reconciled against it (`docs/deliverable-writing.md`).>
 
 ## What did we get wrong? What's missing?
 

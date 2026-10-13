@@ -7,7 +7,7 @@ class: intelligence
 domain: diagnostic
 layer: [L5]
 client-scope: single-client
-version: 0.1.0
+version: 0.2.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write]
 args-hint: "(no args — operates on the granted folder; uses the HubSpot connector when present)"
@@ -61,7 +61,7 @@ It **diagnoses** — it produces a findings document that names where the lifecy
 
 **Multi-domain:** If the client has 2+ domains, load `client/DOMAIN_CHANNEL_MAP.yaml` first and diagnose lifecycle **per domain** — never flatten retention rates or list health across domains, and never use account-level totals as one domain's lifecycle metrics.
 
-**Evidence:** Tag every evidence item — `[DATA]`, `[OBSERVED]`, `[STATED]`, `[NARRATIVE]`, `[INFERRED]`, `[HEARSAY]`. Only `[DATA]` and `[OBSERVED]` items carry a causal claim. Keep data confidence (is the retention number real?) separate from causal confidence (does it explain the churn?). A single CRM report is never sufficient for a causal claim — triangulate.
+**Evidence:** Tag every evidence item — `[DATA]`, `[OBSERVED]`, `[STATED]`, `[NARRATIVE]`, `[INFERRED]`, `[HEARSAY]`. Only `[DATA]` and `[OBSERVED]` items carry a causal claim. Keep data confidence (is the retention number real?) separate from causal confidence (does it explain the churn?). A single CRM report is never sufficient for a causal claim — triangulate. Grade per `docs/deliverable-writing.md` §3: one day or a single-digit sample is never strong; a claim that turns on an unknown fact is *"open — decided by …"*; no lesson from an event whose dates and content are unknown; a conversion-rate order between channels is attribution, not a lever. Purchases and revenue come from the shop's order export, with GA4 reconciled against it — if the order export is missing, say so and draw no count / revenue conclusions (§4).
 
 ## Connector — HubSpot (graceful degradation)
 
@@ -145,6 +145,7 @@ what lets a granted folder be migrated when the plugin or schema changes.
 6. Single client — operate only within the granted folder; never reach outside it.
 7. Write deliverables to `deliverables/<YYYY-MM>/` and FND/REC to `ontology/` — never to `brand/`. This skill produces a diagnostic, not a brand-profile file.
 8. **Privacy.** Diagnose lifecycle in aggregate — stage counts, cohort rates, segment shares. Do not enumerate or export individual contacts from the CRM.
+9. **Grade honestly; count from the source of record.** Evidence is graded and purchases / revenue are sourced per `docs/deliverable-writing.md` §3–§4. Write the deliverable to the seven writing rules in §1 of the same doc.
 
 ## Integration
 
@@ -153,6 +154,7 @@ what lets a granted folder be migrated when the plugin or schema changes.
 
 ## Versioning
 
+- **v0.2.0** — **evidence grading + source of record** (external review of real deliverables). Evidence grading follows `docs/deliverable-writing.md` §3 (no "strong" from one day or a single-digit sample; unknown deciding facts left open; no lessons from events without known dates and content; channel conversion-rate order read as attribution), purchases and revenue come from the shop's order export with GA4 reconciled against it (§4), and the deliverable follows the seven writing rules (§1).
 - **v0.1.0** — initial Cowork-plugin authoring (AOS-743). Focuses the `aos-diagnose-7layer` L5 methodology into a standalone lifecycle diagnostic. List-health bands and leak-pattern tables likely need refinement after first real runs.
 
 **What did we get wrong? What's missing?**

@@ -7,7 +7,7 @@ class: reading
 domain: quality
 layer: all
 client-scope: single-client
-version: 0.1.0
+version: 0.2.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Write, Edit]
 args-hint: "[--artifact=<path>] [--in-place] — operates on the granted folder; defaults to the artifact the user named or the file just produced this session"
@@ -132,12 +132,19 @@ For each material statement:
    **UNSOURCED** in the report (do not invent a tag that implies verification).
 4. If the statement is causal ("X caused Y", "because", "due to") but only
    `[STATED]` or `[NARRATIVE]` backs it → flag **CAUSAL OVERREACH**.
+5. **Grading limits** (`docs/deliverable-writing.md` §3–§4) — flag
+   **OVER-GRADED** when: a claim called strong rests on one day or a
+   single-digit sample; a claim turns on an unknown fact but is not written
+   *"open — decided by …"*; a lesson is drawn from an event whose dates and
+   content are unknown; a conversion-rate order between channels is presented
+   as a lever rather than as attribution; or a purchase count / revenue figure
+   rests on GA4 alone with no order export behind it.
 
 ### Step 3 — Produce the report
 
 Write `deliverables/<YYYY-MM>/provenance-<artifact-slug>.md` using this shape:
 
-- **Summary** — counts by tag, unsourced count, causal-overreach count
+- **Summary** — counts by tag, unsourced count, causal-overreach count, over-graded count
 - **Tagged statements** — table: location · statement (short) · tag · source (or UNSOURCED)
 - **Load-bearing risks** — claims that would change the conclusion if wrong
 - **Recommended fixes** — soften, cut, source, or run a connector skill (e.g.
@@ -166,6 +173,7 @@ Only after user confirmation:
 5. **Sidecar by default.** Do not edit the artifact in place without confirmation.
 6. **Single client.** Operate only within the granted folder.
 7. **Discovery, not pronouncement.** End with *"What did we get wrong? What's missing?"*
+8. **Grade within the limits.** No "strong" from one day or a single-digit sample; an unknown deciding fact keeps a claim open; GA4 is never the only source for purchases or revenue — `docs/deliverable-writing.md` §3–§4.
 
 ## Output Sections
 
@@ -191,6 +199,7 @@ User-facing summary:
 
 ## Versioning
 
+- **v0.2.0** — **grading limits** (external review of real deliverables). Step 2 flags **OVER-GRADED** claims against `docs/deliverable-writing.md` §3–§4: "strong" from one day or a single-digit sample, an unknown deciding fact not left open, a lesson from an event without known dates and content, a channel conversion-rate order presented as a lever, a purchase / revenue figure resting on GA4 alone.
 - **v0.1.0** — initial Cowork lite port (AOS-795). Built from
   `COWORK_FEATURE_CATALOGUE.md` §8 + `aos-measure` evidence-class discipline.
   **Note:** no dedicated `back-statements` skill file was found in

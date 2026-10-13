@@ -1,13 +1,13 @@
 ---
 name: aos-review
-description: "Review workflow — the quality gate before an artifact moves draft → in-review / published. Checks a content piece (or deliverable) against the brand profile (voice + positioning adherence), its BU's content-system contract, and completeness, then issues a PASS / REVISE / BLOCK verdict with a review report. On a REVISE it runs the autonomous revision micro-loop — re-drafts and re-reviews itself to PASS, a structural BLOCK, or an iteration cap, rather than bouncing each turn back to the human. Also runs the calibration store-back: a REVISE/BLOCK routes corrections into the foundations, and a client-accepted piece flows its voice + winning structure back into brand/VOICE.md and the pattern library. The plugin analogue of the ADF verification gate. Trigger on 'review this', 'check this before publish', 'is this ready to ship', when a piece is marked client-accepted, or before aos-distribute advances a piece."
+description: "Review workflow — the quality gate before an artifact moves draft → in-review / published. Checks a content piece (or deliverable) against the brand profile (voice + positioning adherence), its BU's content-system contract, and completeness, then issues a PASS / REVISE / BLOCK verdict with a review report. A deliverable is also checked against the shared writing rules. On a REVISE it runs the autonomous revision micro-loop — re-drafts and re-reviews itself to PASS, a structural BLOCK, or an iteration cap, rather than bouncing each turn back to the human. Also runs the calibration store-back: a REVISE/BLOCK routes corrections into the foundations, and a client-accepted piece flows its voice + winning structure back into brand/VOICE.md and the pattern library. The plugin analogue of the ADF verification gate. Trigger on 'review this', 'check this before publish', 'is this ready to ship', when a piece is marked client-accepted, or before aos-distribute advances a piece."
 scope: int-company
 flavor: [company, advanced, internal]
 class: intelligence
 domain: quality
 layer: [L6, L7]
 client-scope: single-client
-version: 0.3.0
+version: 0.4.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write, Edit]
 args-hint: "--piece=<path-or-slug under content/> [--bu=<bu-slug>] [--accepted] [--max-iterations=<n>] [--no-auto-revise] — operates on the granted folder; reviews one artifact, or runs the accept-door store-back"
@@ -64,7 +64,7 @@ onboard → catalogue → discover → brand → plan → content → REVIEW →
 ```
 
 Before an artifact moves `draft → in-review / published`, `aos-review` checks it
-against three contracts and issues a verdict:
+against three contracts — four for a deliverable — and issues a verdict:
 
 1. **Brand adherence** — does the piece hold to `brand/VOICE.md` (register,
    banned words, sentence shape) and `brand/POSITIONING.md` (does it say what
@@ -75,6 +75,10 @@ against three contracts and issues a verdict:
 3. **Completeness** — is the piece *finished* — no TODO markers, no placeholder
    text, no empty sections, the content-type structure fully populated, frontmatter
    and provenance block present?
+4. **Deliverable writing** *(deliverables only)* — does a summary, report or
+   proposal hold to `docs/deliverable-writing.md`: the seven writing rules, the
+   goal and context of every recommendation, the evidence grading, and the
+   order export as the source of record for purchases and revenue?
 
 This is the **plugin analogue of the ADF verification gate** — the lint →
 type-check → unit → integration → business-validation chain that the Arcanian
@@ -99,7 +103,7 @@ an automated reject. The verdict is the skill's read; the user decides.
 
 Every review ends in exactly one verdict:
 
-- **PASS** — the piece holds to all three contracts. It is cleared to move to
+- **PASS** — the piece holds to every contract checked. It is cleared to move to
   `in-review` / `published`. `aos-review` does not itself advance the status —
   it clears the piece and hands back to `aos-distribute`.
 - **REVISE** — the piece has fixable issues (a voice slip, an off-register line,
@@ -265,10 +269,26 @@ Check the piece is *finished*. Procedure in `reference/review-checklist.md` §3.
 - Frontmatter is complete and the **provenance block** is present and stamped
   (`generated_by`, `skill_version`, `generated_date`, `aos_schema`).
 
+### Step 3b — Deliverable writing check (deliverables only)
+
+When `--piece` is a deliverable — under `deliverables/` or `campaigns/`, or any
+summary, report, plan, brief, pitch or offer — check it against
+`docs/deliverable-writing.md`. Procedure in `reference/review-checklist.md` §4.
+The rules are not restated here; the ones most often broken:
+
+- every comparison names its base, and every platform term its platform
+  (Google Ads or GA4 conversions; Meta Ads or CRM leads);
+- a proposal opens with the client's goal and situation, and each
+  recommendation states the goal it serves and the evidence it rests on;
+- nothing is *strong* on one day or a single-digit sample, and purchases /
+  revenue trace to the shop's order export, not GA4 alone.
+
+Every issue here is class `REVISE`. A content piece skips this step.
+
 ### Step 4 — Verdict, report, emit
 
 1. **Decide the verdict** — `PASS` / `REVISE` / `BLOCK` — by the rule in
-   `reference/review-checklist.md` §4 (any `BLOCK`-class issue → `BLOCK`; else any
+   `reference/review-checklist.md` §5 (any `BLOCK`-class issue → `BLOCK`; else any
    issue → `REVISE`; else `PASS`).
 2. **Write the review report** to `deliverables/<YYYY-MM>/review-<piece-slug>.md`
    using `reference/review-report-template.md`. Resolve the `deliverables` zone
@@ -354,6 +374,7 @@ The review report's minimum content (template: `reference/review-report-template
 - Brand adherence — voice + positioning results, each issue with its line
 - Content-system contract — on-pillar / in-register / claim-accurate results
 - Completeness — markers, structure coverage, provenance
+- Deliverable writing — for a deliverable: writing rules, goal and context, evidence + source of record (`docs/deliverable-writing.md`)
 - Issue list — every issue, its class (`REVISE` / `BLOCK`), the contract line it fails
 - **Iteration log** — when the autonomous revision micro-loop ran: one row per
   iteration (verdict, issues, what the re-draft changed, outcome)
@@ -399,6 +420,7 @@ Never hard-code `skill_version` or `aos_schema` — read them at write time.
 
 ## Versioning
 
+- **v0.4.0** — **deliverable writing check** (external review of real deliverables). A deliverable under review (summary, report, plan, brief, pitch, offer) is now also checked against `docs/deliverable-writing.md` — the seven writing rules, goal and context per recommendation, evidence grading, and the shop's order export as the source of record. New Step 3b; checklist §4 (the verdict rule moves to §5); report section *4 — Deliverable writing*. All such issues are `REVISE`.
 - **v0.3.0** — the **autonomous revision micro-loop** (AOS-848, milestone
   *13. Agentic behaviour* — F2). A `REVISE` no longer bounces the piece back to
   the human each turn: `aos-review` re-drafts and re-reviews the piece itself,

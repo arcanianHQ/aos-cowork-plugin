@@ -7,7 +7,7 @@ class: content
 domain: content
 layer: [L6, L7]
 client-scope: single-client
-version: 0.1.0
+version: 0.2.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write, Edit]
 args-hint: "--topic=\"<phrase>\" [--type=<linkedin-post|blog-post|email|reference>] [--brief=<path under inbox/ or content/>] [--framework=<built-in slug | path to a custom framework file>] [--bu=<bu-slug>] — operates on the granted folder; drafts one piece"
@@ -133,6 +133,13 @@ There is no `--client` argument — the granted folder *is* the client folder.
    abort condition — it is a correctness guard, not a brand gate.)
 3. Resolve `--type` (recommend one from the brief if omitted) and the content
    language.
+4. **Connection check — only when the draft is to land outside the folder.** If
+   the user wants the piece placed as an email draft (Gmail) or a Google Doc /
+   Drive file, check now — per `docs/connection-check.md` — that the connector
+   offers that write (a `create_draft` tool; a create-document / `create_file`
+   tool). If it is read-only or missing, say so at once and offer the fallback:
+   the local file this skill always writes, or the text to copy. Never find out
+   after the draft is written. Mask any account you name (`j***@d***.com`).
 
 ### Step 1 — Assemble context + classify the level
 
@@ -264,6 +271,7 @@ User-facing summary at end of run:
 
 ## Versioning
 
+- **v0.2.0** — **connection check at the start** (external review). When the user wants the draft placed in Gmail or Google Docs / Drive, Step 0.4 checks the connector's write capability up front, names a read-only or missing connector at once, and offers the fallback (the local file, or text to copy). Procedure shared in `docs/connection-check.md`.
 - **v0.1.0** — initial Cowork-plugin authoring (AOS-785, Milestone 4 feature
   wave). The mid-level content-writing skill — built for the Cohort-1 pilot
   install. The context-ladder thresholds, the default per-type structures, and

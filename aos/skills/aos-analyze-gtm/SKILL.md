@@ -7,7 +7,7 @@ class: intelligence
 domain: strategy
 layer: [L2, L3, L4, L5, L6, L7]
 client-scope: single-client
-version: 0.1.0
+version: 0.2.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write]
 args-hint: "(no args — operates on the granted folder)"
@@ -54,8 +54,8 @@ Analyzes a business's Go-To-Market strategy against the complete GTM Strategist 
 ## Diagnostic guardrails
 
 - **Multi-domain.** If `client/CLIENT_CONFIG.md` (or `client/DOMAIN_CHANNEL_MAP.yaml`) lists 2+ domains, load the domain-channel map FIRST. Filter all channel/ROAS/spend queries by domain. Never use account-level totals as a single domain's metric.
-- **Evidence classification.** Every evidence item must be tagged: `[DATA]`, `[OBSERVED]`, `[STATED]`, `[NARRATIVE]`, `[INFERRED]`, `[HEARSAY]`. Only `[DATA]` and `[OBSERVED]` items can carry a causal claim. Keep data confidence separate from causal confidence. GA4 alone is insufficient for causal diagnosis — always check platform-side data (Meta Ads Manager, Google Ads, etc.).
-- **Attribution windows.** Before comparing conversion metrics across platforms, account for window mismatch — Google Ads (30-day click) ≠ Meta (7-day click) ≠ GA4 (data-driven). Never sum platform conversions; use GA4 as the cross-platform arbitrator. Flag any window mismatch in the finding.
+- **Evidence classification.** Every evidence item must be tagged: `[DATA]`, `[OBSERVED]`, `[STATED]`, `[NARRATIVE]`, `[INFERRED]`, `[HEARSAY]`. Only `[DATA]` and `[OBSERVED]` items can carry a causal claim. Keep data confidence separate from causal confidence. GA4 alone is insufficient for causal diagnosis — always check platform-side data (Meta Ads Manager, Google Ads, etc.). Grade per `docs/deliverable-writing.md` §3: one day or a single-digit sample is never strong; a claim that turns on an unknown fact is *"open — decided by …"*; no lesson from an event whose dates and content are unknown; a conversion-rate order between channels is attribution, not a lever. Purchases and revenue come from the shop's order export, with GA4 reconciled against it — if the order export is missing, say so and draw no count / revenue conclusions (§4).
+- **Attribution windows.** Before comparing conversion metrics across platforms, account for window mismatch — Google Ads (30-day click) ≠ Meta (7-day click) ≠ GA4 (data-driven). Never sum platform conversions; use GA4 as the cross-platform arbitrator for attribution — never for purchase counts or revenue, which come from the shop's order export. Flag any window mismatch in the finding.
 - **Currency normalization.** Before summing monetary values across domains/markets, convert to the client's reporting currency and state the conversion rate and its source.
 - **Dedup.** Before emitting new RECs, check `ontology/recommendations/` for existing RECs on the same gap.
 
@@ -109,7 +109,7 @@ Surface limiting beliefs that may be causing the gaps — what would someone hav
 
 ### Step 4 — Format and write
 
-Format the deliverable using the output template in **`reference/gap-analysis-framework.md`**. Save it under `deliverables/<YYYY-MM>/` — resolve the `deliverables` zone via `AOS_CONFIG.md`, never hard-code the path.
+Format the deliverable using the output template in **`reference/gap-analysis-framework.md`**. Save it under `deliverables/<YYYY-MM>/` — resolve the `deliverables` zone via `AOS_CONFIG.md`, never hard-code the path. Write the executive summary and the gap analysis to the seven writing rules in `docs/deliverable-writing.md` §1 — every comparison names its base, every platform term names its platform (Google Ads or GA4 conversions; Meta Ads or CRM leads), every label is defined at first use. Each recommended next step states the goal it serves and the evidence it rests on (§2).
 
 ## Key distinctions
 
@@ -152,6 +152,7 @@ what lets a granted folder be migrated when the plugin or schema changes.
 3. Multi-domain: filter every channel/spend/ROAS metric by domain; never use account-level totals.
 4. Cite evidence with its class; a single channel's analytics is never a causal claim on its own.
 5. Single client — operate only within the granted folder; never reach outside it.
+6. **Grade honestly; count from the source of record.** Evidence is graded and purchases / revenue are sourced per `docs/deliverable-writing.md` §3–§4. Write the deliverable to the seven writing rules in §1 of the same doc.
 
 ## Integration
 

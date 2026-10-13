@@ -45,6 +45,7 @@ status: confirmed-by-user
 - Catalogue + ship log: <…>
 - Plan measured against: deliverables/<YYYY-MM>/gtm-plan.md
 - Metrics: <Databox dashboards / metrics — or "none, see data gap">
+- Orders / revenue: <the shop's order export (source of record) — GA4 reconciled against it; or "order export missing — no count / revenue conclusions drawn">
 - Sessions: <…>
 
 ## What shipped
@@ -59,7 +60,9 @@ status: confirmed-by-user
 |-----------------|--------|--------|----------|------------|
 | … | reach / engagement / CTR / conv. | databox:<…> | [DATA] | data high / causal med |
 
-Show the arithmetic for the headline result.
+Show the arithmetic for the headline result. Every comparison names its base
+("than the same 60 days of last year"); every platform term names its platform
+(Google Ads or GA4 conversions) — `docs/deliverable-writing.md` §1.
 
 ## Findings
 

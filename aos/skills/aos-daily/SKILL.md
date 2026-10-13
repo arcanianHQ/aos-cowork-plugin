@@ -7,7 +7,7 @@ class: reading
 domain: strategy
 layer: all
 client-scope: single-client
-version: 0.3.0
+version: 0.4.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write, Edit]
 args-hint: "--mode=<start|end> — operates on the granted folder"
@@ -110,7 +110,15 @@ Assemble and present, concise:
    "last run" is determined and the `last-run:` write-back, in
    `reference/cadence-catchup.md`. If there is no `schedules:` block, skip this
    line silently.
-5. **Today's focus** — name the **one** highest-leverage thing to do, with one
+5. **Connections** — check, per `docs/connection-check.md`, what each connected
+   tool can actually do this session: list the tools each connector offers and
+   whether the writes the day's work will need exist (a Gmail `create_draft` /
+   send tool; a Docs / Drive create tool; a channel post / schedule tool). Name
+   any that is **read-only or missing** now, with its fallback (a local file, or
+   text to copy) — so no workflow discovers it at the write. Mask what you list:
+   addresses `j***@d***.com`, headers and tokens `Bearer ****`. One line when
+   everything needed is there.
+6. **Today's focus** — name the **one** highest-leverage thing to do, with one
    sentence of why, drawn from the above. Offer one or two alternatives.
 
 ### Step 2 (mode=end) — The end-of-day wrap
@@ -166,7 +174,7 @@ in place, not stamped.
 ## Output Sections
 
 - **start:** continuity hand-off · open-work count · loop state · unactioned
-  findings · cadence catch-up · today's focus
+  findings · cadence catch-up · connections (capability, masked) · today's focus
 - **end:** what moved · the `## Session summary` block · tomorrow's first pick-up
 - **What did we get wrong? What's missing?**
 
@@ -177,6 +185,7 @@ in place, not stamped.
 
 ## Versioning
 
+- **v0.4.0** — **connection check at session start** (external review). The start brief gains a *Connections* line: what each connector can actually do this session (read-only vs draft / create / post), any read-only or missing write named up front with its fallback, every listed address / header / token masked. Procedure shared in `docs/connection-check.md`.
 - **v0.3.0** — **working-memory continuity** (AOS-852, milestone *13. Agentic behaviour* — F6). End mode writes a **structured `## Session summary`** block to `CAPTAINS_LOG.md` (fixed fields incl. a concrete *Open / mid-flight* resume point); start mode opens with a **continuity hand-off** — reading the most recent summary so a cold ephemeral Cowork session picks the thread up. New: `reference/session-continuity.md`.
 - **v0.2.0** — the **session-start standing brief + cadence catch-up** (AOS-849, milestone *13. Agentic behaviour* — F3). `--mode=start` is reframed as the start-of-session orientation (not only a literal morning), and gains the cadence catch-up: it reads the `schedules:` block, determines what scheduled work was missed while the Cowork app was closed, and offers to run it — the mitigation for `/schedule`'s no-catch-up gap (`docs/cadence.md` §3). New: `reference/cadence-catchup.md`; the optional `last-run:` annotation on `schedules:` rows.
 - **v0.1.0** — initial Cowork-plugin authoring (AOS-794, Milestone 4 feature wave). The daily cadence routine — morning briefing + end-of-day wrap. Couples to the cadence architecture (`docs/cadence.md`).

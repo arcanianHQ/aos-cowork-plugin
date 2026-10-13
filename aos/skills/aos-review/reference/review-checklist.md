@@ -2,10 +2,10 @@
 scope: int-company
 ---
 
-# Review checklist — the three contracts and the verdict rule
+# Review checklist — the three contracts, the deliverable check, and the verdict rule
 
 Companion to `aos-review/SKILL.md`. The deterministic per-check procedure and the
-`PASS` / `REVISE` / `BLOCK` decision rule. The SKILL.md names the three checks;
+`PASS` / `REVISE` / `BLOCK` decision rule. The SKILL.md names the checks;
 this file is *how* each one is run.
 
 A check produces **issues**. Each issue carries:
@@ -142,9 +142,64 @@ Checks the piece is *finished*.
 
 ---
 
-## §4 — The verdict rule
+## §4 — Deliverable writing (deliverables only)
 
-After all three checks, collect every issue and apply, in order:
+Runs when `--piece` is a **deliverable** — a path under `deliverables/` or
+`campaigns/`, or any summary, report, plan, brief, pitch or offer. Skipped for a
+content piece (note "n/a, content piece" in the report). The rules themselves
+live in `docs/deliverable-writing.md`; this section is how they are checked. Do
+not restate them in the report — quote the rule number.
+
+### 4a — The seven writing rules (summaries and reports — doc §1)
+
+Read every sentence that reports a result and check:
+
+1. **Base named** — every comparison names what it compares against (*"than the
+   same 60 days of last year"*). A bare *"above last year"* / *"up 12%"* is an issue.
+2. **One comparison per sentence** — and the "why it changed" explains the same
+   comparison as the "where we are", or says explicitly that it switches.
+3. **Corrections announced** — a figure that replaces an earlier one first
+   states what was claimed and where.
+4. **Platform named** — *conversions*, *leads*, *sessions*, *ROAS* each carry
+   their platform (Google Ads / GA4 / Meta Ads / CRM).
+5. **Labels defined** — every label (budget levels, segment names, grades) is
+   defined at first use in this document.
+6. **Own changes not blamed unchecked** — a deliberate change of ours listed
+   under "what went wrong" without a check showing it hurt is an issue; it
+   belongs under "to check", with the deciding check named.
+7. **Who did what** — a process failure names the role and the action (handed
+   to sales, closed lost, no reason recorded by sales), not *"was lost"*.
+
+### 4b — Goal and context (proposals and plans — doc §2)
+
+1. The document opens with the client's **goal and situation** in two or three
+   sentences.
+2. Each recommendation states **which goal it serves** and **what evidence it
+   rests on**.
+3. No recommendation is compressed to a single detail that loses the goal.
+
+### 4c — Evidence and source of record (doc §3, §4)
+
+1. Nothing graded *strong* rests on one day or a single-digit sample.
+2. A claim that turns on an unknown fact reads *"open — decided by …"*.
+3. No lesson is drawn from an event whose dates and content are unknown.
+4. A conversion-rate order between channels is described as attribution, not
+   presented as a lever.
+5. Purchase counts and revenue trace to the shop's order export, with GA4
+   reconciled against it. A count or revenue conclusion resting on GA4 alone —
+   or drawn when the deliverable itself says the order export is missing — is
+   an issue.
+
+Every §4 issue is class `REVISE` — each is fixable by rewording, re-grading, or
+removing the conclusion. Quote the sentence and the rule (`deliverable-writing
+§1.4`) it fails.
+
+---
+
+## §5 — The verdict rule
+
+After all the checks that apply (§1–§3, and §4 for a deliverable), collect every
+issue and apply, in order:
 
 1. **Any issue of class `BLOCK`** → verdict is **`BLOCK`**. The piece has a
    structural fault revision cannot fix in place — it must not ship; the fix is
@@ -164,6 +219,6 @@ skill never reports `PASS` with an open issue.
 
 If `brand/VOICE.md` or `brand/POSITIONING.md` is missing/stub and the user
 accepted a degraded **completeness-only** review (SKILL.md Step 0.5): run **§3
-only**, skip §1 and §2, and label the report `DEGRADED — completeness-only`. A
+only** (plus §4 for a deliverable — it needs no brand profile), skip §1 and §2, and label the report `DEGRADED — completeness-only`. A
 degraded review can never return `PASS` — its best verdict is `REVISE — full
 review blocked on brand profile`, because brand adherence was never checked.

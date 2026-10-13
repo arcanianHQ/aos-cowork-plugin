@@ -7,7 +7,7 @@ class: intelligence
 domain: strategy
 layer: all
 client-scope: single-client
-version: 0.1.0
+version: 0.2.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write]
 args-hint: "--tender=<path under the granted folder> — the tender / RFP / pitch brief to analyse"
@@ -111,6 +111,11 @@ unstated), the win themes (each with its proof), the fit gaps (each addressed or
 disqualifying), the **bid / no-bid recommendation**, and — if bid — what to lead
 with, what to address head on, and the proof to assemble. Present before writing.
 
+**Keep the goal and the context** (`docs/deliverable-writing.md` §2): the analysis
+opens with the buyer's goal and the client's situation in two or three sentences;
+each recommendation (lead with, address, assemble) states the goal it serves and
+the evidence it rests on. Never compress the strategy to a single detail.
+
 ## Provenance
 
 The pitch-prep analysis carries the **standard provenance block** — see
@@ -129,10 +134,12 @@ The pitch-prep analysis carries the **standard provenance block** — see
 5. **Prep, don't write.** This skill sets the strategy; the proposal itself is
    drafted by `aos-write` / `aos-draft-content` afterward.
 6. **Single client.** Operate only within the granted folder.
-7. **Discovery, not pronouncement.** Present the analysis for confirmation.
+7. **Keep the goal and the context.** Open with the buyer's goal and the client's situation; every recommendation names the goal it serves and its evidence (`docs/deliverable-writing.md` §2).
+8. **Discovery, not pronouncement.** Present the analysis for confirmation.
 
 ## Output Sections
 
+- Goal and situation — two or three sentences: the buyer's goal and where the client stands
 - Buyer analysis — stated + unstated wants
 - Win themes — each with its proof
 - Fit gaps — each addressed or disqualifying
@@ -147,6 +154,7 @@ The pitch-prep analysis carries the **standard provenance block** — see
 
 ## Versioning
 
+- **v0.2.0** — **keep the goal and the context** (external review of real deliverables). The analysis opens with the buyer's goal and the client's situation; every recommendation states the goal it serves and the evidence it rests on. Rules shared in `docs/deliverable-writing.md` §2.
 - **v0.1.0** — initial Cowork-plugin authoring (AOS-790 / F13, Milestone 4 feature wave). Tender / pitch-prep analysis. The buyer-analysis and win-theme heuristics likely need refinement after first real runs.
 
 **What did we get wrong? What's missing?**

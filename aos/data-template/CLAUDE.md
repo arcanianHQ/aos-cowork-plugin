@@ -19,7 +19,12 @@ Cowork has no session-start hook — this checklist is the guard.
    installed plugin; `aos-onboard` / `aos-migrate` refresh it.
 3. **Connectors.** `client/CLIENT_CONFIG.md`'s `## Connectors` block lists the
    `required` connectors + paid `overlays`. Check they are actually connected
-   (the MCP tools are present in the session) / installed. Flag any gap.
+   (the MCP tools are present in the session) / installed. Flag any gap. Then
+   check **capability**, not just presence: does each connector offer the write
+   the work will need (an email draft / send tool, a document create tool), or
+   only read? Name any read-only or missing write now, with its fallback (a
+   local file, or text to copy). Mask what you list — `j***@d***.com`,
+   `Bearer ****`. Procedure: `docs/connection-check.md`.
 4. **Structure.** The `AOS_CONFIG.md` Zones manifest should list every zone
    folder present on disk. Flag drift.
 

@@ -7,7 +7,7 @@ class: intelligence
 domain: strategy
 layer: [L3, L6, L7]
 client-scope: single-client
-version: 0.3.0
+version: 0.4.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write]
 args-hint: "--type=<dealer|retail|brand> --occasion=\"<phrase>\" [--bu=<bu-slug>] — operates on the granted folder"
@@ -117,8 +117,16 @@ Interactively capture — do not invent (the question set is in `reference/brief
 
 Compose the brief from the frame + the brand / content-system context, applying
 the `--type`'s emphasis (`reference/brief-types.md`) and the brief shell
-(`reference/brief-template.md`):
+(`reference/brief-template.md`). **Keep the goal and the context**
+(`docs/deliverable-writing.md` §2): the brief opens with the client's goal and
+situation in two or three sentences, and every recommendation in it (the offer,
+the angle, each channel, each deliverable) states the goal it serves and the
+evidence it rests on. A promotion recommendation is never compressed to a single
+detail (a discount level, a send date) that loses the overall goal. Any label the
+brief introduces — a budget level, a tier — is defined at first use.
 
+- **Goal and situation** — two or three sentences: what the client is trying to
+  achieve with this campaign and where it stands now.
 - **Objective + KPI** — the objective, made measurable: the metric, a target band,
   the measurement window. (How it will actually be measured links to `aos-measure`.)
 - **Audience** — the segment from `brand/ICP.md`, narrowed to this campaign; for a
@@ -176,7 +184,8 @@ or `aos_schema` — read them at write time.
 6. **Type emphasis honoured.** A `dealer` brief leads with enablement, a `retail`
    brief with the offer, a `brand` brief with identity — per `reference/brief-types.md`.
 7. **Single client.** Operate only within the granted folder.
-8. **Discovery, not pronouncement.** Present the brief for confirmation; end it
+8. **Keep the goal and the context.** The brief opens with the goal and situation; each recommendation names the goal it serves and its evidence; labels are defined at first use (`docs/deliverable-writing.md` §1–§2).
+9. **Discovery, not pronouncement.** Present the brief for confirmation; end it
    with *"What did we get wrong? What's missing?"*
 
 ## Output Sections
@@ -184,6 +193,7 @@ or `aos_schema` — read them at write time.
 User-facing summary at end of run:
 
 - Brief type + occasion
+- Goal and situation — the two or three sentences the brief opens with
 - Objective + KPI
 - The deliverables the campaign needs (the hand-off list to `aos-write` / `aos-draft-content`)
 - Brief path
@@ -196,6 +206,7 @@ User-facing summary at end of run:
 
 ## Versioning
 
+- **v0.4.0** — **keep the goal and the context** (external review of a promotion proposal). The brief opens with the client's goal and situation in two or three sentences; every recommendation states the goal it serves and the evidence it rests on, never compressed to a single detail; labels (budget levels, tiers) are defined at first use. Rules shared in `docs/deliverable-writing.md`.
 - **v0.3.0** — the finalised campaign model (AOS-834, schema v5): per-campaign files gain a **`## KPIs` table** (the single `kpi:` frontmatter field is gone); a campaign's `theme:` is a slug referencing a **`campaigns/themes/<slug>.md`** theme file the skill also writes. Mirrors the AOS Cloud `campaign_kpis` table + `campaign_themes`.
 - **v0.2.0** — writes into the new **`campaigns/` zone** (AOS-834, schema v4): a per-campaign file `campaigns/<slug>.md` — a frontmatter record (theme / type / BU / budget / window / status / KPI / platforms) + the brief as the body — and a row in `campaigns/INDEX.md`. Supersedes the prose-brief-in-`deliverables/` + flat `dictionaries/campaign.yaml` split.
 - **v0.1.0** — initial Cowork-plugin authoring (AOS-787, Milestone 4 feature wave). Three brief types (dealer / retail / brand). Validated against real seasonal campaign briefs; the per-type emphasis and the brief shell likely need refinement after first real runs.

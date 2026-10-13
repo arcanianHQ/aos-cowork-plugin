@@ -7,7 +7,7 @@ class: intelligence
 domain: diagnostic
 layer: [L0, L1, L2, L3, L4, L5, L6, L7]
 client-scope: single-client
-version: 0.2.0
+version: 0.3.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write]
 args-hint: "[--mode=1|2|3] [--peer-review] — operates on the granted folder"
@@ -51,7 +51,7 @@ Diagnose a business's marketing using the Arcanian Marketing Control Framework (
 
 **Multi-domain:** If the client has 2+ domains, load `client/DOMAIN_CHANNEL_MAP.yaml` first. L5 and L6 must be diagnosed **per domain** — never flatten channel/measurement/customer findings across domains, and never use account-level totals as a single domain's metrics.
 
-**Evidence:** Tag every evidence item — `[DATA]`, `[OBSERVED]`, `[STATED]`, `[NARRATIVE]`, `[INFERRED]`, `[HEARSAY]`. Keep data confidence separate from causal confidence: a single channel's analytics is never sufficient for a causal claim — triangulate (e.g. ads UI + analytics). Before emitting new RECs, check `ontology/recommendations/` for existing RECs on the same constraint to avoid duplicates.
+**Evidence:** Tag every evidence item — `[DATA]`, `[OBSERVED]`, `[STATED]`, `[NARRATIVE]`, `[INFERRED]`, `[HEARSAY]`. Keep data confidence separate from causal confidence: a single channel's analytics is never sufficient for a causal claim — triangulate (e.g. ads UI + analytics). Grade per `docs/deliverable-writing.md` §3: one day or a single-digit sample is never strong; a claim that turns on an unknown fact is *"open — decided by …"*; no lesson from an event whose dates and content are unknown; a conversion-rate order between channels is attribution, not a lever. Purchases and revenue come from the shop's order export, with GA4 reconciled against it — if the order export is missing, say so and draw no count / revenue conclusions (§4). Before emitting new RECs, check `ontology/recommendations/` for existing RECs on the same constraint to avoid duplicates.
 
 **Principles (summary):**
 
@@ -168,6 +168,7 @@ what lets a granted folder be migrated when the plugin or schema changes.
 3. Competitors belong in the **Competitive Matrix**, not as a substitute for L7 macro analysis.
 4. Brand and position are **overlays**, not standalone layers to "fix" in isolation.
 5. Single client — operate only within the granted folder; never reach outside it.
+6. **Grade honestly; count from the source of record.** Evidence is graded and purchases / revenue are sourced per `docs/deliverable-writing.md` §3–§4. Write the deliverable to the seven writing rules in §1 of the same doc.
 
 ## Integration
 
@@ -180,6 +181,7 @@ Ask for: what they sell, who they sell to, challenges/symptoms, data points, wha
 
 ## Versioning
 
+- **v0.3.0** — **evidence grading + source of record** (external review of real deliverables). Evidence grading follows `docs/deliverable-writing.md` §3 (no "strong" from one day or a single-digit sample; unknown deciding facts left open; no lessons from events without known dates and content; channel conversion-rate order read as attribution), purchases and revenue come from the shop's order export with GA4 reconciled against it (§4), and the deliverable follows the seven writing rules (§1).
 - **v0.2.0** — **parallel fan-out** (AOS-850, milestone *13. Agentic behaviour* — F4). The four layer-grouped passes, and the three `--peer-review` perspectives, are documented as independent units that fan out to parallel sub-agents when the runtime exposes them and run sequentially otherwise — same diagnosis, lower latency. Synthesis stays with the parent. See `docs/parallel-fanout.md`.
 - **v0.1.0** — initial Cowork-plugin authoring. The seven-layer diagnostic — modes 1–3, the four-pass architecture, peer review.
 

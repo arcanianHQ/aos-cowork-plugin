@@ -7,7 +7,7 @@ class: intelligence
 domain: strategy
 layer: [L2, L3, L4]
 client-scope: single-client
-version: 0.1.1
+version: 0.2.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write]
 args-hint: "[--bu=<bu-slug>] [--horizon=<this-month|quarter>] — operates on the granted folder; no client argument"
@@ -114,7 +114,7 @@ Rank the candidates with the **prioritisation rubric** in `reference/planning-me
 
 ### Step 4 — Synthesise and emit
 
-1. Write the plan to `deliverables/<YYYY-MM>/gtm-plan.md` using `reference/plan-template.md`. Resolve the `deliverables` zone via `AOS_CONFIG.md`.
+1. Write the plan to `deliverables/<YYYY-MM>/gtm-plan.md` using `reference/plan-template.md`. Resolve the `deliverables` zone via `AOS_CONFIG.md`. **Keep the goal and the context** (`docs/deliverable-writing.md` §2): open with the client's goal and situation in two or three sentences, and give every move the goal it serves and the evidence it rests on — never compress a move to a single detail that loses the goal.
 2. **Emit ontology artifacts.** For each prioritised move, write a `REC` to `ontology/recommendations/` — frontmatter per `ontology/README.md` (`source: aos-plan`, `consumes:` the FND(s) / REC(s) the move responds to, the `layer:` it sits in). **Dedup first** — scan existing `ontology/recommendations/`; supersede (`status: superseded` on the old one) or reference rather than duplicate. The REC emission format is in `reference/plan-template.md`.
 3. Present the ranked plan + the REC shortlist to the user before writing — Accept / Revise / Regenerate.
 
@@ -122,9 +122,10 @@ Rank the candidates with the **prioritisation rubric** in `reference/planning-me
 
 Minimum content for the deliverable:
 
+- Goal and situation — two or three sentences: what the client is trying to achieve and where it stands now
 - Context used (brand files, content-system files, open FNDs consulted, sessions)
 - The picture — diagnosed constraints + open findings the plan answers to
-- The prioritised move list — ranked, each with layer, source (FND/constraint), impact, effort, confidence
+- The prioritised move list — ranked, each with the goal it serves, layer, source (FND/constraint) and the evidence it rests on, impact, effort, confidence
 - The REC shortlist — one REC per move, with its `consumes:` edges
 - What this plan deliberately does **not** do this horizon, and why
 - **What did we get wrong? What's missing?**
@@ -156,7 +157,8 @@ hard-code `skill_version` or `aos_schema` — read them at write time.
 6. **Dedup before emitting.** Scan `ontology/recommendations/` — supersede or reference, never duplicate a REC.
 7. **Single client.** Operate only within the granted folder; never reach outside it.
 8. **Write deliverables to `deliverables/<YYYY-MM>/` and RECs to `ontology/recommendations/`** — never to `brand/` or `content/`.
-9. **Discovery, not pronouncement.** The plan ends with *"What did we get wrong? What's missing?"* before the user accepts.
+9. **Keep the goal and the context.** The plan opens with the goal and situation; every move names the goal it serves and the evidence it rests on (`docs/deliverable-writing.md` §2). Where the plan reports results or compares periods, it follows the writing rules in §1 of the same doc.
+10. **Discovery, not pronouncement.** The plan ends with *"What did we get wrong? What's missing?"* before the user accepts.
 
 ## Integration
 
@@ -165,6 +167,7 @@ hard-code `skill_version` or `aos_schema` — read them at write time.
 
 ## Versioning
 
+- **v0.2.0** — **keep the goal and the context** (external review of real deliverables). The plan opens with the client's goal and situation in two or three sentences; every move states the goal it serves and the evidence it rests on, and is never compressed to a single detail. Rules shared in `docs/deliverable-writing.md` §2.
 - **v0.1.1** — **multi-BU detection fix** (AOS-853 / F1-D1). Step 0.4 now detects multi-BU from `AOS_CONFIG.md`'s `business-units:` declaration, not from the `content-system/<bu>/` layout — a client is multi-BU before its content-system is split. See `docs/data-folder-spec.md`, "Detecting multi-BU".
 - **v0.1.0** — initial Cowork-plugin authoring. The planning stage of the AOS loop (architecture-gaps §1). Prioritisation rubric and candidate-generation lenses likely need refinement after first real runs.
 

@@ -47,6 +47,11 @@ Keep **data confidence** (is the number real?) separate from **causal
 confidence** (does this result mean what the finding says?). A single channel's
 analytics is never enough for a causal claim — triangulate.
 
+Grading limits and the source of record are shared across AOS deliverables —
+`docs/deliverable-writing.md` §3 and §4. The two that bite here: one day or a
+single-digit sample is never strong; purchases and revenue come from the shop's
+order export, with GA4 reconciled against it, never on its own.
+
 ## Result→finding lenses
 
 Run all four lenses over the gathered results. Each turns a result into a

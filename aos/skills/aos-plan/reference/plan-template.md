@@ -30,6 +30,12 @@ status: confirmed-by-user
 > **What this is.** A prioritised GTM plan — the ranked moves that matter most
 > this horizon. A draft prioritisation for you to correct, not a verdict.
 
+## Goal and situation
+
+<Two or three sentences: what the client is trying to achieve, and where it
+stands now — the constraint, the period's result. A reader who sees only this
+paragraph knows why the plan exists. (`docs/deliverable-writing.md` §2)>
+
 ## Context used
 
 - Brand files: <…>
@@ -58,7 +64,8 @@ Show the scoring arithmetic for the top move.
 For each prioritised move:
 
 - **REC-<id> — <move title>** `layer: <Ln>`
-- Responds to: <FND-id / constraint / pillar gap>
+- Serves: <the goal this move serves>
+- Responds to: <FND-id / constraint / pillar gap> — evidence: <what it rests on, with its evidence class>
 - Do: <the move, one paragraph>
 - Why now: <the leverage / confidence argument>
 - Hand-off: <which skill executes it — aos-draft-content, a diagnostic, etc.>

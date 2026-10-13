@@ -7,7 +7,7 @@ class: content
 domain: quality
 layer: all
 client-scope: single-client
-version: 0.2.0
+version: 0.3.0
 owner: arcanian
 allowed-tools: [Read, Grep, Glob, Bash, Write, Edit]
 args-hint: "(no args — an interactive capture; operates on the granted folder)"
@@ -118,6 +118,14 @@ Every record carries the fields auto-triage needs (template:
    + schema to stamp; `feedback-intake:` address if set). Read `client/CLIENT_CONFIG.md` if present.
 2. Ensure the `feedback/` zone exists at the granted-folder root; create it, with
    an `INDEX.md`, if it does not.
+3. **Connection check — at the start** (`docs/connection-check.md`). Look at the
+   tools the session actually offers. If an email connector is present **and**
+   offers a draft tool (e.g. a Gmail `create_draft`), say so: the email can be
+   placed as a draft for the user to send. If it is read-only (search / read
+   only) or absent — the normal case — say so **now**, in one line, and that the
+   email will be handed over as text to copy (plus a `mailto:` link). Never find
+   this out at Step 3. When naming the connected account, mask it
+   (`j***@d***.com`).
 
 ### Step 1 — Capture
 
@@ -145,7 +153,9 @@ Produce the email for the user to send to the intake address:
 
 Hand the user the subject + body (and a `mailto:aos-support@arcanian.ai` link
 when the environment supports it). The user sends it from their own mail client
-— one click / one paste. The skill never sends mail itself.
+— one click / one paste. If Step 0.3 found a draft tool and the user wants it,
+place the email as a **draft** instead — the user still sends it. The skill never
+sends mail itself.
 
 ### Step 4 — Update the index + confirm
 
@@ -162,7 +172,9 @@ A feedback record can contain a transcript excerpt or the user's own words —
 which may carry personal data. Rules: (1) a transcript excerpt is included only
 on the user's explicit say-so; (2) the record is `scope: int-confidential`;
 (3) before auto-triage routes a record into Linear it passes `aos-anonymize` —
-the triage process owns that step (`docs/feedback.md`).
+the triage process owns that step (`docs/feedback.md`); (4) email addresses,
+headers and tokens in an excerpt or error message are masked before they enter
+the record (`j***@d***.com`, `Bearer ****` — `docs/connection-check.md`).
 
 ## Provenance
 
@@ -181,7 +193,10 @@ Each feedback record carries the **standard provenance block** — see
    the email. Classification, prioritisation, dedup, and the Linear ticket are
    auto-triage's job, on Arcanian's side (`docs/feedback.md`).
 4. **The plugin never sends mail and never writes to Linear.** No backend, no
-   email connector, no Linear credentials on the tester's side — by design.
+   required email connector, no Linear credentials on the tester's side — by
+   design. An email connector with a draft tool, when present, is used only to
+   place a draft on the user's say-so — checked at Step 0.3, never discovered
+   at the send.
 5. **Transcript only on consent.** A transcript excerpt is included only when the
    user explicitly agrees; the record is `int-confidential`.
 6. **Zero friction.** Ask only what makes the report actionable.
@@ -202,6 +217,7 @@ Each feedback record carries the **standard provenance block** — see
 
 ## Versioning
 
+- **v0.3.0** — **connection check at the start** (external review). Step 0.3 checks, before capture, whether an email connector offers a draft tool; says at once when it is read-only or absent and that the email will come as text to copy; places a draft (never sends) only on the user's say-so. Connected accounts and any address / header / token in the record are masked. Procedure shared in `docs/connection-check.md`.
 - **v0.1.0** — initial authoring (AOS-773, Milestone 7). In-plugin feedback capture into `feedback/`.
 - **v0.2.0** — the two-representation model (capture edge ⟷ Linear managed form), **email transport** to the AOS feedback intake, and the auto-triage hand-off. The record is ticket-like from birth (`FB-NNN` id + status lifecycle). A dedicated feedback MCP server is the planned transport successor.
 

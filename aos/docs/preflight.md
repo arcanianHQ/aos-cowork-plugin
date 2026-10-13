@@ -38,6 +38,8 @@ onboarded; route to `aos-onboard`.
   gracefully without it.
 - `connectors` — the skill's required connectors (`## Connectors` /
   `.mcp.json`) are present; degrade or halt per the skill's connector contract.
+  A skill that will **write** through a connector (email draft, document,
+  post) also checks the write capability at the start — `docs/connection-check.md`.
 
 A skill's `preflight:` list adds these on top of the base checks.
 
